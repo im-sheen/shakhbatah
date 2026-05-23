@@ -1,0 +1,281 @@
+<!--
+  title: توقف عن استخدام صيغة Material You في Matugen — استخدم Base16
+  description: لماذا نظام الألوان Material You مزعج للـ ricing وكيف تتحول إلى Base16 الأبسط والأنظف الذي صُمّم خصيصاً لتخصيص سطح المكتب
+  tag: الألوان
+  date: 2026-05-16
+  icon: 🎨
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html" class="active">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الألوان</div>
+      <h1 class="article-page-title">توقف عن استخدام Material You في Matugen — استخدم Base16</h1>
+      <p class="article-page-desc">نظام Base16 موجود في Matugen من البداية — أبسط، أنظف، وصُمّم خصيصاً لتخصيص سطح المكتب.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+      <!-- شريحة الكاتب تُضاف تلقائياً بواسطة app.js -->
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المشكلة مع Material You</h2>
+    <p>
+      إذا كنت تستخدم Matugen الآن، قالبك على الأرجح يحتوي على أسطر تشبه هذا:
+    </p>
+    <pre><code>background = {{colors.primary_container.default.hex}}
+foreground = {{colors.on_primary_container.default.hex}}
+border     = {{colors.surface_variant.default.hex_stripped}}</code></pre>
+    <p>
+      40 سطراً من هذه النوع في كل قالب. أسماء لا تعني شيئاً لك.
+      كلما احتجت لون accent تجد نفسك تسأل: هل هو <code>primary</code>؟ أم <code>primary_container</code>؟
+      أم <code>tertiary_container</code>؟ أم <code>surface_container_low</code>؟
+    </p>
+    <p>
+      المشكلة الجذرية: <strong>Material You صُمّم لتطبيقات Android، لا لسطح المكتب.</strong>
+    </p>
+
+    <h2>لماذا Material You لا يناسب الـ ricing</h2>
+    <p>
+      نظام ألوان Material Design 3 مبني حول أدوار دلالية <em>semantic roles</em> مصممة
+      لواجهات تطبيقات لديها أزرار، بطاقات، وقوائم. كل لون عنده معنى محدد في سياق تطبيق Material Design:
+    </p>
+    <ul>
+      <li><code>primary_container</code> — خلفية حاوية بارزة</li>
+      <li><code>on_primary_container</code> — لون النص فوق تلك الحاوية</li>
+      <li><code>surface_variant</code> — سطح بديل للمناطق الأقل بروزاً</li>
+    </ul>
+    <p>
+      هذا منطقي إذا كنت تبني تطبيق Gmail. لكنك تضع ألوان Waybar وRofi وKitty.
+      لا تحتاج أدواراً دلالية مصممة لأزرار Android. تحتاج: لون خلفية، لون نص، وعدة ألوان accent تنسجم مع بعضها.
+    </p>
+    <blockquote>
+      🤦 أطول متغير في Material You: <code>{{colors.surface_container_lowest.default.hex_stripped}}</code> — 48 حرفاً لمتغير واحد!
+    </blockquote>
+
+    <h2>الحل: نظام Base16</h2>
+    <p>
+      Base16 هو نظام ألوان صُمّم خصيصاً لتخصيص التيرمينالات، المحررات، وسطح المكتب.
+      يستخدم <strong>16 لوناً فقط</strong>، مُرقّمة من <code>base00</code> إلى <code>base0F</code>.
+      لا أدوار دلالية، لا <em>containers</em>، لا <em>variants</em> — فقط 16 قيمة hex.
+    </p>
+    <p>
+      والأفضل من ذلك: <strong>Matugen يولّد Base16 تلقائياً من أي خلفية</strong>، وأنت لم تكن تعلم بذلك.
+    </p>
+
+    <h2>بنية الـ 16 لوناً</h2>
+    <p>الألوان تنقسم لمجموعتين واضحتين:</p>
+
+    <h3>base00 → base07 — ألوان التدرج (الهيكل)</h3>
+    <p>تدرج من الأغمق إلى الأفتح. في الثيم الداكن:</p>
+    <ul>
+      <li><strong>base00</strong> — أغمق خلفية (الخلفية الرئيسية)</li>
+      <li><strong>base01</strong> — خلفية أفتح قليلاً (الأشرطة والـ sidebars)</li>
+      <li><strong>base02</strong> — خلفية التحديد والـ highlight</li>
+      <li><strong>base03</strong> — التعليقات والنص الخافت</li>
+      <li><strong>base04</strong> — نص شريط الحالة</li>
+      <li><strong>base05</strong> — النص الافتراضي</li>
+      <li><strong>base06</strong> — نص فاتح</li>
+      <li><strong>base07</strong> — الأفتح، للإبرازات الساطعة</li>
+    </ul>
+
+    <h3>base08 → base0F — ألوان الـ accent</h3>
+    <p>ثمانية ألوان شخصية واضحة الأدوار:</p>
+    <ul>
+      <li><strong>base08</strong> — أحمر (أخطاء، حالات طارئة)</li>
+      <li><strong>base09</strong> — برتقالي</li>
+      <li><strong>base0A</strong> — أصفر (تحذيرات)</li>
+      <li><strong>base0B</strong> — أخضر (نجاح، مؤشرات نشطة)</li>
+      <li><strong>base0C</strong> — سماوي cyan</li>
+      <li><strong>base0D</strong> — أزرق (الـ accent الرئيسي)</li>
+      <li><strong>base0E</strong> — بنفسجي / magenta</li>
+      <li><strong>base0F</strong> — بني / accent عميق</li>
+    </ul>
+
+    <blockquote>
+      💡 قاعدة ذهبية: <strong>base0D</strong> هو لون الـ accent الرئيسي دائماً.
+      <strong>base08</strong> هو لون "يحتاج انتباه" دائماً.
+      بمجرد أن تحفظ هذا، تكتب القوالب من الذاكرة بدون توثيق.
+    </blockquote>
+
+    <h2>الصيغة في Matugen</h2>
+    <p>للاستخدام داخل القوالب، الصيغة بسيطة:</p>
+    <pre><code>{{base16.base00.dark.hex}}
+{{base16.base0D.dark.hex_stripped}}
+{{base16.base08.light.rgb}}</code></pre>
+
+    <p>المكوّنات:</p>
+    <ul>
+      <li><code>base16</code> — للوصول إلى نظام Base16</li>
+      <li><code>base00</code> إلى <code>base0F</code> — رقم اللون</li>
+      <li><code>dark</code> أو <code>light</code> — نوع الثيم</li>
+      <li><code>hex</code> / <code>hex_stripped</code> / <code>rgb</code> / <code>rgba</code> — صيغة الإخراج</li>
+    </ul>
+
+    <h2>أمثلة عملية</h2>
+
+    <h3>Hyprland — حدود النوافذ</h3>
+    <p>المكتبة القديمة (Material You):</p>
+    <pre><code>general {
+  col.active_border   = rgb({{colors.primary.default.hex_stripped}})
+  col.inactive_border = rgb({{colors.surface_variant.default.hex_stripped}})
+}</code></pre>
+
+    <p>بعد التحول إلى Base16:</p>
+    <pre><code>general {
+  col.active_border   = rgb({{base16.base0D.dark.hex_stripped}})
+  col.inactive_border = rgb({{base16.base01.dark.hex_stripped}})
+}</code></pre>
+
+    <p>
+      <code>base0D</code> هو الأزرق — خيار طبيعي للحد النشط.
+      <code>base01</code> هو أفتح قليلاً من الخلفية — حد غير نشط موجود لكن لا يلفت الانتباه.
+    </p>
+
+    <h3>Kitty — ألوان التيرمينال</h3>
+    <pre><code># الخلفية والنص
+background = {{base16.base00.dark.hex}}
+foreground = {{base16.base05.dark.hex}}
+
+# ألوان ANSI
+color0  = {{base16.base00.dark.hex}}
+color1  = {{base16.base08.dark.hex}}
+color2  = {{base16.base0B.dark.hex}}
+color3  = {{base16.base0A.dark.hex}}
+color4  = {{base16.base0D.dark.hex}}
+color5  = {{base16.base0E.dark.hex}}
+color6  = {{base16.base0C.dark.hex}}
+color7  = {{base16.base05.dark.hex}}</code></pre>
+
+    <p>
+      نظام Base16 يُطابق مباشرة مؤشرات ألوان التيرمينال (ANSI) لأنه صُمّم لهذا الغرض تحديداً.
+      لا تخمين أي دور Material You يصبح اللون الأحمر في التيرمينال — <code>base08</code> هو الأحمر دائماً.
+    </p>
+
+    <h3>Waybar — أساس الألوان</h3>
+    <pre><code>@define-color bg        {{base16.base00.dark.hex}};
+@define-color fg        {{base16.base05.dark.hex}};
+@define-color highlight {{base16.base02.dark.hex}};
+@define-color accent    {{base16.base0D.dark.hex}};
+@define-color urgent    {{base16.base08.dark.hex}};
+@define-color muted     {{base16.base03.dark.hex}};
+@define-color border    {{base16.base01.dark.hex}};</code></pre>
+
+    <p>
+      سبعة أسطر تغطي أساس كل Waybar. كل اسم متغير واضح المعنى مباشرة.
+    </p>
+
+    <h2>ورقة الغش — Base16 Cheat Sheet</h2>
+    <p>احفظ هذا الجدول وستكتب القوالب من الذاكرة:</p>
+
+    <table>
+      <thead>
+        <tr><th>الكود</th><th>الدور</th><th>متى تستخدمه</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>base00</code></td><td>خلفية رئيسية</td><td>background في كل مكان</td></tr>
+        <tr><td><code>base01</code></td><td>خلفية ثانوية</td><td>أشرطة، sidebars، حدود خاملة</td></tr>
+        <tr><td><code>base02</code></td><td>تحديد / highlight</td><td>workspace نشط، تحديد نص</td></tr>
+        <tr><td><code>base03</code></td><td>نص خافت</td><td>تعليقات، عناصر ثانوية</td></tr>
+        <tr><td><code>base05</code></td><td>نص افتراضي</td><td>foreground في كل مكان</td></tr>
+        <tr><td><code>base08</code></td><td>أحمر</td><td>أخطاء، إشعارات urgent</td></tr>
+        <tr><td><code>base0A</code></td><td>أصفر</td><td>تحذيرات</td></tr>
+        <tr><td><code>base0B</code></td><td>أخضر</td><td>نجاح، مؤشرات نشطة</td></tr>
+        <tr><td><code>base0D</code></td><td>أزرق</td><td>الـ accent الرئيسي، حدود نشطة</td></tr>
+        <tr><td><code>base0E</code></td><td>بنفسجي</td><td>accent ثانوي</td></tr>
+      </tbody>
+    </table>
+
+    <h2>كيف تبدأ التحويل</h2>
+    <p>لا داعي لتحويل كل القوالب دفعة واحدة. الخطوات:</p>
+    <ul>
+      <li>افتح أبسط قالب عندك (التيرمينال أو الـ launcher).</li>
+      <li>استبدل كل <code>{{colors.something.something.hex}}</code> بمكافئه Base16.</li>
+      <li>شغّل Matugen وشاهد النتيجة — نفس الألوان الديناميكية بنصف التعقيد.</li>
+      <li>كرّر مع بقية القوالب واحداً واحداً.</li>
+    </ul>
+
+    <blockquote>
+      ✅ عند الانتهاء، قوالبك ستكون أنظف، أسهل في الصيانة، وقابلة للنقل لأي setup آخر بدون تعديل.
+    </blockquote>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

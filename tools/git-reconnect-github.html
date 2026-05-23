@@ -1,0 +1,214 @@
+<!--
+  title: كيف تربط مشروعك المحلي بمستودع GitHub من جديد
+  description: دليل شامل لإعادة ربط مشروعك المحلي بمستودع GitHub، مع شرح المسارات المختلفة والمشاكل الشائعة وحلولها.
+  tag: Git
+  date: 2026-05-01
+  icon: 🔄
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <meta name="description" content="دليل شامل لإعادة ربط مشروعك المحلي بمستودع GitHub، مع شرح المسارات المختلفة والمشاكل الشائعة وحلولها.">
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../tools/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        أدوات
+      </a>
+      <div class="article-meta-tag">Git</div>
+      <h1 class="article-page-title">كيف تربط مشروعك المحلي بمستودع GitHub من جديد</h1>
+      <p class="article-page-desc">دليل شامل لإعادة ربط مشروعك المحلي بمستودع GitHub، مع شرح المسارات المختلفة والمشاكل الشائعة وحلولها.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        2026-05-01
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <p>
+        واحدة من أكثر المشاكل المزعجة التي تواجه المطورين — سواء المبتدئين أو حتى من لديهم خبرة — هي فقدان مجلد الإعدادات <code>.git</code> داخل مشروعهم المحلي، أو محاولة ربط مجلد جديد بمستودع قديم موجود مسبقاً على GitHub. في هذا الدليل، سنتعلم معاً كيف نعيد هذا الارتباط بخطوات واضحة، ونختار المسار الصحيح بحسب حاجتنا.
+      </p>
+
+    <h2>لماذا تحدث هذه المشكلة؟</h2>
+
+    <p>
+        عندما تعمل مع Git، يُخزَّن كل تاريخ المشروع وإعداداته داخل مجلد مخفي اسمه <code>.git</code>. إذا حُذف هذا المجلد أو بدأت مشروعاً جديداً من الصفر دون تهيئة Git، يفقد الجهاز أي معرفة بـ GitHub ويصبح كل شيء غير مرتبط. والنتيجة: لا يمكنك رفع تعديلاتك ولا متابعة سجل العمل.
+      </p>
+
+    <h2>الخطوة الأولى: تهيئة المشروع وربطه</h2>
+
+    <p>
+        قبل البدء، يجب أن نتأكد أن المجلد المحلي مُهيَّأ كمستودع Git ومرتبط بالرابط الصحيح. افتح الـ Terminal داخل VS Code ونفّذ الأمرين التاليين:
+      </p>
+
+    <p>أولاً، هيّئ المستودع محلياً:</p>
+
+    <pre><code>git init</code></pre>
+
+    <p>ثانياً، اربط المجلد برابط GitHub الخاص بك (استبدل الرابط برابط مستودعك):</p>
+
+    <pre><code>git remote add origin https://github.com/username/repository.git</code></pre>
+
+    <p>
+        هذان الأمران كافيان لإنشاء الجسر بين جهازك والمستودع البعيد. لكن الخطوة التالية تختلف بحسب ما تريد تحقيقه.
+      </p>
+
+    <h2>الخطوة الثانية: اختر مسارك</h2>
+
+    <p>
+        هنا يتفرق الطريق. اقرأ الخيارين جيداً واختر ما يناسب وضعك:
+      </p>
+
+    <h3>المسار (أ): الرفع القسري — الأسرع والأنظف</h3>
+
+    <p>
+        اختر هذا المسار إذا كنت تريد أن تكون النسخة الموجودة على جهازك هي <strong>النسخة الوحيدة والأساسية</strong>، أو إذا كنت لا تهتم بالملفات القديمة على GitHub وتريد استبدالها بالكامل. الأوامر:
+      </p>
+
+    <pre><code>git add .
+git commit -m "تحديث الملفات واستبدال النسخة القديمة"
+git push origin main --force</code></pre>
+
+    <blockquote>
+        "تذكّر: الرفع القسري سيحذف أي ملفات موجودة على GitHub وليست موجودة في جهازك حالياً. استخدمه بوعي."
+        <br/><strong>— نصيحة مهمة قبل التنفيذ</strong>
+</blockquote>
+
+    <h3>المسار (ب): الدمج مع الحفاظ على التاريخ</h3>
+
+    <p>
+        اختر هذا المسار إذا كان المستودع على GitHub يحتوي على ملفات مهمة مثل <code>README</code> أو ملفات التراخيص، أو إذا كنت تريد دمج تعديلاتك الجديدة مع ما رُفع سابقاً. نفّذ أولاً:
+      </p>
+
+    <pre><code>git pull origin main --allow-unrelated-histories</code></pre>
+
+    <p>
+        الخيار <code>--allow-unrelated-histories</code> ضروري هنا لأن المجلد المحلي لا يملك تاريخاً مشتركاً مع المستودع البعيد، وبدونه سيرفض Git عملية الدمج.
+      </p>
+
+    <p>بعد اكتمال الدمج (أو حل أي تعارضات)، أكمل بهذه الأوامر:</p>
+
+    <pre><code>git add .
+git commit -m "دمج الملفات المحلية مع ملفات GitHub"
+git push origin main</code></pre>
+
+    <h2>التعامل مع تعارضات الدمج (Conflicts)</h2>
+
+    <p>
+        إذا ظهرت رسالة تعارض بعد أمر <code>pull</code>، لا تقلق — هذا طبيعي جداً. افتح الملفات التي فيها تعارض في VS Code وستجد علامات مثل <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> و<code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> تفصل بين النسختين. احذف الجزء الذي لا تريده وأبقِ على ما يناسبك، ثم احفظ الملف ونفّذ أوامر الـ commit والـ push كما هو موضح أعلاه.
+      </p>
+
+    <h2>مشاكل شائعة وحلولها</h2>
+
+    <h3>خطأ: Remote origin already exists</h3>
+
+    <p>
+        يظهر هذا الخطأ عندما يكون المجلد مرتبطاً بالفعل بمستودع آخر. بدلاً من إضافة رابط جديد، غيّر الرابط الحالي بهذا الأمر:
+      </p>
+
+    <pre><code>git remote set-url origin https://github.com/username/repository.git</code></pre>
+
+    <h3>خطأ: Rejected — non-fast-forward</h3>
+
+    <p>
+        هذا الخطأ يعني أن GitHub يرفض استقبال ملفاتك لأن المستودع البعيد يحتوي على تغييرات أحدث مما لديك. الحل إما استخدام <strong>المسار (أ)</strong> للرفع القسري إذا لم تهتم بتلك التغييرات، أو <strong>المسار (ب)</strong> لجلب التغييرات ودمجها أولاً.
+      </p>
+
+    <h2>نصيحة ذهبية قبل أي خطوة</h2>
+
+    <p>
+        قبل تنفيذ أي أمر كبير، نفّذ دائماً:
+      </p>
+
+    <pre><code>git status</code></pre>
+
+    <p>
+        هذا الأمر البسيط يمنحك رؤية واضحة وشاملة: ما الملفات التي ستُرفع؟ ما الملفات الجديدة؟ ما الذي تغيّر؟ دقيقة واحدة في قراءة ناتج هذا الأمر يمكن أن تنقذك من أخطاء كبيرة.
+      </p>
+
+    <h2>الخلاصة</h2>
+
+    <p>
+        إعادة ربط مشروع بـ GitHub ليست بالمعقدة إذا فهمت الخطوات بشكل صحيح. ابدأ دائماً بـ <code>git init</code> و<code>git remote add origin</code>، ثم اختر مسارك بناءً على ما تريد: الرفع القسري إذا أردت السيطرة الكاملة، أو الدمج إذا أردت الحفاظ على الملفات القديمة. والأهم: لا تتسرع — اقرأ رسائل الأخطاء بتمعن فهي دائماً تحمل الحل.
+      </p>
+
+    <p>
+        إذا واجهت مشكلة لم تجد لها حلاً هنا، تواصل معي وسأحاول مساعدتك!
+      </p>
+
+  </main>
+
+  <script src="../assets/js/app.js"></script>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

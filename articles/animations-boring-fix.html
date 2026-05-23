@@ -1,0 +1,304 @@
+<!--
+  title: لماذا أنيميشن Hyprland عندك يبدو مملاً — وكيف تصلحه
+  description: الأنيميشن هو الجزء الوحيد من الـ rice الذي تشعر به كل ثانية — لكن معظم الناس يتركونه على الافتراضي. إليك كيف تصنع منحنيات بيزيير تجعل سطح مكتبك يبدو حياً
+  tag: التخصيص
+  date: 2026-05-16
+  icon: ✨
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">لماذا أنيميشن Hyprland عندك يبدو مملاً — وكيف تصلحه</h1>
+      <p class="article-page-desc">الأنيميشن هو الجزء الوحيد من الـ rice الذي تشعر به كل ثانية. إليك كيف تصنع منحنيات بيزيير تجعل سطح مكتبك يبدو حياً.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المشكلة التي لا أحد يتكلم عنها</h2>
+    <p>
+      فعّلت الأنيميشن في Hyprland، رأيت النوافذ تنزلق، قلت "تمام يعمل"، وتركته.
+      منحنيات بيزيير افتراضية، سرعات افتراضية، ربما غيّرت المدة مرة واحدة.
+      والنتيجة؟ كل نافذة تُفتح، كل workspace تتبدل، كل شيء يتحرك بنفس الطريقة —
+      ناعم، نعم، لكن مسطح وبلا روح.
+    </p>
+    <p>
+      الأنيميشن هو الجزء <strong>الوحيد</strong> من الـ rice الذي تختبره باستمرار.
+      خلفية الشاشة تجلس في الخلف، الشريط ثابت، لكن في كل مرة تفتح نافذة أو تبدّل workspace،
+      منحنياتك موجودة أمامك مباشرة. وإذا كانت مملة، سطح مكتبك بالكامل يبدو مملاً —
+      بغض النظر عن مدى جمال الألوان.
+    </p>
+
+    <h2>ما هو منحنى البيزيير؟</h2>
+    <p>
+      منحنى البيزيير في Hyprland يُحدِّد طريقة <strong>التسارع والتباطؤ</strong> في الحركة.
+      النافذة لا تنتقل من نقطة A إلى B فجأة — تسير على مسار، والمنحنى يُحدِّد شخصية هذه الحركة:
+    </p>
+    <ul>
+      <li>هل تبدأ سريعة وتتباطأ في النهاية؟</li>
+      <li>هل تبدأ بطيئة وتتسارع نحو الهدف؟</li>
+      <li>هل تتجاوز الهدف قليلاً ثم تعود (bounce)؟</li>
+    </ul>
+    <p>
+      في Hyprland تُعرِّف المنحنى بأربعة أرقام: نقطتا تحكم، كل منهما لها X و Y.
+      هذه الأرقام الأربعة تتحكم في الشكل الكامل للحركة.
+    </p>
+    <pre><code>bezier = myBezier, X1, Y1, X2, Y2</code></pre>
+
+    <h2>الخطأان اللذان يقع فيهما الجميع</h2>
+
+    <h3>الخطأ الأول: الاعتماد على المنحنيات الافتراضية</h3>
+    <p>
+      منحنيات Hyprland الافتراضية <em>آمنة وعامة</em> — لا تُصمَّم لتشعر بالجودة،
+      تُصمَّم لتعمل بدون مشاكل. إنها نقطة بداية يتركها معظم الناس دون تغيير.
+      النتيجة: نوافذ تتحرك بالطريقة الأكثر توقعاً وعادية.
+    </p>
+
+    <h3>الخطأ الثاني: المنحنيات المسطّحة</h3>
+    <p>
+      المنحنى المسطح هو منحنى تكون نقاط تحكمه قريبة جداً من خط مستقيم.
+      الحركة شبه خطية — لا تسارع، لا تباطؤ، لا دراما.
+      النافذة تنجرف من مكان لآخر بسرعة ثابتة. تبدو آلية وميتة.
+    </p>
+
+    <blockquote>
+      الفرق بين <strong>ناعم</strong> و<strong>مسطح</strong>: ناعم يعني لا اهتزاز في الحركة.
+      مسطح يعني لا حياة في الحركة. تريد الأول، لا الثاني.
+    </blockquote>
+
+    <h2>لماذا الأنيميشن مهم جداً؟</h2>
+    <p>
+      فكر في سبب شعور منتجات Apple بالجودة. ليس فقط الهاردوير — إنها الأنيميشن.
+      كل سحب، كل انتقال، كل ارتداد تم ضبطه بعناية شديدة. منحنيات البيزيير صُنِعت
+      يدوياً لتعطي الواجهة إحساساً بالوزن والاستجابة.
+    </p>
+    <p>
+      عندك نفس القدرة في Hyprland. لكن يجب أن تستخدمها فعلاً — أن تتوقف عن معاملة
+      الأنيميشن كـ checkbox تُشغِّله وتنسى الموضوع، وتبدأ تعامله كعنصر تصميم بنفس
+      أهمية الألوان والشريط.
+    </p>
+    <p>
+      ولهذا يمكن أن يكون لسطحي مكتب نفس الثيم ونفس الشريط ونفس الخلفية،
+      وأحدهما يبدو أفضل بعشرة أضعاف — لأن صاحبه أمضى وقتاً في صياغة منحنيات
+      تجعل كل حركة تبدو مقصودة. لا تُرى هذه المنحنيات في لقطة الشاشة.
+      تُحَسّ فقط أثناء الاستخدام.
+    </p>
+
+    <h2>الخمس خطوات لإصلاح أنيميشنك</h2>
+
+    <h3>الخطوة ١: افتح visualizer للبيزيير</h3>
+    <p>
+      اذهب إلى <a href="https://cubic-bezier.com" target="_blank" rel="noopener">cubic-bezier.com</a>
+      — الأداة الكلاسيكية. ترى شكل المنحنى وتُحرِّك نقاط التحكم وتتابع تأثيرها على الحركة فوراً.
+    </p>
+
+    <h3>الخطوة ٢: افهم طعم الأشكال المختلفة</h3>
+    <table>
+      <thead>
+        <tr><th>شكل المنحنى</th><th>الإحساس</th><th>مناسب لـ</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>يبدأ حاداً ويتسطح في النهاية</td>
+          <td>بداية سريعة، هبوط ناعم</td>
+          <td>فتح النوافذ</td>
+        </tr>
+        <tr>
+          <td>يبدأ بطيئاً ويتسارع نحو النهاية</td>
+          <td>ثقيل ودرامي، إحساس بالزخم</td>
+          <td>تبديل الـ workspaces</td>
+        </tr>
+        <tr>
+          <td>يتجاوز القيمة 1 (overshoot)</td>
+          <td>ارتداد خفيف — شخصية وحيوية</td>
+          <td>بتحفظ — لا تُفرط فيه</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>الخطوة ٣: خصِّص منحنى لكل نوع من الأنيميشن</h3>
+    <p>
+      هنا يُفوِّت معظم الناس الفرصة الحقيقية. لا تستخدم منحنى واحداً لكل شيء.
+      Hyprland يسمح لك بتعريف منحنيات متعددة وربط كل منها بنوع أنيميشن مختلف.
+      فتح النوافذ يمكن أن يكون سريعاً وحاداً، بينما تبديل الـ workspace يكون أثقل وأكثر تعمداً.
+      هذا التباين هو ما يجعل الإعداد يبدو مصقولاً.
+    </p>
+    <pre><code>animations {
+    enabled = true
+
+    # منحنى سريع للنوافذ — يبدأ بقوة ويهبط ناعم
+    bezier = windowIn,  0.05, 0.9, 0.1, 1.05
+
+    # منحنى ثقيل للـ workspaces — يبدأ بطيء ويتسارع
+    bezier = workSnap,  0.77, 0, 0.175, 1
+
+    # منحنى خطي للحركة المستمرة
+    bezier = linear,    0.0,  0.0, 1.0, 1.0
+
+    animation = windowsIn,   1, 5,  windowIn, slide
+    animation = windowsOut,  1, 4,  windowIn, slide
+    animation = workspaces,  1, 7,  workSnap, slide
+    animation = windowsMove, 1, 4,  linear
+    animation = fadeIn,      1, 4,  windowIn
+    animation = fadeOut,     1, 3,  windowIn
+}</code></pre>
+
+    <h3>الخطوة ٤: اضبط السرعة لتتناسب مع المنحنى</h3>
+    <p>
+      المنحنى يُحدِّد شخصية الحركة، والمدة الزمنية تُحدِّد التوقيت.
+      منحنى حاد بـ 300ms يبدو طاقة وحيوية. نفس المنحنى بـ 600ms يبدو بطيئاً وثقيلاً.
+    </p>
+    <p>
+      عموماً: الأسرع أفضل. أنيميشنك يجب أن يُعزِّز التجربة لا يُبطئها.
+      معظم الأنيميشن يجب أن يكون بين <strong>200 و400ms</strong>.
+      فوق 500ms وستشعر أن سطح المكتب يُجبرك على الانتظار.
+    </p>
+
+    <h3>الخطوة ٥: اختبر باستخدام سطح المكتب فعلياً</h3>
+    <p>
+      لا تنسخ الأرقام من الـ visualizer مباشرة دون تجربة. افتح تطبيقات، أغلقها،
+      بدّل الـ workspaces، غيّر أحجام النوافذ — عِش معها فترة.
+      ستشعر فوراً بما هو بطيء جداً أو سريع جداً أو مسطح جداً.
+      ثق بإحساسك — هو صحيح.
+    </p>
+
+    <h2>مثال كامل جاهز للبداية</h2>
+    <pre><code>animations {
+    enabled = true
+
+    # ─── منحنيات البيزيير ────────────────────────────────
+    # overshoot خفيف — شخصية بدون مبالغة
+    bezier = bounce,   0.05, 0.9, 0.1, 1.05
+
+    # ثقيل ودرامي — مناسب لتبديل الـ workspace
+    bezier = heavy,    0.77, 0, 0.175, 1
+
+    # ناعم وبسيط للتلاشي
+    bezier = smooth,   0.4, 0, 0.2, 1
+
+    # ─── تعيين الأنيميشن ────────────────────────────────
+    animation = windows,     1, 5,  bounce, slide
+    animation = windowsIn,   1, 5,  bounce, slide
+    animation = windowsOut,  1, 4,  smooth, slide
+
+    animation = workspaces,  1, 7,  heavy,  slide
+    animation = specialWorkspace, 1, 6, bounce, slidevert
+
+    animation = fadeIn,      1, 4,  smooth
+    animation = fadeOut,     1, 3,  smooth
+
+    animation = border,      1, 10, smooth
+    animation = borderangle, 1, 8,  smooth
+}</code></pre>
+
+    <h2>أدوات مفيدة</h2>
+    <ul>
+      <li>
+        <a href="https://cubic-bezier.com" target="_blank" rel="noopener">cubic-bezier.com</a>
+        — الأداة الأشهر، preview فوري للمنحنى
+      </li>
+      <li>
+        <a href="https://easings.net" target="_blank" rel="noopener">easings.net</a>
+        — مكتبة من المنحنيات الجاهزة مع رسوم توضيحية
+      </li>
+      <li>
+        <a href="https://cssportal.com/css-cubic-bezier-generator/" target="_blank" rel="noopener">cssportal.com</a>
+        — مولّد بديل مع قيم جاهزة للنسخ
+      </li>
+    </ul>
+
+    <h2>الخلاصة</h2>
+    <p>
+      الفرق بين إعداد يبدو مذهلاً في الفيديو وآخر يبدو هاوياً هو الأنيميشن في معظم الأوقات.
+      اثنان من الإعدادات بنفس الثيم ونفس الشريط ونفس الخلفية — أحدهما يبدو أفضل بعشرة أضعاف
+      لأن صاحبه صنع منحنيات تجعل كل حركة تشعر بأنها مقصودة.
+    </p>
+    <p>
+      لا أحد سيُعجَب بمنحنياتك على Reddit. لكنك ستشعر بالفرق كل ثانية تقضيها على سطح مكتبك.
+      وهذا هو المغزى كله.
+    </p>
+    <p>افتح كونفيجك الآن، ابحث عن تعريفات البيزيير، وتوقف عن قبول الافتراضي.</p>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

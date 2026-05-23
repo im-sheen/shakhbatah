@@ -1,0 +1,267 @@
+<!--
+  title: ملفات إعداد Hyprland أصبحت بلغة Lua
+  description: أكبر تغيير في Hyprland منذ إنشائه — من Hyperlang إلى Lua الكاملة، مع شرح التهجرة والإمكانيات الجديدة
+  tag: إعداد
+  date: 2026-05-01
+  icon: 🌙
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+      
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Hyprland
+      </a>
+      <div class="article-meta-tag">إعداد</div>
+      <h1 class="article-page-title">ملفات إعداد Hyprland أصبحت بلغة Lua 🌙</h1>
+      <p class="article-page-desc">
+        منذ الإصدار 0.55، ملف الإعداد أصبح Lua حقيقية — ليس DSL مخصص، بل لغة برمجة كاملة
+        تغير كل شيء في طريقة التعامل مع المكونات.
+      </p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        ١ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>لماذا كان التغيير ضرورياً؟</h2>
+    <p>
+      لسنوات، كان كل مستخدمي Hyprland يعملون بنفس الطريقة: يفتحون <code>hyprland.conf</code>
+      ويكتبون key-value pairs بصيغة Hyperlang. بسيطة، مألوفة، وتؤدي الغرض.
+    </p>
+    <p>
+      لكن مع نمو Hyprland، أصبحت المشكلة واضحة. قواعد النوافذ تحولت من سطر بسيط إلى وحوش كهذا:
+    </p>
+    <pre><code># window rule قديمة — كابوس حقيقي
+windowrulev2 = immediate,bordersize 4,class:^(Among Us)$,title:^(Among Us)$</code></pre>
+
+    <p>
+      Basti (مطور Hyprland) نفسه وصف صيغة Hyperlang بأنها "غير موثوقة، غير مقروءة، محدودة، ومفككة".
+      المشكلة الأساسية لم تكن القبح — كانت أن صيغة key-value لا تستطيع حمل منطق:
+    </p>
+    <ul>
+      <li>لا يمكن وضع <code>if</code> داخل keybind</li>
+      <li>لا يمكن عمل loop على قائمة workspaces</li>
+      <li>لا يمكن تعريف دالة تُنادى عند فتح نافذة</li>
+      <li>كل سلوك شرطي يحتاج سكريبت bash خارجي</li>
+    </ul>
+    <p>
+      <strong>Lua تحل كل هذا.</strong> منذ الإصدار 0.55 — ملف الإعداد أصبح Lua.
+    </p>
+
+    <h2>لماذا Lua تحديداً؟</h2>
+    <p>Lua ليست اختياراً عشوائياً:</p>
+    <ul>
+      <li>خفيفة وسريعة جداً — مصممة للتضمين داخل تطبيقات</li>
+      <li>مُستخدمة في Neovim وAwesomeWM وكثير من الأدوات</li>
+      <li>متغيرات، دوال، حلقات، شروط، جداول، ومكتبة قياسية كاملة</li>
+      <li>مألوفة لكثير من مستخدمي Linux المتقدمين</li>
+    </ul>
+
+    <h2>الانتقال إلى الصيغة الجديدة</h2>
+
+    <h3>موقع ملف الإعداد الجديد</h3>
+    <pre><code>~/.config/hypr/hyprland.lua</code></pre>
+    <p>
+      عند تشغيل Hyprland، إذا وجد هذا الملف يحمّله بدلاً من <code>hyprland.conf</code>.
+      إذا لم يكن موجوداً، يرجع للصيغة القديمة — لا شيء ينكسر إذا لم تهاجر بعد.
+    </p>
+
+    <h3>الـ Keybinds — قبل وبعد</h3>
+    <pre><code># قبل — Hyperlang
+bind = SUPER, Return, exec, kitty</code></pre>
+
+    <pre><code>-- بعد — Lua
+hl.bind("SUPER", "Return", hl.dsp.exec_cmd, "kitty")</code></pre>
+
+    <p>بسيطة، لكن الفرق الحقيقي يظهر عند إضافة منطق:</p>
+    <pre><code>-- keybind بمنطق شرطي — مستحيل في الصيغة القديمة
+hl.bind("SUPER", "X", function()
+  local w = hl.get_active_window()
+  if w ~= nil and w.title == "htop" then
+    hl.dsp.window.float({ action = "set" })
+  else
+    hl.dsp.window.float({ action = "toggle" })
+  end
+end)</code></pre>
+
+    <h3>قواعد النوافذ — قبل وبعد</h3>
+    <pre><code># قبل — سطر طويل لا يُقرأ
+windowrulev2 = float,center,size 200 300,class:^(font-switcher)$</code></pre>
+
+    <pre><code>-- بعد — جدول Lua واضح ومقروء
+hl.window_rule({
+  match = { class = "font-switcher" },
+  float = true,
+  center = true,
+  size = { w = 200, h = 300 }
+})</code></pre>
+
+    <p>
+      في الصيغة القديمة، conditions وeffects كانت محشورة في سطر واحد بفواصل وregex.
+      في Lua، كل شيء في جدول بمفاتيح مسماة — يمكن قراءته وفهمه بلمحة واحدة.
+      ومحرر الكود يساعدك: syntax highlighting، LSP، وkشف الأخطاء — مجاناً.
+    </p>
+
+    <h2>الإمكانيات الجديدة</h2>
+
+    <h3>١. Event Callbacks — ردود فعل على أحداث المكون</h3>
+    <p>
+      الآن يمكنك تسجيل دوال تُنادى عند وقوع أحداث في compositor:
+    </p>
+    <pre><code>-- إشعار عند كل تغيير focus
+hl.on("window.active", function(w)
+  hl.notification.create({
+    text = "focused: " .. w.title,
+    timeout = 3000,
+    icon = "ok"
+  })
+end)</code></pre>
+
+    <p>فكّر في الاحتمالات:</p>
+    <ul>
+      <li>تطبيق إعدادات مختلفة تلقائياً عند focus نافذة معينة</li>
+      <li>تغيير الثيم حسب الوقت</li>
+      <li>تسجيل التطبيقات الأكثر استخداماً</li>
+    </ul>
+
+    <h3>٢. Timers — جدولة مهام بدون cron</h3>
+    <pre><code>-- ينفذ كل دقيقة بدون cron job أو daemon خارجي
+local my_timer = hl.timer(function()
+  -- افعل شيئاً دورياً هنا
+end, {
+  timeout = 60000,  -- milliseconds
+  type = "repeat"
+})</code></pre>
+
+    <p>
+      يمكنك استخدام هذا لتدوير الخلفيات، تغيير الثيم حسب الوقت،
+      فحص مستوى البطارية وتعديل الإعدادات — كل هذا من ملف الإعداد مباشرة.
+    </p>
+
+    <h3>٣. Configs مجزأة ومنظمة</h3>
+    <p>
+      بدلاً من صيغة <code>source</code> القديمة، تستخدم <code>require</code> من Lua:
+    </p>
+    <pre><code>-- hyprland.lua الرئيسي
+require("modules.keybinds")
+require("modules.window-rules")
+require("modules.animations")
+require("modules.theme")</code></pre>
+
+    <pre><code>-- هيكل المجلدات
+~/.config/hypr/
+├── hyprland.lua
+└── modules/
+    ├── keybinds.lua
+    ├── window-rules.lua
+    ├── animations.lua
+    └── theme.lua</code></pre>
+
+    <p>
+      الفائدة: بدلاً من ملف 450 سطر تبحث فيه عن إعداد واحد،
+      كل جزء في ملفه المنطقي. عند تعديل keybind تفتح <code>keybinds.lua</code> مباشرة.
+    </p>
+
+    <h2>كيف تهاجر من الصيغة القديمة؟</h2>
+    <ol>
+      <li>احتفظ بـ <code>hyprland.conf</code> كما هو — لن ينكسر شيء</li>
+      <li>أنشئ <code>hyprland.lua</code> فارغاً وابدأ بنقل أقسام واحداً بواحد</li>
+      <li>ابدأ بالأقسام البسيطة (الإعدادات العامة، الألوان) قبل الانتقال للـ keybinds والقواعد</li>
+      <li>اختبر بعد كل مرحلة: <code>hyprctl reload</code></li>
+    </ol>
+
+    <blockquote>
+      ⚠️ <strong>ملاحظة:</strong> Hyprland لا يحمّل الملفين معاً — إذا وجد
+      <code>hyprland.lua</code> يتجاهل <code>hyprland.conf</code>.
+      احذف أو أعد تسمية <code>hyprland.lua</code> للرجوع للصيغة القديمة.
+    </blockquote>
+
+    <h2>الخلاصة</h2>
+    <p>
+      هذا ليس مجرد تغيير في الصيغة — هو تحويل Hyprland من "ملف إعداد" إلى "برنامج يصف بيئتك".
+      ملف الإعداد أصبح قادراً على التفاعل مع المكون، التفكير، واتخاذ قرارات.
+    </p>
+    <p>
+      AwesomeWM كان دائماً المثال على ما يمكن فعله بـ Lua في window manager.
+      الآن Hyprland يمشي في نفس الاتجاه — مع الأداء والجماليات التي نحبها.
+    </p>
+
+    <blockquote>
+      🎯 إذا كنت تستخدم Hyprland 0.55+، ابدأ بالتهجرة التدريجية.
+      الإمكانيات الجديدة تستحق.
+    </blockquote>
+
+  </main>
+  <script src="../assets/js/app.js"></script>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

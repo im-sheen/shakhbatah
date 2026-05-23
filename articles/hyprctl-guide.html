@@ -1,0 +1,381 @@
+<!--
+  title: احترف Hyprland مع hyprctl
+  description: دليل شامل لأوامر hyprctl — من التنقل بين الـ workspaces وتشغيل التطبيقات، إلى بناء بيئة عمل كاملة تبدأ تلقائياً عند تسجيل الدخول
+  tag: سكريبتات
+  date: 2026-05-16
+  icon: ⚡
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+  author-bio: مطور ومهتم بلينكس وتخصيص سطح المكتب
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html" class="active">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">سكريبتات</div>
+      <h1 class="article-page-title">احترف Hyprland مع hyprctl</h1>
+      <p class="article-page-desc">دليل شامل لأوامر hyprctl — من التنقل بين الـ workspaces وتشغيل التطبيقات، إلى بناء بيئة عمل كاملة تبدأ تلقائياً عند تسجيل الدخول.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٧ يناير ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو hyprctl؟</h2>
+    <p>
+      <code>hyprctl</code> هو أداة سطر الأوامر الرسمية للتحكم في Hyprland من خارج ملف الإعداد.
+      بها تستطيع التنقل بين الـ workspaces، تشغيل أوامر dispatch، استعلام معلومات النوافذ،
+      وبناء سكريبتات تتحكم في بيئة العمل كاملة — كل ذلك برمجياً.
+    </p>
+    <p>
+      الفكرة المحورية هنا: بدلاً من فتح تطبيقاتك يدوياً كل مرة وترتيبها على الـ workspaces،
+      يمكنك كتابة سكريبت ينفذ كل ذلك في ثانية واحدة بمجرد ضغط اختصار لوحة المفاتيح.
+    </p>
+
+    <blockquote>
+      💡 <code>hyprctl dispatch</code> هو جوهر الأداة — يمررك أي أمر تفاعلي تكتبه عادةً في الـ config
+      مباشرةً من الترمنل أو من داخل سكريبت.
+    </blockquote>
+
+    <h2>أوامر hyprctl الأساسية</h2>
+
+    <h3>التنقل بين الـ Workspaces</h3>
+    <pre><code># الانتقال إلى workspace رقم 1
+hyprctl dispatch workspace 1
+
+# الانتقال إلى workspace رقم 3
+hyprctl dispatch workspace 3
+
+# الانتقال للـ workspace السابق
+hyprctl dispatch workspace previous
+</code></pre>
+
+    <h3>نقل النوافذ</h3>
+    <pre><code># نقل النافذة الحالية إلى workspace 2
+hyprctl dispatch movetoworkspace 2
+
+# نقل نافذة بعينها بالـ address
+hyprctl dispatch movetoworkspace 2,address:0x12345678
+</code></pre>
+
+    <h3>معلومات النوافذ والـ Workspaces</h3>
+    <pre><code># عرض كل النوافذ المفتوحة
+hyprctl clients
+
+# عرض الـ workspace الحالي
+hyprctl activeworkspace
+
+# عرض معلومات الشاشات
+hyprctl monitors
+</code></pre>
+
+    <h3>إعادة تحميل الإعداد</h3>
+    <pre><code>hyprctl reload
+</code></pre>
+
+    <h2>بناء سكريبت بيئة عمل — الفكرة الكاملة</h2>
+    <p>
+      الهدف: عند ضغط <kbd>Alt + X</kbd> ينتقل النظام إلى workspace 1 ويفتح تلقائياً:
+      محرر الكود، المتصفح مع DevTools، وترمنل — كل شيء في مكانه المحدد.
+    </p>
+    <p>أنشئ الملف في <code>~/.local/bin/startworkflow</code>:</p>
+
+    <pre><code>#!/usr/bin/env bash
+
+# ── إعدادات ──────────────────────────────────
+TERMINAL="kitty"
+EDITOR="codium"
+BROWSER="chromium"
+BROWSER2="brave"
+PROJECT_URL="file:///home/USER/mysite/index.html"
+GITHUB_URL="https://github.com/USERNAME"
+
+# ── الانتقال إلى workspace 1 ────────────────
+hyprctl dispatch workspace 1
+
+# ── رسالة الترحيب ───────────────────────────
+$TERMINAL \
+  --override font_size=35 \
+  --title greeting \
+  -e ~/.local/bin/workflow-greeting &
+
+# انتظر ظهور النافذة
+sleep 0.5
+
+# انتظر إغلاق نافذة الترحيب تلقائياً
+sleep 3
+
+# ── فتح المتصفح مع DevTools ─────────────────
+$BROWSER \
+  --new-window \
+  "$PROJECT_URL" \
+  --auto-open-devtools-for-tabs &
+
+sleep 2
+
+# ── فتح المحرر ──────────────────────────────
+$EDITOR &
+
+# ── فتح الترمنل ─────────────────────────────
+$TERMINAL \
+  --working-directory ~/mysite &
+
+sleep 1
+
+# ── workspace 2: GitHub ──────────────────────
+hyprctl dispatch workspace 2
+$BROWSER2 --new-window "$GITHUB_URL" &
+
+sleep 2
+
+# العودة إلى workspace 1
+hyprctl dispatch workspace 1
+</code></pre>
+
+    <pre><code># اجعله قابلاً للتنفيذ
+chmod +x ~/.local/bin/startworkflow
+</code></pre>
+
+    <h3>ما معنى &amp; بعد كل أمر؟</h3>
+    <p>
+      علامة <code>&amp;</code> تعني "شغّل هذا الأمر في الخلفية ولا تنتظر انتهاءه".
+      بدونها، سيظل السكريبت عالقاً حتى تُغلق المتصفح مثلاً قبل أن يفتح المحرر.
+    </p>
+    <pre><code># بدون & — يتجمد السكريبت حتى تغلق waybar
+waybar
+
+# مع & — يستمر السكريبت فوراً
+waybar &
+
+# مع & disown — يستمر حتى لو أغلقت الترمنل
+waybar & disown
+</code></pre>
+
+    <blockquote>
+      ⚠️ استخدم <code>disown</code> مع البرامج التي تريد أن تبقى تعمل حتى بعد إغلاق الترمنل،
+      مثل waybar وswaync وغيرها من برامج الخلفية.
+    </blockquote>
+
+    <h3>لماذا sleep بين الأوامر؟</h3>
+    <p>
+      النوافذ لا تظهر فورياً — تحتاج بضع أعشار من الثانية لتبدأ وتظهر على الشاشة.
+      <code>sleep 0.5</code> يعطيها وقتاً كافياً قبل أن ننتقل للخطوة التالية.
+    </p>
+    <pre><code># انتظار نصف ثانية
+sleep 0.5
+
+# انتظار ثانيتين
+sleep 2
+</code></pre>
+
+    <h2>سكريبت رسالة الترحيب</h2>
+    <p>
+      الجزء الجميل: نافذة ترحيب تظهر في وسط الشاشة بنص مخصص ثم تختفي تلقائياً.
+      أنشئ الملف في <code>~/.local/bin/workflow-greeting</code>:
+    </p>
+
+    <pre><code>#!/usr/bin/env bash
+
+# أخفِ المؤشر
+tput civis
+
+# امسح الشاشة
+clear
+
+# احصل على أبعاد الترمنل
+ROWS=$(tput lines)
+COLS=$(tput cols)
+
+# نص الرسالة
+MSG="مرحباً يا سيد 👑"
+MSG_LEN=${#MSG}
+
+# احسب الموضع المركزي
+ROW_POS=$(( ROWS / 2 ))
+COL_POS=$(( (COLS - MSG_LEN) / 2 ))
+
+# انقل المؤشر للمركز
+tput cup $ROW_POS $COL_POS
+
+# اطبع النص بخط عريض وأبيض ساطع
+tput bold
+echo -e "\e[97m${MSG}\e[0m"
+tput sgr0
+
+# انتظر 3 ثوان ثم أعد المؤشر
+sleep 3
+tput cnorm
+</code></pre>
+
+    <pre><code>chmod +x ~/.local/bin/workflow-greeting
+</code></pre>
+
+    <p>شرح الأوامر المستخدمة:</p>
+    <ul>
+      <li><code>tput civis</code> — يخفي مؤشر الكتابة</li>
+      <li><code>tput lines</code> — يعيد عدد أسطر الترمنل الحالي</li>
+      <li><code>tput cols</code> — يعيد عدد الأعمدة</li>
+      <li><code>tput cup ROW COL</code> — ينقل المؤشر لموضع محدد (cup = cursor position)</li>
+      <li><code>tput bold</code> — يفعّل الخط العريض</li>
+      <li><code>tput sgr0</code> — يعيد كل التنسيقات لحالتها الأصلية</li>
+      <li><code>tput cnorm</code> — يعيد ظهور مؤشر الكتابة</li>
+    </ul>
+
+    <h2>ربط النافذة بـ Window Rules</h2>
+    <p>
+      لكي تظهر نافذة الترحيب عائمة في المنتصف بالحجم المطلوب،
+      أضف هذا في ملف إعداد الـ window rules:
+    </p>
+
+    <pre><code># ~/.config/hypr/windowrules.conf
+
+# نافذة الترحيب — تظهر عائمة في المنتصف
+windowrulev2 = float,        title:^(greeting)$
+windowrulev2 = center,       title:^(greeting)$
+windowrulev2 = size 1000 300, title:^(greeting)$
+
+# تطبيق أنيميشن مخصص عليها
+windowrulev2 = animation gnome, title:^(greeting)$
+</code></pre>
+
+    <p>
+      هذا هو السبب في تمرير <code>--title greeting</code> لـ Kitty في السكريبت —
+      نعطيها اسماً محدداً حتى تتمكن الـ window rules من التعرف عليها بدقة.
+    </p>
+
+    <h2>ربط السكريبت بـ Keybind</h2>
+    <p>أضف هذا في ملف الـ keybinds:</p>
+
+    <pre><code># ~/.config/hypr/keybinds.conf
+
+# Alt + X يشغّل بيئة العمل
+bind = ALT, X, exec, ~/.local/bin/startworkflow
+</code></pre>
+
+    <h2>أوامر dispatch مفيدة أخرى</h2>
+    <pre><code># تغيير حجم النافذة
+hyprctl dispatch resizeactive 100 0
+
+# تحريك النافذة العائمة
+hyprctl dispatch moveactive 50 50
+
+# إغلاق النافذة الحالية
+hyprctl dispatch killactive
+
+# التبديل بين التخطيطات
+hyprctl dispatch layoutmsg togglefloating
+
+# تشغيل برنامج
+hyprctl dispatch exec "kitty"
+
+# تدوير الـ workspace
+hyprctl dispatch swapnext
+</code></pre>
+
+    <h2>استعلام بيانات النوافذ (JSON)</h2>
+    <p>
+      كل أوامر الاستعلام ترجع JSON — يمكنك تمريرها لـ <code>jq</code> للحصول على معلومات دقيقة:
+    </p>
+    <pre><code># عنوان النافذة الحالية
+hyprctl activewindow -j | jq '.title'
+
+# كلاس جميع النوافذ المفتوحة
+hyprctl clients -j | jq '.[].class'
+
+# رقم الـ workspace لكل نافذة
+hyprctl clients -j | jq '.[] | {title: .title, workspace: .workspace.id}'
+</code></pre>
+
+    <h2>خلاصة</h2>
+    <p>
+      <code>hyprctl</code> هو مفتاح أتمتة Hyprland. بدلاً من أن تكون مجرد مستخدم يفتح تطبيقات يدوياً،
+      تصبح قادراً على برمجة بيئة عملك الكاملة — الـ workspaces، النوافذ، الأحجام، الترتيب — كلها
+      بسكريبت واحد وضغطة مفتاح واحدة.
+    </p>
+    <ul>
+      <li>استخدم <code>dispatch workspace N</code> للتنقل بين الـ workspaces برمجياً</li>
+      <li>استخدم <code>&amp;</code> لتشغيل البرامج في الخلفية دون انتظار</li>
+      <li>استخدم <code>disown</code> لفصل البرنامج عن الترمنل كلياً</li>
+      <li>استخدم <code>sleep</code> لإعطاء النوافذ وقتاً للظهور بين الخطوات</li>
+      <li>اربط النوافذ بالـ window rules عبر العنوان <code>--title</code></li>
+    </ul>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

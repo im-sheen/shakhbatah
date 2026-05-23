@@ -1,0 +1,353 @@
+<!--
+  title: Hyprlock — شاشة القفل الاحترافية لـ Hyprland
+  description: كيف تُعدّ Hyprlock من الصفر — الخلفية والإدخال والوقت والتاريخ وصورة المستخدم، مع شرح الـ config سطراً سطراً
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🔒
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">Hyprlock — شاشة القفل الاحترافية لـ Hyprland</h1>
+      <p class="article-page-desc">كيف تُعدّ Hyprlock من الصفر — الخلفية والإدخال والوقت والتاريخ وصورة المستخدم، مع شرح الـ config كاملاً.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو Hyprlock؟</h2>
+    <p>
+      Hyprlock هو شاشة القفل الرسمية لـ Hyprland. بخلاف حلول القفل القديمة، يدعم الـ Blur والـ Widgets والتحديث اللحظي للعناصر — مما يتيح عرض الوقت والتاريخ والأغنية الحالية وحتى حالة الطقس مباشرةً على شاشة القفل.
+    </p>
+
+    <h2>التثبيت</h2>
+    <pre><code>sudo pacman -S hyprlock</code></pre>
+    <p>أو للنسخة git:</p>
+    <pre><code>yay -S hyprlock-git</code></pre>
+
+    <h2>ربطه بضغطة مفتاح</h2>
+    <p>في ملف إعدادات Hyprland، أضف:</p>
+    <pre><code>bind = $mainMod, L, exec, hyprlock --config ~/.config/hypr/hyprlock/hyprlock.conf</code></pre>
+    <p>
+      الخيار <code>-C</code> أو <code>--config</code> يُحدد مسار ملف الإعداد. مفيد إذا كان لديك أكثر من config لثيمات مختلفة.
+    </p>
+
+    <h2>ملف الإعداد</h2>
+    <p>Hyprlock يقرأ من:</p>
+    <pre><code>~/.config/hypr/hyprlock.conf</code></pre>
+    <blockquote>
+      📌 هذا الملف <strong>مطلوب</strong>. بدونه لن يعمل Hyprlock.
+    </blockquote>
+
+    <h2>تنبيه مهم: حجم صورة الخلفية</h2>
+    <blockquote>
+      ⚠️ إذا كانت صورة الخلفية أكبر من 1 ميغابايت، سيتعطل Hyprlock. قلّل حجمها أولاً:<br>
+      <code>magick convert input.jpg -quality 85 output.jpg</code>
+    </blockquote>
+
+    <h2>قسم background — الخلفية</h2>
+    <pre><code>background {
+    monitor =
+    path = ~/.config/hypr/hyprlock/wallpaper
+
+    # إعدادات الـ Blur
+    blur_passes = 3
+    blur_size = 7
+    noise = 0.0117
+    contrast = 0.8917
+    brightness = 0.8172
+    vibrancy = 0.1696
+    vibrancy_darkness = 0.0
+}</code></pre>
+    <p>
+      <code>monitor</code> إذا تركته فارغاً يطبّق الخلفية على جميع الشاشات. إعدادات الـ Blur هنا مطابقة لإعدادات الـ Blur في Hyprland — راجع مقالة <a href="mastering-blur.html">إتقان Blur في Hyprland</a> لفهمها بالتفصيل.
+    </p>
+    <blockquote>
+      💡 يمكنك استخدام Symlink لجعل مسار الخلفية يتغير تلقائياً مع الثيم:<br>
+      <code>ln -sf ~/.config/hypr/themes/current/wallpaper.jpg ~/.config/hypr/hyprlock/wallpaper</code>
+    </blockquote>
+
+    <h2>قسم general — إعدادات عامة</h2>
+    <pre><code>general {
+    no_fade_in = false
+    grace = 0
+    disable_loading_bar = false
+}</code></pre>
+    <ul>
+      <li><code>no_fade_in</code> — تعطيل تأثير الـ fade عند ظهور شاشة القفل</li>
+      <li><code>grace</code> — فترة بالثواني تستطيع فيها إلغاء القفل دون إدخال كلمة مرور (0 = فوري)</li>
+      <li><code>disable_loading_bar</code> — إخفاء شريط التحميل</li>
+    </ul>
+
+    <h2>قسم input-field — حقل كلمة المرور</h2>
+    <pre><code>input-field {
+    monitor =
+    size = 170, 45
+    outline_thickness = 2
+    dots_size = 0.3
+    dots_spacing = 0.3
+    dots_center = true
+    outer_color = rgba(255,255,255,0.1)
+    inner_color = rgba(0,0,0,0.5)
+    font_color = rgb(255,255,255)
+    fade_on_empty = false
+    placeholder_text = ادخل كلمة المرور
+    hide_input = false
+    position = 0, -425
+    halign = center
+    valign = center
+}</code></pre>
+
+    <h3>فهم نظام الإحداثيات</h3>
+    <p>
+      Hyprlock يستخدم نظام الإحداثيات الكارتيزي: المركز هو النقطة (0,0). القيم الموجبة تتجه للأعلى وللجهة اليمنى، والسالبة للأسفل وللجهة اليسرى.
+    </p>
+    <ul>
+      <li><code>position = 0, -425</code> — ينزل الحقل 425 بكسل تحت المركز</li>
+      <li><code>halign = center</code> — محاذاة أفقية للمركز</li>
+      <li><code>valign = center</code> — محاذاة رأسية للمركز</li>
+    </ul>
+    <p>
+      <code>dots_size</code> و<code>dots_spacing</code> هي نسب من ارتفاع الحقل وليست بكسلات — فكّر فيهما كـ multiplier.
+    </p>
+    <p>
+      <code>outer_color</code> و<code>inner_color</code> يقبلان قيم RGBA — القيمة الرابعة هي الشفافية من 0 إلى 1.
+    </p>
+
+    <h2>قسم label — النصوص والوقت والتاريخ</h2>
+    <p>يمكنك إضافة أي عدد من labels. كل label يعرض نصاً ثابتاً أو مخرج أمر shell:</p>
+
+    <h3>عرض الوقت والتاريخ</h3>
+    <pre><code>label {
+    monitor =
+    text = cmd[update:1000] echo "$(date +"%H:%M")"
+    color = rgba(255,255,255,0.9)
+    font_size = 72
+    font_family = SF Pro Display
+    position = 0, 200
+    halign = center
+    valign = center
+}
+
+label {
+    monitor =
+    text = cmd[update:1000] echo "$(date +"%A, %d %B %Y")"
+    color = rgba(255,255,255,0.7)
+    font_size = 22
+    font_family = SF Pro Text
+    position = 0, 130
+    halign = center
+    valign = center
+}</code></pre>
+    <p>
+      <code>cmd[update:1000]</code> يعني نفّذ الأمر وحدّث النص كل 1000 ميلي ثانية (ثانية واحدة). يمكنك تغيير الرقم حسب الحاجة.
+    </p>
+
+    <h2>قسم image — صورة المستخدم</h2>
+    <pre><code>image {
+    monitor =
+    path = ~/.config/hypr/hyprlock/user-image.png
+    size = 100
+    border_color = rgba(255,255,255,0.3)
+    border_size = 2
+    rounding = -1
+    position = 0, 50
+    halign = center
+    valign = center
+}</code></pre>
+    <p>
+      <code>rounding = -1</code> يجعل الصورة دائرية كاملة. يمكنك أيضاً استخدام Symlink هنا ليتغير أفاتار المستخدم تلقائياً مع الثيم.
+    </p>
+
+    <h2>إضافة Widgets ديناميكية عبر Scripts</h2>
+    <p>
+      أي label يمكنه تنفيذ سكريبت وعرض مخرجاته. مثال لعرض الأغنية الحالية من Spotify:
+    </p>
+    <pre><code># ~/.config/hypr/hyprlock/scripts/spotify.sh
+#!/bin/bash
+song_info=$(playerctl metadata --format "{{ title }} — {{ artist }}" 2>/dev/null)
+[ -z "$song_info" ] && exit 0
+echo "♫ $song_info"</code></pre>
+
+    <pre><code>label {
+    monitor =
+    text = cmd[update:5000] bash ~/.config/hypr/hyprlock/scripts/spotify.sh
+    color = rgba(255,255,255,0.6)
+    font_size = 14
+    font_family = SF Pro Text
+    position = 0, -500
+    halign = center
+    valign = center
+}</code></pre>
+
+    <p>ومثال لعرض حالة الطقس:</p>
+    <pre><code># ~/.config/hypr/hyprlock/scripts/weather.sh
+#!/bin/bash
+city="Baghdad"
+weather=$(curl -sf "wttr.in/$city?format=%c+%t" 2>/dev/null)
+[ -z "$weather" ] && echo "—" && exit 0
+echo "$weather"</code></pre>
+
+    <h2>الـ Config الكامل</h2>
+    <pre><code>background {
+    monitor =
+    path = ~/.config/hypr/hyprlock/wallpaper
+    blur_passes = 3
+    blur_size = 7
+    noise = 0.0117
+    contrast = 0.8917
+    brightness = 0.8172
+    vibrancy = 0.1696
+}
+
+general {
+    no_fade_in = false
+    grace = 0
+}
+
+# الوقت
+label {
+    monitor =
+    text = cmd[update:1000] echo "$(date +"%H:%M")"
+    color = rgba(255,255,255,0.9)
+    font_size = 72
+    font_family = SF Pro Display
+    position = 0, 200
+    halign = center
+    valign = center
+}
+
+# التاريخ
+label {
+    monitor =
+    text = cmd[update:1000] echo "$(date +"%A, %d %B %Y")"
+    color = rgba(255,255,255,0.7)
+    font_size = 22
+    font_family = SF Pro Text
+    position = 0, 130
+    halign = center
+    valign = center
+}
+
+# صورة المستخدم
+image {
+    monitor =
+    path = ~/.config/hypr/hyprlock/user-image.png
+    size = 100
+    border_color = rgba(255,255,255,0.3)
+    border_size = 2
+    rounding = -1
+    position = 0, 50
+    halign = center
+    valign = center
+}
+
+# حقل كلمة المرور
+input-field {
+    monitor =
+    size = 170, 45
+    outline_thickness = 2
+    dots_size = 0.3
+    dots_spacing = 0.3
+    dots_center = true
+    outer_color = rgba(255,255,255,0.1)
+    inner_color = rgba(0,0,0,0.5)
+    font_color = rgb(255,255,255)
+    fade_on_empty = false
+    placeholder_text = ادخل كلمة المرور
+    position = 0, -425
+    halign = center
+    valign = center
+}</code></pre>
+
+    <h2>نصائح ختامية</h2>
+    <ul>
+      <li>استخدم <strong>Symlinks</strong> لربط الخلفية وصورة المستخدم بمسارات الثيمات — هكذا تتغير شاشة القفل تلقائياً عند تبديل الثيم.</li>
+      <li>اختبر hyprlock مباشرةً من الطرفية لتشاهد أي خطأ: <code>hyprlock</code></li>
+      <li>إذا اعتمدت على Hypridle لتشغيل hyprlock تلقائياً، راجع مقالة <a href="hypridle-setup.html">إعداد Hypridle</a> للتكامل بينهما.</li>
+      <li>قلّل حجم الصور دائماً إلى أقل من 1 ميغابايت قبل استخدامها كخلفية.</li>
+    </ul>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

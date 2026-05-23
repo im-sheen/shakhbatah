@@ -1,0 +1,287 @@
+<!--
+  title: إتقان تأثير Blur في Hyprland
+  description: شرح كامل لجميع إعدادات الـ Blur في Hyprland — من dual-kawase وحجم الـ kernel حتى الـ noise والـ contrast وتأثير الزجاج المصنفر
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🫧
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">إتقان تأثير Blur في Hyprland</h1>
+      <p class="article-page-desc">شرح كامل لجميع إعدادات الـ Blur — من dual-kawase وحجم الـ kernel حتى الـ noise والـ contrast وتأثير الزجاج المصنفر.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>مقدمة</h2>
+    <p>
+      تأثير الـ Blur الافتراضي في Hyprland مقبول، لكنه مملّ. بضعة إعدادات بسيطة يمكنها تحويله إلى شيء يبدو أكثر ثراءً وحيوية — مثل تأثير الزجاج المصنفر الذي تراه في macOS أو Windows 11. هذه المقالة تشرح كل إعداد متاح في قسم <code>blur</code> حتى تعرف ماذا يفعل كل خيار وكيف تستخدمه.
+    </p>
+
+    <h2>أين توضع إعدادات الـ Blur؟</h2>
+    <p>
+      إعدادات الـ Blur تقع داخل قسم <code>decoration</code> في ملف إعدادات Hyprland:
+    </p>
+    <pre><code>decoration {
+    blur {
+        enabled = true
+        size = 8
+        passes = 2
+        # ... بقية الإعدادات
+    }
+}</code></pre>
+
+    <h2>شرح كل إعداد بالتفصيل</h2>
+
+    <h3>enabled — تفعيل الـ Blur</h3>
+    <p>
+      أول شيء بديهي: تفعيل أو تعطيل تأثير الـ Blur كلياً. Hyprland يستخدم خوارزمية اسمها <strong>Dual-Kawase</strong>، وهي خوارزمية ضبابية مخصصة طوّرها فريق Hyprland مستوحاةً من مُجمِّع X11 القديم Compton/Picom. تختلف عن Gaussian blur وBox blur من حيث الأداء والنتيجة البصرية.
+    </p>
+    <pre><code>enabled = true</code></pre>
+
+    <h3>size — حجم الـ Kernel</h3>
+    <p>
+      هذا الإعداد يتحكم في <em>حجم kernel الضبابية</em>. ببساطة: تخيّل أن الصورة مكوّنة من pixels، وأن الـ kernel هو شبكة صغيرة (مثلاً 3×3) تُطبَّق على كل pixel. الخوارزمية تأخذ متوسط قيم الـ pixels المحيطة وتضع القيمة الجديدة مكان الـ pixel الأصلي — وهذا ما ينتج الضبابية.
+    </p>
+    <p>
+      كلما كبر الـ kernel (أي زادت قيمة <code>size</code>)، كلما ازدادت شدة الضبابية:
+    </p>
+    <ul>
+      <li><code>size = 4</code> — ضبابية خفيفة</li>
+      <li><code>size = 8</code> — ضبابية متوازنة (الافتراضي الموصى به)</li>
+      <li><code>size = 15</code> — ضبابية كثيفة جداً</li>
+    </ul>
+    <pre><code>size = 8</code></pre>
+    <blockquote>
+      💡 فكّر في <code>size</code> باعتباره "شدة الضبابية". القيم بين 6 و10 تعطي نتائج متوازنة لمعظم الإعدادات.
+    </blockquote>
+
+    <h3>passes — عدد التمريرات</h3>
+    <p>
+      Dual-Kawase خوارزمية <em>تكرارية</em>: تطبّق الضبابية مرة، ثم تُعيد تطبيقها على النتيجة، وهكذا. عدد التمريرات يتحكم في كم مرة يحدث هذا:
+    </p>
+    <ul>
+      <li><code>passes = 1</code> — ضبابية خفيفة مع قليل من التشبّع اللوني</li>
+      <li><code>passes = 2</code> — توازن جيد بين الأداء والجودة</li>
+      <li><code>passes = 4</code> — تأثير زجاج مصنفر (Frosted Glass) مثل Acrylic في Windows 11</li>
+      <li><code>passes = 5+</code> — شفافية عالية جداً، ثقيل على الـ GPU</li>
+    </ul>
+    <pre><code>passes = 2</code></pre>
+    <blockquote>
+      ⚠️ كلما زادت التمريرات، زاد الضغط على الـ GPU. إذا كان جهازك بمواصفات متواضعة، اخفض <code>passes</code> وعوّض بزيادة <code>size</code>.
+    </blockquote>
+
+    <h3>ignore_opacity — تجاهل شفافية النافذة</h3>
+    <p>
+      بعض النوافذ لها شفافية (<code>opacity</code>) أقل من 1. هذا الإعداد يجعل طبقة الـ Blur تتجاهل تلك الشفافية وتُضبّب كل السطوح بغض النظر، مما يضمن أن تأثير الـ Blur يظهر كما تتوقعه دائماً.
+    </p>
+    <pre><code>ignore_opacity = true</code></pre>
+
+    <h3>new_optimizations — تحسينات الأداء</h3>
+    <p>
+      يُفعّل تحسينات داخلية على خوارزمية الـ Blur للحصول على أداء أفضل مع نفس النتيجة البصرية تقريباً. مُفعَّل افتراضياً ولا داعي لتغييره.
+    </p>
+    <pre><code>new_optimizations = true</code></pre>
+
+    <h3>xray — رؤية الخلفية مباشرةً</h3>
+    <p>
+      بالحالة الافتراضية (<code>xray = false</code>)، النافذة تُضبّب السطح الذي خلفها — أي النوافذ الأخرى أو سطح المكتب. عند تفعيل <code>xray = true</code>، ستُضبّب الخلفية (الـ wallpaper) مباشرةً بدلاً من ذلك.
+    </p>
+    <ul>
+      <li><code>xray = false</code> — يُضبّب ما خلف النافذة (الموصى به عادةً)</li>
+      <li><code>xray = true</code> — يُضبّب الخلفية دائماً، مهما كان خلف النافذة</li>
+    </ul>
+    <pre><code>xray = false</code></pre>
+
+    <h3>noise — إضافة حبيبات (Grain)</h3>
+    <p>
+      يُضيف ضجيجاً بصرياً على طبقة الـ Blur، مما يعطي تأثير الزجاج المصنفر الواقعي. القيمة عائمة من 0 إلى 1:
+    </p>
+    <ul>
+      <li><code>noise = 0</code> — بدون حبيبات (ضبابية ناعمة)</li>
+      <li><code>noise = 0.05</code> — حبيبات خفيفة وطبيعية</li>
+      <li><code>noise = 0.5</code> — مثل زجاج مصنفر حقيقي</li>
+      <li><code>noise = 1</code> — حبيبات كثيفة جداً</li>
+    </ul>
+    <pre><code>noise = 0.05</code></pre>
+
+    <h3>contrast — التباين</h3>
+    <p>
+      يتحكم في تباين الألوان داخل طبقة الـ Blur — يجعل الداكن أكثر قتامةً والفاتح أكثر إضاءةً. هو السر وراء تأثير الـ Blur المشبع "الحيّ":
+    </p>
+    <ul>
+      <li><code>contrast = 1.0</code> — لا تغيير في التباين (مسطّح)</li>
+      <li><code>contrast = 1.5</code> — تباين لطيف يُعطي عمقاً</li>
+      <li><code>contrast = 2.0</code> — تباين حادّ وحيويّ</li>
+    </ul>
+    <pre><code>contrast = 1.5</code></pre>
+    <blockquote>
+      ✨ <code>contrast</code> هو الإعداد الذي يجعل الـ Blur يبدو "مميزاً" بدلاً من مجرد ضبابية عادية. جرّب القيمة 1.5 كنقطة انطلاق.
+    </blockquote>
+
+    <h3>brightness — السطوع</h3>
+    <p>
+      يتحكم في سطوع منطقة الـ Blur. القيمة الافتراضية 0.8 (أي أغمق قليلاً من الخلفية الأصلية):
+    </p>
+    <ul>
+      <li><code>brightness = 0</code> — يُطفئ الـ Blur كلياً (لا تفعل هذا)</li>
+      <li><code>brightness = 0.8</code> — القيمة الافتراضية، داكن قليلاً</li>
+      <li><code>brightness = 1.0</code> — سطوع طبيعي</li>
+      <li><code>brightness = 2.0</code> — ساطع جداً، مفيد للثيمات الفاتحة</li>
+    </ul>
+    <pre><code>brightness = 0.8</code></pre>
+
+    <h3>vibrancy — التشبّع اللوني</h3>
+    <p>
+      يتحكم في مدى حيوية وتشبّع الألوان داخل طبقة الـ Blur. مفيد إذا كنت تريد ألواناً أكثر حيوية أو أقل تشبعاً:
+    </p>
+    <pre><code>vibrancy = 0.1696</code></pre>
+
+    <h3>special — ضبابية الـ Special Workspace</h3>
+    <p>
+      يُفعّل تأثير Blur خلف الـ special workspace عند فتحه. هذا مكلف على الأداء لأنه يُضبّب الشاشة كاملة، لذا يُنصح بإبقائه معطلاً:
+    </p>
+    <pre><code>special = false</code></pre>
+
+    <h3>popups — ضبابية القوائم المنبثقة</h3>
+    <p>
+      يُطبّق الـ Blur على القوائم المنبثقة. في الغالب لا تحتاج لتفعيله لأن القوائم المنبثقة لها حجم صغير والـ Blur قد يجعلها أصعب قراءةً.
+    </p>
+    <pre><code>popups = false</code></pre>
+
+    <h2>الإعدادات الكاملة الموصى بها</h2>
+    <p>
+      هذه مجموعة إعدادات متوازنة تعطي تأثير Blur جميلاً مع أداء مقبول:
+    </p>
+    <pre><code>decoration {
+    blur {
+        enabled = true
+        size = 8
+        passes = 2
+        ignore_opacity = true
+        new_optimizations = true
+        xray = false
+        noise = 0.05
+        contrast = 1.5
+        brightness = 0.8
+        vibrancy = 0.1696
+        special = false
+        popups = false
+    }
+}</code></pre>
+
+    <h2>تأثير الزجاج المصنفر (Frosted Glass)</h2>
+    <p>
+      إذا أردت تأثيراً أقرب لزجاج Windows 11 الـ Acrylic أو macOS، جرّب هذه الإعدادات:
+    </p>
+    <pre><code>decoration {
+    blur {
+        enabled = true
+        size = 6
+        passes = 4
+        ignore_opacity = true
+        new_optimizations = true
+        xray = false
+        noise = 0.08
+        contrast = 2.0
+        brightness = 0.8
+        vibrancy = 0.2
+    }
+}</code></pre>
+    <blockquote>
+      💡 <code>passes = 4</code> مع <code>contrast = 2.0</code> يعطي تأثير الزجاج المصنفر الأجمل، لكنه أكثر ضغطاً على الـ GPU. اخفض <code>passes</code> إلى 2 إذا لاحظت بطئاً.
+    </blockquote>
+
+    <h2>ملاحظات مهمة</h2>
+    <ul>
+      <li>قيمة <code>size</code> و<code>passes</code> يجب أن تكون 1 على الأقل.</li>
+      <li>كلما زادت قيمة <code>size</code>، كلما احتجت إلى زيادة <code>passes</code> لتجنّب تشويه في حواف الـ Blur.</li>
+      <li>على الأجهزة المتواضعة: اخفض <code>passes</code> وعوّض بزيادة <code>size</code> للحصول على تأثير مقبول بأداء أخف.</li>
+      <li>لا تنسَ تفعيل الشفافية (<code>opacity</code>) على النوافذ التي تريد رؤية الـ Blur فيها — بدون شفافية لن يظهر الـ Blur.</li>
+    </ul>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

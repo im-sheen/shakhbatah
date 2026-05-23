@@ -1,0 +1,335 @@
+<!--
+  title: اجعل Hyprland أسرع ما يكون — power-profiles-daemon وأوامر التحسين
+  description: كيف تضيف قائمة Power Profiles (Performance / Balanced / Power Saver) لـ Hyprland، وتربطها بـ Waybar واختصار لوحة المفاتيح، مع تقنيات أتمتة إضافية لتسريع العمل اليومي
+  tag: الأداء
+  date: 2026-05-16
+  icon: 🚀
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+  author-bio: مطور ومهتم بلينكس وتخصيص سطح المكتب
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html" class="active">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الأداء</div>
+      <h1 class="article-page-title">اجعل Hyprland أسرع ما يكون</h1>
+      <p class="article-page-desc">كيف تضيف قائمة Power Profiles لـ Hyprland وتربطها بـ Waybar، مع تقنيات أتمتة إضافية لتسريع سير العمل اليومي.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٧ يناير ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المشكلة — لا توجد قائمة Power Profiles خارج بيئات سطح المكتب</h2>
+    <p>
+      في GNOME توجد قائمة Power Profiles مدمجة في مركز التحكم — تختار بين Performance وBalanced وPower Saver
+      بنقرة واحدة. في Hyprland لا يوجد شيء كهذا افتراضياً.
+    </p>
+    <p>
+      لكن الحل موجود ويعمل بنفس الكفاءة تماماً بل أفضل، لأنك تتحكم به من Waybar ومن لوحة المفاتيح مباشرةً.
+    </p>
+
+    <h2>الأداة: power-profiles-daemon</h2>
+    <p>
+      <code>power-profiles-daemon</code> هي الخدمة المسؤولة عن إدارة بروفايلات الطاقة في لينكس.
+      تعمل في الخلفية وتوفر ثلاثة بروفايلات:
+    </p>
+    <ul>
+      <li><strong>performance</strong> — أقصى أداء، استهلاك أكبر للبطارية</li>
+      <li><strong>balanced</strong> — التوازن الافتراضي بين الأداء والبطارية</li>
+      <li><strong>power-saver</strong> — توفير البطارية، أداء أقل</li>
+    </ul>
+
+    <h2>التثبيت والتفعيل</h2>
+    <pre><code># على Arch Linux
+sudo pacman -S power-profiles-daemon
+
+# تفعيل الخدمة
+sudo systemctl enable --now power-profiles-daemon
+</code></pre>
+
+    <blockquote>
+      💡 بعد التثبيت ستجد الأمر <code>powerprofilesctl</code> متاحاً في الترمنل.
+    </blockquote>
+
+    <h2>أوامر powerprofilesctl</h2>
+    <pre><code># عرض البروفايلات المتاحة (البروفايل الحالي عليه *)
+powerprofilesctl list
+
+# عرض البروفايل الحالي فقط
+powerprofilesctl get
+
+# تغيير البروفايل
+powerprofilesctl set performance
+powerprofilesctl set balanced
+powerprofilesctl set power-saver
+</code></pre>
+
+    <p>مثال على الناتج:</p>
+    <pre><code>* performance:
+    Driver:     amd_pstate
+    Degraded:   no
+
+  balanced:
+    Driver:     amd_pstate
+
+  power-saver:
+    Driver:     amd_pstate
+</code></pre>
+
+    <h2>إضافة Power Profile Module إلى Waybar</h2>
+    <p>
+      Waybar يحتوي على module جاهز لـ power-profiles-daemon. أضفه إلى إعدادات الـ bar:
+    </p>
+
+    <h3>config.jsonc</h3>
+    <pre><code>{
+  "modules-right": [
+    "power-profiles-daemon",
+    "battery",
+    "clock"
+  ],
+
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+    "tooltip": true,
+    "format-icons": {
+      "default":      "⚡",
+      "performance":  "🚀",
+      "balanced":     "⚖️",
+      "power-saver":  "🌿"
+    }
+  }
+}
+</code></pre>
+
+    <p>
+      الآن تظهر الأيقونة في Waybar وتتغير تلقائياً مع كل تغيير في البروفايل —
+      سواء من الترمنل أو من الـ keybind.
+    </p>
+
+    <h2>ربط البروفايلات بـ Keybind — "Blitz Mode"</h2>
+    <p>
+      الفكرة: اضغط <kbd>Super + F1</kbd> للتبديل بين وضع الأداء الكامل ووضع توفير البطارية.
+      مفيد جداً على اللاب توب.
+    </p>
+
+    <p>أنشئ سكريبت التبديل في <code>~/.local/bin/toggle-power-profile</code>:</p>
+    <pre><code>#!/usr/bin/env bash
+
+CURRENT=$(powerprofilesctl get)
+
+if [ "$CURRENT" = "power-saver" ]; then
+  powerprofilesctl set performance
+  notify-send "⚡ Performance Mode" "تم تفعيل وضع الأداء الكامل"
+else
+  powerprofilesctl set power-saver
+  notify-send "🌿 Power Saver" "تم تفعيل وضع توفير البطارية"
+fi
+</code></pre>
+
+    <pre><code>chmod +x ~/.local/bin/toggle-power-profile
+</code></pre>
+
+    <p>ثم في ملف الـ keybinds:</p>
+    <pre><code># ~/.config/hypr/keybinds.conf
+
+bind = SUPER, F1, exec, ~/.local/bin/toggle-power-profile
+</code></pre>
+
+    <blockquote>
+      🎯 يمكنك توسيع هذا السكريبت ليطفئ الـ animations والـ blur عند دخول Power Saver Mode
+      عبر <code>hyprctl keyword</code> — مما يزيد العمر الافتراضي للبطارية بشكل ملحوظ.
+    </blockquote>
+
+    <h2>إطفاء الأنيميشن والـ Blur في Power Saver Mode</h2>
+    <p>
+      <code>hyprctl keyword</code> يتيح تغيير إعدادات Hyprland مؤقتاً دون إعادة تحميل الكونفيج.
+      أضف هذا للسكريبت:
+    </p>
+    <pre><code>#!/usr/bin/env bash
+
+CURRENT=$(powerprofilesctl get)
+
+if [ "$CURRENT" = "power-saver" ]; then
+  # تفعيل وضع الأداء
+  powerprofilesctl set performance
+  hyprctl keyword animations:enabled true
+  hyprctl keyword decoration:blur:enabled true
+  notify-send "⚡ Performance Mode" "الأنيميشن والبلور مفعّلان"
+else
+  # تفعيل توفير البطارية
+  powerprofilesctl set power-saver
+  hyprctl keyword animations:enabled false
+  hyprctl keyword decoration:blur:enabled false
+  notify-send "🌿 Power Saver" "الأنيميشن والبلور مُطفآن"
+fi
+</code></pre>
+
+    <h2>تسريع سير العمل — Aliases في ZSH</h2>
+    <p>
+      جانباً من موضوع Power Profiles، هناك طريقة بسيطة جداً لجعل الترمنل أسرع في الاستخدام اليومي:
+      الـ <strong>Aliases</strong>.
+    </p>
+    <p>
+      الـ alias هو اختصار تعيّنه لأمر طويل. فكر فيه كـ shortcut في ويندوز لكن داخل الترمنل.
+    </p>
+
+    <pre><code># أضف هذا في ~/.zshrc
+
+# تثبيت الحزم بحرف واحد
+alias i="yay -S"
+
+# حذف الحزم مع dependencies
+alias r="yay -Rns"
+
+# تحديث النظام كاملاً
+alias up="yay -Syu"
+
+# التنقل السريع
+alias ..="cd .."
+alias ...="cd ../.."
+
+# git مختصر
+alias gs="git status"
+alias ga="git add ."
+alias gc="git commit -m"
+alias gp="git push"
+</code></pre>
+
+    <pre><code># لتفعيلها فوراً
+source ~/.zshrc
+</code></pre>
+
+    <p>مثال على الاستخدام:</p>
+    <pre><code># بدلاً من: yay -S neovim
+i neovim
+
+# بدلاً من: yay -Rns cmatrix
+r cmatrix
+
+# بدلاً من: yay -Syu
+up
+</code></pre>
+
+    <h2>تقنية sudo nmcli لتجنب كلمة المرور المتكررة</h2>
+    <p>
+      عند تشغيل تحديث النظام وتريد تركه يعمل وحده بدون أن تظل منتظراً لإدخال كلمة المرور،
+      هناك حيلة بسيطة: شغّل أمر <code>sudo</code> مرة واحدة أولاً لتفتح جلسة sudo، ثم شغّل التحديث.
+    </p>
+    <pre><code># افتح جلسة sudo أولاً (يطلب كلمة المرور مرة واحدة)
+sudo -v
+
+# الآن شغّل التحديث بدون توقف
+yay -Syu --noconfirm
+</code></pre>
+
+    <p>
+      أو استخدم <code>--noconfirm</code> مباشرة مع <code>--needed</code> في سكريبتات الـ dotfiles
+      لتثبيت الحزم دفعة واحدة دون أي تدخل:
+    </p>
+    <pre><code>sudo pacman -S --needed --noconfirm \
+  hyprland \
+  waybar \
+  kitty \
+  rofi-wayland \
+  dunst
+</code></pre>
+
+    <blockquote>
+      💡 <code>--needed</code> لا تثبّت الحزمة إذا كانت موجودة بالفعل — مفيد جداً عند إعادة تشغيل
+      سكريبت الـ dotfiles على نظام مثبّت مسبقاً.
+    </blockquote>
+
+    <h2>خلاصة</h2>
+    <p>لجعل Hyprland أسرع وأذكى في إدارة الأداء والعمل اليومي:</p>
+    <ol>
+      <li>ثبّت <code>power-profiles-daemon</code> وفعّل الخدمة</li>
+      <li>أضف module في Waybar يعرض البروفايل الحالي</li>
+      <li>أنشئ سكريبت <code>toggle-power-profile</code> للتبديل بضغطة مفتاح</li>
+      <li>وسّع السكريبت ليطفئ الـ animations والـ blur في Power Saver تلقائياً</li>
+      <li>استخدم الـ aliases في ZSH للأوامر الطويلة المتكررة</li>
+      <li>استخدم <code>--needed --noconfirm</code> في سكريبتات الـ dotfiles</li>
+    </ol>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!--
+  title: إصلاح Screen Tearing في Hyprland بسطر واحد
+  description: شاشتك تتقسم أفقياً عند تحريك النوافذ أو التمرير؟ هذه مشكلة Screen Tearing وحلها سطر واحد في الكونفيغ
+  tag: الأداء
+  date: 2026-05-16
+  icon: 🖥️
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+  -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الأداء</div>
+      <h1 class="article-page-title">️ إصلاح Screen Tearing في Hyprland بسطر واحد</h1>
+      <p class="article-page-desc">شاشتك تتقسم أفقياً عند تحريك النوافذ أو التمرير؟ الحل في إعداد VFR.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+      <!-- شريحة الكاتب تُضاف تلقائياً بواسطة app.js -->
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو Screen Tearing؟</h2>
+    <p>
+      إذا لاحظت أن سطح مكتب Hyprland لديك يبدو فيه اهتزاز خفيف عند تحريك النوافذ أو التمرير في محتوى — كأن الصورة تنشق أفقياً للحظة — فأنت تعاني من مشكلة تُعرف بـ <strong>Screen Tearing</strong>.
+    </p>
+    <p>
+      Screen Tearing تحدث عندما تبدأ الشاشة برسم إطار (frame) جديد قبل أن تنتهي من الإطار السابق. النتيجة: النصف العلوي من الشاشة يعرض إطاراً والنصف السفلي يعرض الإطار التالي — مما يخلق هذا الانشقاق الأفقي المزعج.
+    </p>
+
+    <blockquote>
+      💡 كثير من الناس لا يدركون أنهم يعانون من Screen Tearing — يعرفون فقط أن شيئاً ما يبدو غير صحيح، والسطح لا يبدو ناعماً كما ينبغي رغم وجود شاشة بمعدل تحديث عالٍ.
+    </blockquote>
+
+    <h2>من أين تأتي المشكلة؟</h2>
+    <p>
+      الإعداد المسؤول هو <code>vfr</code> (Variable Frame Rate) في قسم <code>misc</code> من ملف الكونفيغ. هذا الإعداد يتحكم في تفعيل أو تعطيل Vsync.
+    </p>
+    <ul>
+      <li><code>vfr = false</code> ← يعني أن Vsync <strong>مُفعَّل</strong> (لا screen tearing)</li>
+      <li><code>vfr = true</code> ← يعني أن Vsync <strong>معطَّل</strong> (قد يظهر screen tearing)</li>
+    </ul>
+    <p>
+      المشكلة تظهر خصوصاً عند استخدام dotfiles جاهزة مثل ML4W أو OMRJ أو N4 dots، لأن هذه الكونفيغات أحياناً تُغيّر إعداد VFR بشكل مختلف عن القيمة الافتراضية.
+    </p>
+
+    <h2>الحل: سطر واحد في hyprland.conf</h2>
+    <p>افتح ملف الكونفيغ، وابحث عن قسم <code>misc</code>، ثم أضف أو عدّل هذا السطر:</p>
+
+    <pre><code>misc {
+    vfr = false
+}</code></pre>
+
+    <p>
+      ضبط <code>vfr</code> على <code>false</code> يفعّل Vsync ويُزيل Screen Tearing بشكل فوري.
+    </p>
+
+    <blockquote>
+      💡 إذا كنت تنظّم كونفيغك في ملفات منفصلة، ابحث عن ملف <code>misc.conf</code> وضعه هناك مباشرة.
+    </blockquote>
+
+    <h2>التحذير: Vsync والـ Input Latency</h2>
+    <p>
+      تفعيل Vsync ليس مجانياً تماماً — هناك مقايضة يجب أن تعرفها:
+    </p>
+    <ul>
+      <li><strong>شاشات 60Hz:</strong> تفعيل Vsync سيُزيل الـ tearing لكنه يُضيف قدراً بسيطاً من الـ latency إلى الـ compositor، أي أن حركة الماوس قد تبدو أقل دقة بشكل طفيف.</li>
+      <li><strong>شاشات بمعدل تحديث عالٍ (120Hz+):</strong> في الغالب لن تلاحظ أي فرق في الاستجابة، والـ tearing سيختفي.</li>
+      <li><strong>للاعبين:</strong> إذا كنت تُفضّل تقليل الـ input delay على حساب وجود tearing بسيط، يمكنك إبقاء <code>vfr = true</code>.</li>
+    </ul>
+
+    <h2>ملاحظة حول Wayland مقابل X11</h2>
+    <p>
+      Screen Tearing أكثر شيوعاً في بيئات X11. Hyprland يعمل على Wayland وهو أقل عرضة للمشكلة، لكنها تظهر في حالات معينة — خصوصاً مع إعدادات VFR غير المضبوطة.
+    </p>
+
+    <h2>خلاصة</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>الإعداد</th>
+          <th>Vsync</th>
+          <th>Screen Tearing</th>
+          <th>Input Latency</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>vfr = false</code></td>
+          <td>✅ مُفعَّل</td>
+          <td>❌ لا يوجد</td>
+          <td>بسيط</td>
+        </tr>
+        <tr>
+          <td><code>vfr = true</code></td>
+          <td>❌ معطَّل</td>
+          <td>⚠️ محتمل</td>
+          <td>أقل</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      الإعداد الموصى به للأغلبية هو <code>vfr = false</code>. جرّب الاثنين ولاحظ أيهما يناسب شاشتك وأسلوب استخدامك.
+    </p>
+
+    <!-- بلوك الكاتب يُضاف تلقائياً هنا بواسطة app.js -->
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

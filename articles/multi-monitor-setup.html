@@ -1,0 +1,293 @@
+<!--
+  title: إعداد شاشات متعددة في Hyprland
+  description: الطريقة الأسهل لإعداد Multi-Monitor في Hyprland — من معرفة اسم الشاشة حتى ربط الـ workspaces وإخفاء الشاشات وعكسها
+  tag: الإعداد
+  date: 2026-05-16
+  icon: 🖥️
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الإعداد</div>
+      <h1 class="article-page-title">️ إعداد شاشات متعددة في Hyprland</h1>
+      <p class="article-page-desc">الطريقة الأسهل لإعداد Multi-Monitor في Hyprland — من معرفة اسم الشاشة حتى ربط الـ workspaces وإخفاء الشاشات وعكسها.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>مقدمة</h2>
+    <p>
+      إعداد شاشات متعددة في Hyprland أسهل مما تتوقع. كل شيء يتم عبر ملف config واحد،
+      وبسطرين فقط تكون شاشتك الثانية تعمل بالضبط كما تريد.
+      في هذا الدليل سنمر على كل شيء: من إيجاد اسم الشاشة، إلى الدقة والموضع والـ scale،
+      وصولاً لربط الـ workspaces وعكس الشاشات.
+    </p>
+
+    <h2>أين تكتب إعداد الشاشات؟</h2>
+    <p>
+      يمكنك كتابة إعداد الشاشات مباشرة داخل <code>hyprland.conf</code>، لكن الأفضل
+      فصله في ملف مستقل لتنظيم أفضل. مثلاً:
+    </p>
+    <pre><code>~/.config/hypr/modules/monitors.conf</code></pre>
+    <p>
+      ثم تضيف في <code>hyprland.conf</code>:
+    </p>
+    <pre><code>source = ~/.config/hypr/modules/monitors.conf</code></pre>
+    <p>
+      هذه طريقة ممتازة لتقسيم الكونفيج الكبير إلى ملفات صغيرة يسهل التعامل معها.
+    </p>
+
+    <h2>الصيغة الأساسية</h2>
+    <p>
+      كل شاشة تُعرَّف بسطر واحد بهذا الشكل:
+    </p>
+    <pre><code>monitor = اسم_الشاشة, الدقة@معدل_التحديث, الموضع, الـscale</code></pre>
+
+    <p>مثال حقيقي:</p>
+    <pre><code>monitor = DP-1,    2560x1440@143.97, 0x0,    1
+monitor = eDP-1,   1920x1200@60,     2560x0,  1.25</code></pre>
+
+    <blockquote>
+      💡 الترتيب مهم: <strong>الاسم</strong> ← <strong>الدقة@معدل التحديث</strong> ← <strong>الموضع X و Y</strong> ← <strong>الـ Scale</strong>
+    </blockquote>
+
+    <h2>الخطوة الأولى: اعرف اسم شاشتك</h2>
+    <p>
+      قبل أي شيء، تحتاج معرفة الاسم الذي يعرفه Hyprland لشاشتك. الأمر بسيط:
+    </p>
+    <pre><code>hyprctl monitors</code></pre>
+    <p>
+      هذا سيعطيك قائمة بكل الشاشات المتصلة. ستجد أسماءً مثل:
+    </p>
+    <ul>
+      <li><code>eDP-1</code> — الشاشة المدمجة في اللابتوب</li>
+      <li><code>DP-1</code> أو <code>DP-2</code> — شاشة خارجية عبر DisplayPort</li>
+      <li><code>HDMI-A-1</code> — شاشة خارجية عبر HDMI</li>
+    </ul>
+    <p>
+      ستجد أيضاً جميع الدقات ومعدلات التحديث المتاحة لكل شاشة تحت <code>available modes</code>.
+    </p>
+
+    <h2>تحديد الدقة ومعدل التحديث</h2>
+    <p>
+      انسخ الدقة ومعدل التحديث <strong>بالضبط</strong> كما تظهر في نتيجة <code>hyprctl monitors</code>.
+      إذا كانت الشاشة تدعم <code>143.97 Hz</code>، اكتبها <code>143.97</code> وليس <code>144</code> —
+      الفرق الصغير يسبب مشاكل.
+    </p>
+    <pre><code>monitor = DP-1, 2560x1440@143.97, 0x0, 1</code></pre>
+
+    <h2>تحديد الموضع (Position)</h2>
+    <p>
+      الموضع هو إحداثيات X و Y لبداية الشاشة. الشاشة الأولى تبدأ عند <code>0x0</code>.
+      الشاشة الثانية تبدأ عند نهاية الأولى.
+    </p>
+    <p>
+      مثال: عندي شاشة رئيسية عرضها 2560 بكسل. إذاً الشاشة الثانية تبدأ عند <code>2560x0</code>:
+    </p>
+    <pre><code>monitor = DP-1,  2560x1440@143.97, 0x0,    1      # الشاشة الرئيسية (يسار)
+monitor = eDP-1, 1920x1200@60,     2560x0,  1.25   # اللابتوب (يمين)</code></pre>
+
+    <blockquote>
+      💡 إحداثيات Y لا تتغير إذا أردت الشاشات في سطر أفقي واحد. غيّرها فقط إذا أردت
+      شاشة فوق الأخرى.
+    </blockquote>
+
+    <h2>الـ Scale (حجم العناصر)</h2>
+    <p>
+      الـ Scale يتحكم في حجم العناصر على الشاشة. القيمة <code>1</code> تعني الحجم الطبيعي.
+      <code>1.25</code> يكبّر العناصر 25%.
+    </p>
+    <pre><code>monitor = eDP-1, 1920x1200@60, 2560x0, 1.25</code></pre>
+
+    <blockquote>
+      ⚠️ تنبيه: تغيير الـ Scale قد يجعل بعض تطبيقات Xwayland تبدو ضبابية أو مكسورة،
+      لأنها لا تدعم Wayland بشكل أصيل. تطبيقات Wayland الأصيلة لا تتأثر.
+    </blockquote>
+
+    <h2>إيقاف تشغيل شاشة</h2>
+    <p>
+      تريد إيقاف شاشة مؤقتاً دون فصلها؟ ببساطة:
+    </p>
+    <pre><code>monitor = eDP-1, disable</code></pre>
+    <p>
+      فور حفظ الكونفيج، الشاشة تطفئ على الفور. لإعادة تشغيلها، احذف هذا السطر أو
+      ضع الإعداد الطبيعي مرة أخرى.
+    </p>
+
+    <h2>عكس الشاشة (Mirroring)</h2>
+    <p>
+      تريد أن تظهر نفس صورة شاشة على شاشة أخرى؟ استخدم <code>mirror</code>:
+    </p>
+    <pre><code>monitor = DP-2, 1920x1080@60, 0x0, 1, mirror, DP-1</code></pre>
+    <p>
+      هذا يعني: اعرض على <code>DP-2</code> نفس ما يظهر على <code>DP-1</code>.
+    </p>
+
+    <blockquote>
+      ⚠️ المحاذير: العكس لا يعيد رسم الصورة. إذا عكست شاشة 1080p على شاشة 4K،
+      ستظل الدقة 1080p. وإذا كانت نسب العرض مختلفة ستظهر أشرطة سوداء على الجوانب.
+    </blockquote>
+
+    <h2>خيارات متقدمة</h2>
+
+    <h3>شاشة 10-bit (ألوان أوسع)</h3>
+    <p>
+      إذا كانت شاشتك تدعم 10-bit (مليار لون بدلاً من 16 مليون):
+    </p>
+    <pre><code>monitor = DP-1, 2560x1440@143.97, 0x0, 1, bitdepth, 10</code></pre>
+    <p>
+      مفيد للمحررين والمصممين. لكن بعض التطبيقات قد لا تتوافق معه، اختبر قبل الاعتماد عليه.
+    </p>
+
+    <h3>صيغة monitor v2 (أوضح للقراءة)</h3>
+    <p>
+      بدلاً من سطر واحد طويل، يمكنك كتابة إعداد الشاشة بصيغة block:
+    </p>
+    <pre><code>monitor {
+    output   = DP-1
+    mode     = 2560x1440@143.97
+    position = 0x0
+    scale    = 1
+}</code></pre>
+    <p>
+      النتيجة نفسها تماماً، لكن أسهل في القراءة والتعديل.
+    </p>
+
+    <h2>ربط الـ Workspaces بشاشة معينة</h2>
+    <p>
+      هذه من أقوى ميزات الشاشات المتعددة في Hyprland. يمكنك تخصيص workspaces معينة
+      لشاشة معينة، بحيث عند الانتقال إليها تفتح على الشاشة الصحيحة تلقائياً.
+    </p>
+    <pre><code># workspaces 1-5 على الشاشة الرئيسية
+workspace = 1, monitor:DP-1
+workspace = 2, monitor:DP-1
+workspace = 3, monitor:DP-1
+workspace = 4, monitor:DP-1
+workspace = 5, monitor:DP-1
+
+# workspaces 6-10 على اللابتوب
+workspace = 6,  monitor:eDP-1
+workspace = 7,  monitor:eDP-1
+workspace = 8,  monitor:eDP-1
+workspace = 9,  monitor:eDP-1
+workspace = 10, monitor:eDP-1</code></pre>
+
+    <p>
+      بعد هذا الإعداد، عند الانتقال للـ workspace 6 وفتح نافذة، ستفتح مباشرة على
+      شاشة اللابتوب. حتى شريط Waybar ومؤشر الـ workspace النشط سيتحرك للشاشة الصحيحة.
+    </p>
+
+    <h2>ملف monitors.conf كامل</h2>
+    <p>هذا مثال كامل جاهز للاستخدام يجمع كل ما ذكرناه:</p>
+    <pre><code># ─── monitors.conf ───────────────────────────────
+# الشاشة الرئيسية: 2.5K خارجية
+monitor = DP-1, 2560x1440@143.97, 0x0, 1
+
+# شاشة اللابتوب: على اليمين
+monitor = eDP-1, 1920x1200@60, 2560x0, 1.25
+
+# ─── Workspace Bindings ──────────────────────────
+workspace = 1,  monitor:DP-1
+workspace = 2,  monitor:DP-1
+workspace = 3,  monitor:DP-1
+workspace = 4,  monitor:DP-1
+workspace = 5,  monitor:DP-1
+
+workspace = 6,  monitor:eDP-1
+workspace = 7,  monitor:eDP-1
+workspace = 8,  monitor:eDP-1
+workspace = 9,  monitor:eDP-1
+workspace = 10, monitor:eDP-1</code></pre>
+
+    <h2>خلاصة — الأوامر المهمة</h2>
+    <ul>
+      <li><code>hyprctl monitors</code> — اعرف أسماء الشاشات والدقات المتاحة</li>
+      <li><code>monitor = اسم, دقة@hz, موضع, scale</code> — الصيغة الأساسية</li>
+      <li><code>monitor = اسم, disable</code> — أوقف تشغيل الشاشة</li>
+      <li><code>monitor = اسم, ..., mirror, اسم_آخر</code> — اعكس شاشة على أخرى</li>
+      <li><code>workspace = رقم, monitor:اسم</code> — اربط workspace بشاشة</li>
+    </ul>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

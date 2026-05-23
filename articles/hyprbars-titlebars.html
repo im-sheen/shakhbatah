@@ -1,0 +1,157 @@
+<!--
+  title: Title Bars في Hyprland — التثبيت والتبديل
+  description: كيف تضيف title bars لنوافذ Hyprland باستخدام إضافة hyprbars مع keybind لتفعيلها وإيقافها حسب الطلب
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🪟
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">Title Bars في Hyprland — التثبيت والتبديل</h1>
+      <p class="article-page-desc">كيف تضيف title bars لنوافذ Hyprland باستخدام إضافة hyprbars مع keybind لتفعيلها وإيقافها حسب الطلب.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>hyprbars — الإضافة الرسمية</h2>
+    <p>
+      hyprbars هي إضافة رسمية من مستودع Hyprland Plugins تضيف title bars قابلة للتخصيص لنوافذ Hyprland.
+    </p>
+
+    <h2>التثبيت</h2>
+    <pre><code># تحديث hyprpm أولاً
+hyprpm update
+
+# إضافة المستودع وتثبيت الإضافة
+hyprpm add https://github.com/hyprwm/hyprland-plugins
+hyprpm enable hyprbars</code></pre>
+
+    <h2>إعداد الـ hyprbars في الكونفيغ</h2>
+    <pre><code>plugin {
+    hyprbars {
+        bar_height = 33
+        bar_color = rgba(1e1e2eaa)
+        bar_blur = true
+        bar_part_of_window = true
+        bar_precedence_over_border = true
+
+        buttons {
+            button_size = 12
+            col.maximize = rgba(a6e3a1ff)
+            col.close = rgba(f38ba8ff)
+        }
+    }
+}</code></pre>
+
+    <h2>Toggle — تفعيل وإيقاف بضغطة</h2>
+    <p>
+      بدلاً من تحميل الإضافة دائماً، يمكن تشغيلها وإيقافها بـ keybind — بدون إشعارات مزعجة:
+    </p>
+    <pre><code># في plugins.conf أو binds.conf
+$hyprbars = /usr/lib/hyprland/plugins/hyprbars.so
+
+bind = SUPER, Y,       exec, hyprctl plugin load $hyprbars
+bind = SUPER SHIFT, Y, exec, hyprctl plugin unload $hyprbars</code></pre>
+
+    <blockquote>
+      💡 استخدام <code>hyprctl plugin load/unload</code> أفضل من <code>hyprpm enable/disable</code> لأنه لا يعرض إشعارات ويعمل بسلاسة.
+    </blockquote>
+
+    <h2>تخصيص أزرار الـ Title Bar</h2>
+    <pre><code>plugin {
+    hyprbars {
+        # ...
+        buttons {
+            button_size = 12
+            # إغلاق
+            col.close = rgba(f38ba8ff)
+            # تصغير
+            col.minimize = rgba(f9e2afff)
+            # تكبير
+            col.maximize = rgba(a6e3a1ff)
+        }
+    }
+}</code></pre>
+
+    <blockquote>
+      ⚠️ إن كنت تستخدم theme switcher، يمكنك تغيير ألوان الأزرار ديناميكياً بتحديث الكونفيغ وإعادة تحميل الإضافة.
+    </blockquote>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

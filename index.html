@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+  <link rel="icon" type="image/png" href="assets/images/favicon-32.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <meta name="description" content="كل شيء تحتاج معرفته عن Hyprland — من التثبيت حتى التخصيص الاحترافي">
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+      
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="active">الرئيسية</a></li>
+      <li><a href="distros/index.html">التوزيعات</a></li>
+      <li><a href="desktop/index.html">واجهات</a></li>
+      <li><a href="tools/index.html">أدوات</a></li>
+      <li><a href="articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">الرئيسية</a>
+    <a href="distros/index.html">التوزيعات</a>
+    <a href="desktop/index.html">واجهات</a>
+    <a href="tools/index.html">أدوات</a>
+    <a href="articles/index.html">Hyprland</a>
+  </div>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">مرحباً بك في</span>
+      </div>
+      <h1 class="hero-name">
+        <span>شخبطه</span>
+      </h1>
+      <p class="hero-title" style="font-size:1.4rem;color:#909090;margin-bottom:0.5rem;">توثيق عربي لعالم لينكس</p>
+      <p class="hero-desc">مقالات وأدلة بالعربية عن Hyprland، التوزيعات، الواجهات، والأدوات — كل ما تحتاجه في مكان واحد.</p>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num" id="totalCount">0</span><span class="stat-label">مقالة</span></div>
+        <div class="stat-divider">|</div>
+        <div class="stat"><span class="stat-num">4</span><span class="stat-label">قسم</span></div>
+        <div class="stat-divider">|</div>
+        <div class="stat"><span class="stat-num">AR</span><span class="stat-label">عربي</span></div>
+      </div>
+      <div class="hero-cta">
+        <a href="articles/index.html" class="btn btn-gold">ابدأ القراءة</a>
+        <a href="#latest" class="btn btn-outline">آخر المقالات</a>
+      </div>
+    </div>
+
+    <div class="hero-visual" style="position:relative;">
+      <div class="logo-container">
+        <div class="logo-glow"></div>
+        <div class="logo-ring-outer"></div>
+        <div class="logo-ring-inner"></div>
+        <img src="assets/images/logo.jpg" alt="شخبطه" class="logo-img">
+      </div>
+      <div class="stat-badge stat-1"><span class="num" id="badge-count">5</span><span class="label">مقالة منشورة</span></div>
+      <div class="stat-badge stat-2"><span class="num">AR</span><span class="label">محتوى عربي</span></div>
+    </div>
+  </section>
+
+  <div class="sections-overview">
+    <div class="sections-inner">
+      <h2 class="sections-title">تصفح حسب الموضوع</h2>
+      <div class="section-cards">
+        <a href="articles/index.html" class="section-card sc-hypr">
+          
+          <div class="sc-body"><span class="sc-name">Hyprland</span><span class="sc-desc">إعداد، تخصيص، الإضافات، أدوات Hypr</span></div>
+          <span class="sc-arrow">←</span>
+        </a>
+        <a href="distros/index.html" class="section-card sc-distro">
+          
+          <div class="sc-body"><span class="sc-name">التوزيعات</span><span class="sc-desc">Arch Linux، التثبيت، إدارة الحزم</span></div>
+          <span class="sc-arrow">←</span>
+        </a>
+        <a href="desktop/index.html" class="section-card sc-desktop">
+          
+          <div class="sc-body"><span class="sc-name">واجهات</span><span class="sc-desc">مديرو النوافذ، Waybar، Rofi، Ricing</span></div>
+          <span class="sc-arrow">←</span>
+        </a>
+        <a href="tools/index.html" class="section-card sc-tools">
+          
+          <div class="sc-body"><span class="sc-name">أدوات وطرفيات</span><span class="sc-desc">Ghostty، Neovim، Matugen، مديرو الملفات</span></div>
+          <span class="sc-arrow">←</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" id="latest">
+    <div class="container">
+      <div class="section-header-row">
+        <div class="section-header" style="margin-bottom:0;">
+          <div class="section-eyebrow"><div class="s-line"></div><span>المقالات</span></div>
+          <h2 class="section-title">أحدث ما نشرناه</h2>
+        </div>
+        <a href="articles/index.html" class="see-all">عرض الكل ←</a>
+      </div>
+
+      <div class="filter-tags" id="filterTags" style="margin-top:2rem;">
+        <button class="tag active" data-section="all">الكل</button>
+        <button class="tag" data-section="articles">Hyprland</button>
+        <button class="tag" data-section="distros">التوزيعات</button>
+        <button class="tag" data-section="desktop">واجهات</button>
+        <button class="tag" data-section="tools">أدوات</button>
+      </div>
+
+      <div style="margin-bottom:2rem;">
+        <div class="search-bar" style="max-width:360px;">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="searchInput" placeholder="ابحث في كل المقالات..." />
+        </div>
+      </div>
+
+      <div class="articles-grid" id="articlesGrid">
+        <div class="loading-state" id="loadingState"><div class="loader"></div><p>جارٍ تحميل المقالات...</p></div>
+        <div class="empty-state" id="emptyState" style="display:none;"><div class="empty-icon">📄</div><h3>لا توجد نتائج</h3><p>جرّب كلمة بحث أخرى.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

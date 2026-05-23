@@ -1,0 +1,337 @@
+<!--
+  title: قواعد النوافذ في Hyprland — شرح كامل
+  description: كيف تتحكم في سلوك أي نافذة في Hyprland — من الصيغة الأساسية إلى الـ Tags والأخطاء الشائعة التي تضيّع وقتك
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🪟
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">قواعد النوافذ في Hyprland — شرح كامل</h1>
+      <p class="article-page-desc">كيف تتحكم في سلوك أي نافذة في Hyprland — من الصيغة الأساسية إلى الـ Tags والأخطاء الشائعة التي تضيّع وقتك.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المشكلة</h2>
+    <p>
+      تثبّت Hyprland، تفتح المتصفح فيتبلّط. تفتح نافذة حوار صغيرة فتتبلّط هي الأخرى.
+      كل شيء يُعامَل بنفس الطريقة. الحل؟ <strong>Window Rules</strong> — وهي واحدة من
+      أقوى ميزات Hyprland، لكن معظم الناس يستخدمون 10% منها فقط.
+    </p>
+
+    <h2>النموذج الذهني: if-then</h2>
+    <p>
+      قاعدة النافذة هي جملة شرطية بسيطة: <em>إذا تطابقت النافذة مع كذا، طبّق عليها كذا.</em>
+    </p>
+    <ul>
+      <li><strong>الـ Prop</strong> — شرط التطابق (من؟ أي نافذة؟)</li>
+      <li><strong>الـ Effect</strong> — ما يُطبَّق عليها (عائم؟ شفافية؟ حجم معين؟)</li>
+    </ul>
+    <p>
+      قاعدة واحدة تحتاج prop واحد على الأقل وeffect واحد على الأقل.
+      يمكن دمج effects متعددة في قاعدة واحدة وكلها تُطبَّق على أي نافذة تتطابق.
+    </p>
+
+    <h2>صيغتان لكتابة القواعد</h2>
+    <p>هناك طريقتان مقبولتان تماماً:</p>
+
+    <h3>١. الصيغة المسمّاة (Block)</h3>
+    <pre><code>windowrule {
+    # اسم اختياري للقاعدة — مفيد للتفعيل/الإيقاف ديناميكياً
+    float = on
+    size  = 800 600
+    match = class kitty
+}</code></pre>
+
+    <h3>٢. الصيغة المختصرة (One-liner)</h3>
+    <pre><code>windowrule = float on, size 800 600, match:class kitty</code></pre>
+
+    <p>
+      النتيجة واحدة تماماً. الصيغة المسمّاة أوضح عند وجود effects كثيرة،
+      والمختصرة أسرع للقواعد البسيطة.
+    </p>
+
+    <blockquote>
+      💡 فرق مهم: القواعد <strong>المسمّاة</strong> يمكن تفعيلها/إيقافها وقت التشغيل عبر
+      <code>hyprctl dispatch</code>. القواعد المختصرة <strong>لا يمكن</strong> التحكم فيها ديناميكياً.
+      إذا كنت تخطط لربط القاعدة بـ keybind، امنحها اسماً.
+    </blockquote>
+
+    <h2>كيف تعرف class النافذة؟</h2>
+    <p>الأمر المهم الذي ستستخدمه كثيراً:</p>
+    <pre><code>hyprctl clients</code></pre>
+    <p>
+      يُخرج قائمة بكل النوافذ المفتوحة مع جميع خصائصها — الـ class، الـ title،
+      الـ initial class وغيرها. ابحث فيها عن النافذة التي تريد استهدافها.
+    </p>
+
+    <blockquote>
+      ⚠️ لا تخمّن اسم الـ class. مثلاً class برنامج Spotify ليس بالضرورة
+      <code>spotify</code> — قد يكون <code>Spotify</code> بحرف كبير أو غير ذلك.
+      <strong>دائماً تحقق عبر <code>hyprctl clients</code></strong>.
+    </blockquote>
+
+    <h2>الـ Props — كيف تستهدف النوافذ</h2>
+    <p>أهم الـ props التي ستحتاجها:</p>
+    <table>
+      <thead>
+        <tr><th>الـ Prop</th><th>ما يستهدفه</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>match:class kitty</code></td><td>النوافذ التي class-ها يحتوي على "kitty"</td></tr>
+        <tr><td><code>match:title YouTube</code></td><td>النوافذ التي عنوانها يحتوي على "YouTube"</td></tr>
+        <tr><td><code>match:float true</code></td><td>كل النوافذ العائمة</td></tr>
+        <tr><td><code>match:fullscreen true</code></td><td>النوافذ في وضع fullscreen</td></tr>
+        <tr><td><code>match:xwayland true</code></td><td>تطبيقات Xwayland</td></tr>
+        <tr><td><code>match:workspace 3</code></td><td>النوافذ في الـ workspace رقم 3</td></tr>
+        <tr><td><code>match:focus true</code></td><td>النافذة النشطة حالياً</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      الـ class والـ title يدعمان <strong>Regex</strong>.
+      تطابق جزئي افتراضي، وللتطابق الكامل استخدم الأقواس:
+    </p>
+    <pre><code># يتطابق مع أي class يحتوي على "kitty"
+match:class kitty
+
+# يتطابق فقط مع class اسمه kitty بالضبط
+match:class (^kitty$)
+
+# يتطابق مع أي class ما عدا kitty
+match:class (^(?!kitty).*$)</code></pre>
+
+    <p>
+      عند دمج props متعددة في قاعدة واحدة، <strong>كلها يجب أن تتحقق</strong> (AND وليس OR):
+    </p>
+    <pre><code># تُطبَّق فقط على نوافذ kitty العائمة — الاثنان معاً
+windowrule = opacity 0.85, match:class kitty, match:float true</code></pre>
+
+    <h2>Effects ثابتة vs ديناميكية</h2>
+    <p>هذا الفرق هو سبب 90% من مشاكل "قاعدتي لا تعمل":</p>
+
+    <h3>Effects الثابتة (Static)</h3>
+    <p>
+      تُطبَّق <strong>مرة واحدة فقط</strong> عند فتح النافذة ولا تُعاد تقييمها.
+      أمثلة: <code>float</code>، <code>tile</code>، <code>move</code>، <code>size</code>،
+      <code>center</code>، <code>workspace</code>، <code>monitor</code>، <code>pin</code>.
+    </p>
+    <p>
+      لأنها تعمل مرة واحدة، فهي تتطابق مع الـ <em>initial class</em> والـ <em>initial title</em>
+      فقط. إذا غيّر المتصفح عنوانه بعد الفتح، القاعدة الثابتة لن تُعاد.
+    </p>
+
+    <h3>Effects الديناميكية (Dynamic)</h3>
+    <p>
+      تُعاد تقييمها <strong>في كل مرة</strong> يتغير فيها أي خاصية ذات صلة.
+      أمثلة: <code>opacity</code>، <code>bordercolor</code>، <code>rounding</code>،
+      <code>bordersize</code>، <code>noblur</code>، <code>noshadow</code>، <code>animation</code>.
+    </p>
+
+    <p>مثال عملي على الفرق:</p>
+    <pre><code># border أحمر للنوافذ العائمة، أزرق للمثبّتة — يعمل لأن bordercolor ديناميكي
+windowrule = bordercolor rgb(FF0000), match:class kitty, match:float true
+windowrule = bordercolor rgb(0000FF), match:class kitty, match:float false</code></pre>
+    <p>
+      عند تبديل النافذة بين عائمة ومثبّتة، لون الـ border يتغير فوراً.
+      هذا مستحيل مع effects ثابتة.
+    </p>
+
+    <h2>ترتيب القواعد والأولوية</h2>
+    <p>
+      القواعد تُعالَج <strong>من الأعلى للأسفل</strong>، وآخر قاعدة متطابقة تفوز.
+      الترتيب مهم جداً:
+    </p>
+    <pre><code># كل نوافذ kitty: شفافية 0.8
+windowrule = opacity 0.8, match:class kitty
+
+# kitty العائمة تحديداً: شفافية 0.5 (تتغلب على السابقة)
+windowrule = opacity 0.5, match:class kitty, match:float true</code></pre>
+
+    <p>إذا عكست الترتيب، kitty ستحصل دائماً على 0.8 حتى وهي عائمة.</p>
+
+    <blockquote>
+      💡 القواعد <strong>المسمّاة</strong> تأخذ أولوية على المختصرة بغض النظر عن موضعها
+      في الكونفيج — المسمّاة تُقيَّم أولاً دائماً.
+    </blockquote>
+
+    <h2>أمثلة عملية جاهزة للاستخدام</h2>
+
+    <h3>جعل نوافذ الحوار عائمة ومتمركزة</h3>
+    <pre><code>windowrule = float on, center on, match:modal true</code></pre>
+
+    <h3>Firefox Picture-in-Picture عائمة ومثبّتة</h3>
+    <pre><code>windowrule {
+    match = class firefox
+    match = title Picture-in-Picture
+    float = on
+    pin   = on
+    size  = 640 360
+    # move بالنسبة لحافة الشاشة — بدون مسافات حول العمليات الحسابية
+    move  = monitor_w-660 20
+}</code></pre>
+
+    <h3>شفافية مع استثناء fullscreen</h3>
+    <pre><code># active opacity, inactive opacity, fullscreen opacity
+windowrule = opacity 0.9 override 0.85 override 1.0 override, match:class (^.*$)</code></pre>
+    <p>
+      كلمة <code>override</code> تجعل القيمة مطلقة لا مضاعِفة.
+      بدونها تتضاعف قيم الشفافية وتحصل على نتائج غير متوقعة.
+    </p>
+
+    <h3>تعطيل الـ blur لتطبيق ثقيل</h3>
+    <pre><code>windowrule = noblur on, match:class firefox</code></pre>
+
+    <h3>فتح Discord في workspace 4 بصمت</h3>
+    <pre><code>windowrule = workspace 4 silent, match:class discord</code></pre>
+    <p><code>silent</code> تعني: انقل النافذة للـ workspace لكن لا تنتقل إليه.</p>
+
+    <h2>الـ Tags — حيث تصبح القواعد أقوى</h2>
+    <p>
+      الـ Tag هو تسمية تُلصقها بأي نافذة، ثم تكتب قواعد تستهدف هذه التسمية
+      بدلاً من الـ class. هذا يفتح إمكانيات مذهلة.
+    </p>
+
+    <p>مثال: تطبيق شفافية 20% على أي نافذة بضغطة مفتاح:</p>
+    <pre><code># keybind: ألصق tag "alpha" على النافذة الحالية
+bind = SUPER CTRL, Z, tagwindow, alpha
+
+# قاعدة: أي نافذة عليها tag "alpha" تصبح شفافة
+windowrule = opacity 0.2 override, match:tag alpha</code></pre>
+    <p>
+      اضغط <kbd>Super+Ctrl+Z</kbd> على أي نافذة فتصبح شبه شفافة.
+      اضغطها مرة أخرى والـ tag يُزال والشفافية تعود.
+    </p>
+
+    <h3>Tags لتوحيد قواعد Terminal</h3>
+    <pre><code># ألصق tag "term" على كل المحاكيات
+windowrule = tag term, match:class (^kitty$)
+windowrule = tag term, match:class (^foot$)
+windowrule = tag term, match:class (^alacritty$)
+
+# قاعدة واحدة تسري على الكل
+windowrule = opacity 0.9, match:tag term</code></pre>
+    <p>
+      إذا غيّرت المحاكي لاحقاً، تُعدِّل سطر الـ tag فقط —
+      لا تُعدِّل عشرين قاعدة منفصلة.
+    </p>
+
+    <h2>الأخطاء الشائعة</h2>
+
+    <h3>١. Static effect مع عنوان يتغير</h3>
+    <pre><code># ❌ لن يعمل — بحلول وقت ظهور "YouTube" في العنوان، القواعد الثابتة انتهت
+windowrule = float on, match:title YouTube
+
+# ✅ استخدم effect ديناميكي بدلاً من ذلك
+windowrule = opacity 0.95, match:title YouTube</code></pre>
+
+    <h3>٢. الشفافية تتضاعف</h3>
+    <pre><code># ❌ إذا كان لديك opacity عام 0.5، هذا يعطي 0.5 × 0.5 = 0.25
+windowrule = opacity 0.5, match:class kitty
+
+# ✅ استخدم override للقيمة المطلقة
+windowrule = opacity 0.5 override, match:class kitty</code></pre>
+
+    <h3>٣. تخمين اسم الـ class</h3>
+    <p>
+      دائماً استخدم <code>hyprctl clients</code> للتحقق من الاسم الفعلي.
+      لا تخمن — أنت ستضيع وقتك في debug قاعدة صحيحة الصياغة لكن خاطئة الهدف.
+    </p>
+
+    <h2>خلاصة سريعة</h2>
+    <ul>
+      <li><strong>Prop</strong> = من تستهدف | <strong>Effect</strong> = ماذا تفعل</li>
+      <li><code>hyprctl clients</code> — دائماً للتحقق من الـ class</li>
+      <li>Static effects تعمل مرة عند الفتح، Dynamic تتابع التغييرات</li>
+      <li>آخر قاعدة متطابقة تفوز — الترتيب مهم</li>
+      <li>القواعد المسمّاة تتغلب على المختصرة وتدعم التفعيل الديناميكي</li>
+      <li>Tags = قوة حقيقية — استخدمها لتوحيد القواعد وتبسيط الكونفيج</li>
+      <li><code>override</code> في الـ opacity = قيمة مطلقة لا مضاعِفة</li>
+    </ul>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

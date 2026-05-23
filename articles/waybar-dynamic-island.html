@@ -1,0 +1,403 @@
+<!--
+  title: تحويل Waybar إلى Dynamic Island
+  description: كيف تجعل شريط Waybar يبدو مثل Dynamic Island من Apple — الإعداد الكامل من الصفر
+  tag: التخصيص
+  date: 2024-01-15
+  icon: 🏝️
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+      
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <!-- Article Header -->
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">تحويل Waybar إلى Dynamic Island 🏝️</h1>
+      <p class="article-page-desc">
+        كيف تجعل شريط Waybar العادي يبدو مثل Dynamic Island من Apple —
+        بدون أدوات إضافية، فقط CSS وبعض الإعدادات الذكية.
+      </p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٥ يناير ٢٠٢٤
+      </div>
+    </div>
+  </div>
+
+  <!-- Article Content -->
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>الفكرة الأساسية</h2>
+    <p>
+      الشريط العادي في Waybar يمتد على كامل عرض الشاشة ويجلس على الحافة — هذا هو شكله الافتراضي.
+      تأثير Dynamic Island يعتمد على ثلاثة أشياء فقط:
+    </p>
+    <ul>
+      <li><strong>الشريط يطفو</strong> — لا يلتصق بحافة الشاشة</li>
+      <li><strong>المحتوى في المنتصف</strong> — لا يمتد يميناً أو يساراً</li>
+      <li><strong>شكل حبة دواء (Pill)</strong> — حواف مستديرة بالكامل</li>
+    </ul>
+    <p>
+      الحيلة هنا أنك <strong>لا تُصمّم الشريط نفسه</strong>، بل تُصمّم ما بداخله.
+      الشريط يصبح شفافاً تماماً، والـ pill هو container الوحدة الوسطى <code>module-center</code>.
+    </p>
+
+    <blockquote>
+      💡 ليس AGS، ليس EWW، ليس أي أداة خارجية — هذا Waybar العادي الذي يستخدمه الجميع.
+    </blockquote>
+
+    <h2>١. إعداد config.json</h2>
+    <p>أول شيء تحتاج ضبطه في ملف الإعداد:</p>
+
+    <h3>الموضع والهامش</h3>
+    <pre><code>{
+  "position": "top",
+  "margin-top": 8,
+  "margin-left": 0,
+  "margin-right": 0
+}</code></pre>
+    <p>
+      <code>position: top</code> يضع الشريط في الأعلى.
+      <code>margin-top</code> يدفع الشريط للأسفل قليلاً بحيث لا يلتصق بحافة الشاشة —
+      هذا هو ما يعطيه تأثير "الطفو".
+    </p>
+
+    <h3>وضع كل الـ Modules في المنتصف</h3>
+    <pre><code>{
+  "modules-left": [],
+  "modules-center": [
+    "hyprland/workspaces",
+    "clock",
+    "battery",
+    "network",
+    "pulseaudio",
+    "custom/media"
+  ],
+  "modules-right": []
+}</code></pre>
+    <p>
+      هذه هي النقطة الجوهرية. عندما تضع كل شيء في <code>modules-center</code>،
+      تتجمع العناصر في وسط الشاشة والجانبان يبقيان فارغَين.
+      هذا بالضبط ما يخلق وهم الـ Dynamic Island المنفصل.
+    </p>
+
+    <h3>تعريف الـ Modules</h3>
+    <pre><code>{
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "on-click": "activate"
+  },
+
+  "clock": {
+    "format": "{:%H:%M}",
+    "tooltip-format": "{:%A، %d %B %Y}"
+  },
+
+  "battery": {
+    "format": "{icon} {capacity}%",
+    "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+  },
+
+  "network": {
+    "format-wifi": "󰤨 {essid}",
+    "format-disconnected": "󰤭 غير متصل",
+    "tooltip-format": "{ipaddr}"
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-icons": {
+      "default": ["󰕿", "󰖀", "󰕾"]
+    },
+    "on-click": "pavucontrol"
+  }
+}</code></pre>
+
+    <h2>٢. إعداد style.css</h2>
+    <p>
+      هنا يحدث الجمال الحقيقي. الـ CSS هو المسؤول الكامل عن تحويل الشريط العادي
+      إلى Dynamic Island.
+    </p>
+
+    <h3>الخطوة الأولى: تصفير كل شيء</h3>
+    <pre><code>* {
+  font-family: "JetBrainsMono Nerd Font", sans-serif;
+  font-size: 14px;
+  padding: 0;
+  margin: 0;
+  min-height: 0;
+}</code></pre>
+    <p>
+      هذا يُصفّر كل القيم الافتراضية. فكّر فيه كـ <code>main()</code> في لغة C —
+      نقطة البداية التي تضمن أن لا قيمة مسبقة تُفسد تصميمك.
+    </p>
+
+    <h3>الخطوة الثانية: جعل الشريط شفافاً</h3>
+    <pre><code>window#waybar {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}</code></pre>
+    <p>
+      إذا تركت للشريط لونه الافتراضي، ستحصل على شريط عادي يمتد على كامل الشاشة.
+      الشفافية تجعل الشريط "يختفي" وتبقى فقط العناصر التي داخله مرئية.
+    </p>
+
+    <h3>الخطوة الثالثة: صنع الـ Pill — هنا السحر</h3>
+    <pre><code>.modules-center {
+  background: #1e1e2e;
+  padding: 4px 16px;
+  border-radius: 999px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}</code></pre>
+    <p>ننظر لكل سطر:</p>
+    <ul>
+      <li><code>background</code> — لون الـ pill، اختر أي لون يناسب ثيمك</li>
+      <li><code>padding</code> — مسافة داخلية تعطي العناصر "تنفّساً"</li>
+      <li><code>border-radius: 999px</code> — قيمة كبيرة جداً تجعل الحواف مستديرة بالكامل بغض النظر عن ارتفاع الشريط</li>
+      <li><code>box-shadow</code> — اختياري لكن يبيع التأثير بقوة، يجعل الـ pill يبدو طافياً فوق سطح المكتب</li>
+    </ul>
+
+    <h3>الخطوة الرابعة: إزالة خلفيات الـ Modules الفردية</h3>
+    <pre><code>#workspaces,
+#clock,
+#battery,
+#network,
+#pulseaudio,
+#custom-media {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 0 8px;
+}</code></pre>
+    <p>
+      كل module بشكل افتراضي عنده خلفيته الخاصة. إذا تركتها، ستنكسر وهم الـ pill
+      لأنك ستشوف مربعات داخل الـ pill. يجب أن تكون كل الـ modules شفافة
+      حتى يظهر لون الـ pill بشكل موحّد.
+    </p>
+
+    <blockquote>
+      🎨 <strong>بديل — نمط OnePlus Live Alerts:</strong> إذا أردت مظهراً مشابهاً لـ Live Alerts من OnePlus،
+      أعطِ كل module خلفية بلون مختلف قليلاً عن الـ pill وأضف border خفيف.
+      هذا يكسر وهم الـ pill الواحد لكن يعطي مظهراً آخر جميلاً.
+    </blockquote>
+
+    <h2>٣. تصميم مساحات العمل (Workspaces)</h2>
+    <p>
+      المساحات تحتاج اهتماماً خاصاً لأن لها حالات متعددة:
+      نشطة، غير نشطة، وعاجلة.
+    </p>
+    <pre><code>/* الزر الافتراضي — غير نشط */
+#workspaces button {
+  background: transparent;
+  color: #6c7086;
+  border: none;
+  border-radius: 999px;
+  padding: 2px 10px;
+  transition: all 0.2s ease;
+}
+
+/* عند التمرير */
+#workspaces button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #cdd6f4;
+}
+
+/* مساحة العمل النشطة */
+#workspaces button.active {
+  background: linear-gradient(135deg, #cba6f7, #89b4fa);
+  color: #1e1e2e;
+  font-weight: bold;
+}
+
+/* مساحة عمل بها نوافذ طارئة */
+#workspaces button.urgent {
+  background: #f38ba8;
+  color: #1e1e2e;
+}</code></pre>
+
+    <p>
+      الـ <code>transition</code> مهم جداً. بدونه، يقفز زر المساحة النشطة فجأة
+      عند التبديل. مع الـ transition، ينزلق بسلاسة.
+    </p>
+    <p>
+      الـ gradient في <code>button.active</code> اختياري تماماً —
+      يمكنك استبداله بلون ثابت. لكن يبدو رائعاً خاصة مع ثيمات مثل Everforest أو Rosé Pine.
+    </p>
+
+    <h2>٤. تنسيق الـ Tooltips</h2>
+    <p>
+      التفصيلة الصغيرة التي تُكمل المظهر. عندما تمرر فوق module وتظهر
+      tooltip بمظهر مختلف كلياً، تبدو الإعدادات غير محترفة.
+    </p>
+    <pre><code>tooltip {
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 12px;
+  padding: 6px 12px;
+  color: #cdd6f4;
+  font-size: 12px;
+}</code></pre>
+
+    <h2>٥. تناسق أحجام الأيقونات</h2>
+    <p>
+      عند استخدام Nerd Fonts، أيقونة من Font Awesome قد تكون أكبر بكثير
+      من أيقونة من Material Design — وهذا يكسر تناسق الـ pill.
+      الحل يدوي: تضبط حجم كل أيقونة بعينها حتى تبدو متناسقة.
+    </p>
+    <pre><code>/* مثال: تصغير أيقونة الشبكة قليلاً */
+#network {
+  font-size: 14px;
+}
+
+/* وتكبير أيقونة الصوت قليلاً */
+#pulseaudio {
+  font-size: 17px;
+}</code></pre>
+    <p>
+      لا توجد قاعدة ثابتة هنا — استخدم عينيك وعدّل حتى تبدو كل الأيقونات
+      بنفس الوزن البصري.
+    </p>
+
+    <h2>٦. نظام الألوان (اختياري لكن موصى به)</h2>
+    <p>
+      إذا كنت تريد إمكانية تبديل الثيمات لاحقاً، الأفضل فصل الألوان
+      في ملف <code>colors.css</code> منفصل واستدعاؤه من style.css:
+    </p>
+    <pre><code>/* في بداية style.css */
+@import "colors.css";</code></pre>
+
+    <p>ومحتوى <code>colors.css</code> يكون هكذا (مثال بثيم Rosé Pine):</p>
+    <pre><code>/* rosepine.css */
+@define-color bg0    #191724;
+@define-color bg1    #1f1d2e;
+@define-color bg2    #26233a;
+@define-color bg3    #403d52;
+@define-color bg4    #524f67;
+@define-color fg     #e0def4;
+@define-color gray1  #6e6a86;
+@define-color accent #c4a7e7;</code></pre>
+
+    <p>ثم تستخدمها في style.css هكذا:</p>
+    <pre><code>.modules-center {
+  background: @bg1;
+}
+
+#workspaces button.active {
+  background: @accent;
+  color: @bg0;
+}</code></pre>
+    <p>
+      بهذه الطريقة، لتغيير الثيم كل ما تحتاجه هو استبدال ملف الألوان —
+      كل الـ CSS يتكيف تلقائياً.
+    </p>
+
+    <h2>الملف الكامل — نظرة عامة</h2>
+    <p>هيكل ملفات المشروع يجب أن يكون هكذا:</p>
+    <pre><code>~/.config/waybar/
+├── config.json      ← إعداد الـ modules والموضع
+├── style.css        ← كل التصميم
+└── themes/
+    ├── rosepine.css
+    ├── catppuccin.css
+    └── everforest.css</code></pre>
+
+    <h2>لماذا يعمل هذا التصميم بشكل جيد؟</h2>
+    <p>ثلاثة أسباب تجعل Dynamic Island أفضل من الشريط التقليدي:</p>
+    <ul>
+      <li>
+        <strong>مينيمالي:</strong> عنصر واحد في الشاشة بدل شريط يمتد على كل العرض.
+        عيناك تتجه للمركز حيث المعلومات، لا للحواف.
+      </li>
+      <li>
+        <strong>طافٍ:</strong> الـ margin والـ shadow يخلقان عمقاً بصرياً.
+        الشريط لا يبدو جزءاً من الشاشة — يبدو يطفو فوقها.
+      </li>
+      <li>
+        <strong>متماسك:</strong> كل شيء داخل pill واحد، خلفية واحدة، شكل واحد، ظل واحد.
+        يبدو كجسم واحد لا كمجموعة widgets متفرقة.
+      </li>
+    </ul>
+
+    <blockquote>
+      🎯 الهدف ليس شريط معلومات — الهدف جزيرة صغيرة أنيقة تبقى بعيدة عن طريقك
+      حتى تحتاجها.
+    </blockquote>
+
+  </main>
+
+  <script src="../assets/js/app.js"></script>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

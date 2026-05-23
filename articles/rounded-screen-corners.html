@@ -1,0 +1,335 @@
+<!--
+  title: زوايا الشاشة المدوّرة في Hyprland باستخدام AGS
+  description: كيف تضيف زوايا مدوّرة لشاشتك في Hyprland باستخدام AGS وTypeScript — شرح كامل للمنطق والكود خطوة بخطوة
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🔲
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html" class="active">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">زوايا الشاشة المدوّرة في Hyprland باستخدام AGS</h1>
+      <p class="article-page-desc">كيف تضيف زوايا مدوّرة لشاشتك في Hyprland باستخدام AGS وTypeScript — شرح كامل للمنطق والكود.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+      <!-- شريحة الكاتب تُضاف تلقائياً بواسطة app.js -->
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>مقدمة</h2>
+    <p>
+      إضافة زوايا مدوّرة لحواف الشاشة هي واحدة من أبسط التفاصيل التي ترفع مستوى الـ rice وتعطيه طابعاً احترافياً.
+      الفكرة بسيطة: نرسم مربعاً صغيراً في كل زاوية من الشاشة، ثم نقطع منه دائرة لتظهر الاستدارة.
+      الأداة التي سنستخدمها هي <strong>AGS (Aylur's GTK Shell)</strong> مع TypeScript وكتابة أكواد Cairo لرسم الزوايا.
+    </p>
+
+    <blockquote>
+      💡 AGS هو shell سطح المكتب الذي يتيح لك بناء أشرطة وـ overlays وغيرها باستخدام TypeScript/JSX.
+      سنستخدمه هنا لشيء واحد فقط: رسم زوايا الشاشة.
+    </blockquote>
+
+    <h2>الخطوة الأولى: تثبيت AGS</h2>
+    <p>
+      على Arch Linux، ابحث عن الحزمة باسم <code>aylurs-gtk-shell</code> من الـ AUR أو الـ Chaotic AUR:
+    </p>
+    <pre><code># من الـ AUR
+yay -S aylurs-gtk-shell
+
+# أو من Chaotic AUR (إذا كان مفعّلاً)
+sudo pacman -S aylurs-gtk-shell-git</code></pre>
+
+    <p>
+      بعد التثبيت، ثبّت أيضاً مكتبات <code>libastal</code> الكاملة لضمان توافر كل المكوّنات:
+    </p>
+    <pre><code>sudo pacman -S libastal-meta</code></pre>
+
+    <blockquote>
+      📦 <code>libastal-meta</code> هي meta package تثبّت كل مكتبات libastal مرّة واحدة
+      (wireplumber، power-profiles، وغيرها) — مفيد خصوصاً إذا كنت تخطط لاستخدام AGS لمشاريع أخرى لاحقاً.
+    </blockquote>
+
+    <h2>الخطوة الثانية: إنشاء مجلد المشروع</h2>
+    <p>
+      أنشئ مجلداً جديداً للمشروع وشغّل <code>ags init</code> بداخله:
+    </p>
+    <pre><code>mkdir ~/corners && cd ~/corners
+ags init -d . -f</code></pre>
+
+    <p>
+      الخيار <code>-d .</code> يحدد المجلد الحالي، و<code>-f</code> يتجاوز أي إعدادات سابقة موجودة.
+      بعد انتهاء الأمر ستجد الهيكل التالي:
+    </p>
+    <pre><code>corners/
+├── node_modules/
+├── package.json
+├── style.css
+└── widget/
+    └── bar.tsx</code></pre>
+
+    <h2>الخطوة الثالثة: إنشاء ملف الزوايا</h2>
+    <p>
+      أنشئ ملفاً جديداً داخل مجلد <code>widget</code>:
+    </p>
+    <pre><code>touch widget/screen-corners.tsx</code></pre>
+
+    <p>
+      ثم افتح <code>app.ts</code> وأضف الاستيراد والاستدعاء:
+    </p>
+    <pre><code>import screenCorners from "./widget/screen-corners.tsx";
+
+// أضف هذا السطر داخل الدالة الرئيسية
+screenCorners();</code></pre>
+
+    <h2>المنطق الهندسي: كيف تعمل الزاوية؟</h2>
+    <p>
+      قبل الكود، من المهم أن تفهم الفكرة الرياضية البسيطة وراءها:
+    </p>
+    <ul>
+      <li>نرسم <strong>مربعاً 30×30 بكسل</strong> يُوضع في إحدى زوايا الشاشة.</li>
+      <li>نرسم <strong>دائرة</strong> مركزها عند النقطة (30, 30) بنصف قطر 30.</li>
+      <li>باستخدام قاعدة <code>even-odd</code> في Cairo، الجزء المتقاطع بين المربع والدائرة يُحذف — فتظهر الزاوية المستديرة.</li>
+      <li>نلوّن الجزء المتبقي بنفس لون خلفية الشاشة (عادةً أسود) لإخفائه.</li>
+    </ul>
+
+    <blockquote>
+      🎨 فكّر فيه هكذا: المربع هو قطعة ورق، والدائرة هي مقص دائري — نقطع الزاوية لتبدو مستديرة.
+    </blockquote>
+
+    <h2>الكود الكامل لـ screen-corners.tsx</h2>
+    <p>
+      هذا هو الكود الكامل الذي تضعه في ملف <code>widget/screen-corners.tsx</code>:
+    </p>
+    <pre><code>import { Astal, Gtk } from "ags/gtk4";
+import Cairo from "cairo";
+
+const size = 30; // حجم الزاوية بالبكسل — غيّره حسب ذوقك
+
+const corners = {
+  topLeft: {
+    anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.LEFT,
+    cx: size,
+    cy: size,
+  },
+  topRight: {
+    anchor: Astal.WindowAnchor.TOP | Astal.WindowAnchor.RIGHT,
+    cx: 0,
+    cy: size,
+  },
+  bottomLeft: {
+    anchor: Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.LEFT,
+    cx: size,
+    cy: 0,
+  },
+  bottomRight: {
+    anchor: Astal.WindowAnchor.BOTTOM | Astal.WindowAnchor.RIGHT,
+    cx: 0,
+    cy: 0,
+  },
+};
+
+export default function screenCorners() {
+  return Object.entries(corners).map(([name, { anchor, cx, cy }]) => {
+    const da = new Gtk.DrawingArea();
+    da.set_content_width(size);
+    da.set_content_height(size);
+
+    da.set_draw_func((_self, cr: Cairo.Context, width: number, height: number) => {
+      // ارسم المربع
+      cr.rectangle(0, 0, width, height);
+
+      // ارفع القلم لرسم الدائرة بشكل منفصل
+      cr.new_sub_path();
+
+      // ارسم الدائرة (cx, cy = المركز، size = نصف القطر)
+      cr.arc(cx, cy, size, 0, 2 * Math.PI);
+
+      // even-odd: يُظهر فقط التقاطع بين المربع والمنطقة خارج الدائرة
+      cr.set_fill_rule(Cairo.FillRule.EVEN_ODD);
+
+      // اللون الأسود الشفاف — غيّره ليطابق لون سطح مكتبك
+      cr.set_source_rgba(0, 0, 0, 1);
+
+      cr.fill();
+    });
+
+    return (
+      <window
+        visible
+        namespace={`corner-${name}`}
+        anchor={anchor}
+        exclusivity={Astal.Exclusivity.IGNORE}
+        layer={Astal.Layer.OVERLAY}
+        css="background-color: transparent;"
+      >
+        {da}
+      </window>
+    );
+  });
+}</code></pre>
+
+    <h2>شرح أجزاء الكود</h2>
+
+    <h3>الـ anchor</h3>
+    <p>
+      يحدد أين يُوضع مربع الزاوية على الشاشة. الرمز <code>|</code> يجمع اتجاهين معاً
+      (مثلاً: أعلى + يسار = الزاوية العلوية اليسرى).
+    </p>
+
+    <h3>cx و cy</h3>
+    <p>
+      إحداثيات مركز الدائرة التي ترسمها Cairo. تختلف حسب الزاوية:
+    </p>
+    <ul>
+      <li><strong>أعلى يسار:</strong> المركز عند (size, size) أي الزاوية السفلية اليمنى من المربع</li>
+      <li><strong>أعلى يمين:</strong> المركز عند (0, size)</li>
+      <li><strong>أسفل يسار:</strong> المركز عند (size, 0)</li>
+      <li><strong>أسفل يمين:</strong> المركز عند (0, 0)</li>
+    </ul>
+
+    <h3>FillRule.EVEN_ODD</h3>
+    <p>
+      هذه القاعدة هي سر عمل الزوايا. بدلاً من ملء كل شيء داخل الشكل،
+      Cairo يملأ فقط المناطق التي تُحاط بعدد فردي من المسارات.
+      النتيجة: الدائرة تُحذف من المربع وتظهر الزاوية المستديرة.
+    </p>
+
+    <h3>exclusivity و layer</h3>
+    <pre><code>exclusivity={Astal.Exclusivity.IGNORE}
+layer={Astal.Layer.OVERLAY}</code></pre>
+    <p>
+      <code>IGNORE</code> يعني أن Hyprland لن يحجز مساحة للزاوية (لن تؤثر على النوافذ).
+      <code>OVERLAY</code> يضع الزاوية فوق كل شيء لتبدو كجزء من الشاشة نفسها.
+    </p>
+
+    <h2>تشغيل الزوايا</h2>
+    <p>أوقف أي جلسة AGS حالية ثم شغّل المشروع:</p>
+    <pre><code>ags quit
+ags run app.ts</code></pre>
+
+    <p>للتحقق من أن الزوايا تعمل كـ layer، استخدم hyprctl:</p>
+    <pre><code>hyprctl layers</code></pre>
+    <p>ستجد في الناتج <code>namespace: corner-topLeft</code> وبقية الزوايا.</p>
+
+    <h2>تلميحات ومشاكل شائعة</h2>
+
+    <h3>الزوايا تظهر بخلفية ملوّنة</h3>
+    <p>
+      تأكد أن خاصية <code>css</code> تحتوي على <code>background-color: transparent;</code>.
+      بدونها ستظهر خلفية رمادية أو بيضاء حول الزاوية.
+    </p>
+    <pre><code>css="background-color: transparent;"</code></pre>
+
+    <h3>تغيير حجم الزاوية</h3>
+    <p>
+      غيّر قيمة <code>size</code> في بداية الملف. القيمة الافتراضية 30 مناسبة لمعظم الشاشات.
+      ارفعها إلى 50 أو أكثر إذا أردت زوايا أكبر وأوضح.
+    </p>
+
+    <h3>تغيير اللون</h3>
+    <p>
+      إذا كانت خلفية سطح مكتبك ليست سوداء، غيّر <code>set_source_rgba</code>:
+    </p>
+    <pre><code>// أبيض
+cr.set_source_rgba(1, 1, 1, 1);
+
+// لون مخصص (R, G, B, Alpha)
+cr.set_source_rgba(0.1, 0.05, 0.15, 1);</code></pre>
+
+    <h3>التشغيل التلقائي مع Hyprland</h3>
+    <p>أضف السطر التالي في <code>hyprland.conf</code> ليبدأ AGS مع الجلسة:</p>
+    <pre><code>exec-once = ags run ~/corners/app.ts</code></pre>
+
+    <h2>الخلاصة</h2>
+    <p>
+      بضعة أسطر من TypeScript وCairo وتحصل على زوايا مدوّرة حقيقية لشاشتك.
+      الفكرة بسيطة: مربع + دائرة + even-odd = زاوية مستديرة.
+      الجميل أنك تتحكم في كل شيء: الحجم، اللون، والموضع.
+    </p>
+    <p>
+      إذا أردت أن تجعل الزوايا تتغير مع الـ theme switcher تلقائياً، يمكنك ربط
+      <code>set_source_rgba</code> بمتغير يقرأ لون الخلفية الحالي من ملف الإعدادات.
+    </p>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

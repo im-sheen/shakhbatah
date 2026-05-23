@@ -1,0 +1,144 @@
+<!--
+  title: اجعل Hyprland أسرع بثلاث أدوات
+  description: ثلاث طرق لتسريع Hyprland بشكل ملحوظ — auto-cpufreq للمعالج وSuper GFXCTL للـ GPU وإيقاف الأنيميشن في وضع الأداء
+  tag: الأداء
+  date: 2026-05-16
+  icon: ⚡
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الأداء</div>
+      <h1 class="article-page-title">اجعل Hyprland أسرع بثلاث أدوات</h1>
+      <p class="article-page-desc">ثلاث طرق لتسريع Hyprland بشكل ملحوظ — auto-cpufreq للمعالج وSuper GFXCTL للـ GPU وإيقاف الأنيميشن.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>الطريقة الأولى: auto-cpufreq</h2>
+    <p>
+      auto-cpufreq يضبط تردد المعالج تلقائياً حسب الحِمل — يرفعه عند الحاجة للأداء ويخفضه لتوفير الطاقة.
+    </p>
+    <pre><code># من Chaotic AUR (بدون ترجمة)
+sudo pacman -S auto-cpufreq
+
+# تفعيل الخدمة
+sudo systemctl enable --now auto-cpufreq</code></pre>
+
+    <p>لمتابعة الحالة مباشرة:</p>
+    <pre><code>auto-cpufreq --stats</code></pre>
+
+    <blockquote>
+      ⚠️ لا تستخدم auto-cpufreq وpowerprofiled في نفس الوقت — سيتعارضان على التحكم بالمعالج. اختر واحداً فقط.
+    </blockquote>
+
+    <h2>الطريقة الثانية: power-profiles-daemon</h2>
+    <p>بديل أبسط لـ auto-cpufreq، مشابه لما يستخدمه GNOME وKDE:</p>
+    <pre><code>sudo pacman -S power-profiles-daemon
+sudo systemctl enable --now power-profiles-daemon
+
+# عرض الوضع الحالي
+powerprofilesctl list
+
+# تفعيل وضع الأداء
+powerprofilesctl set performance
+
+# توفير طاقة
+powerprofilesctl set power-saver</code></pre>
+
+    <h2>الطريقة الثالثة: Super GFXCTL (لأجهزة Nvidia)</h2>
+    <pre><code>yay -S supergfxctl
+
+# عرض الأوضاع المتاحة
+supergfxctl -s
+
+# التبديل لوضع dedicated (إن توفر hardware mux switch)
+supergfxctl -m dedicated</code></pre>
+
+    <h2>بونس: إيقاف الأنيميشن والتأثيرات في وضع الألعاب</h2>
+    <p>أسرع طريقة لتحسين الأداء في Hyprland هي إيقاف الأنيميشن وBlur والظلال مؤقتاً:</p>
+    <pre><code># في binds.conf — toggle لوضع الألعاب
+bind = SUPER, F1, exec, hyprctl keyword animations:enabled false && hyprctl keyword decoration:blur:enabled false && hyprctl keyword decoration:shadow:enabled false
+
+bind = SUPER, F2, exec, hyprctl keyword animations:enabled true && hyprctl keyword decoration:blur:enabled true && hyprctl keyword decoration:shadow:enabled true</code></pre>
+
+    <blockquote>
+      💡 يمكنك بناء "game mode" كامل: يوقف الأنيميشن، يُبدّل layout الـ Waybar، ويُوقف Blur كله دفعة واحدة.
+    </blockquote>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

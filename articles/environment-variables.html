@@ -1,0 +1,159 @@
+<!--
+  title: متغيرات البيئة الأساسية في Hyprland
+  description: متغيرات البيئة التي لا يخبرك أحد عنها في Hyprland — لإصلاح تطبيقات Electron والـ GTK والـ Qt وضبط الـ Wayland بشكل صحيح
+  tag: الإعداد
+  date: 2026-05-16
+  icon: 🔩
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الإعداد</div>
+      <h1 class="article-page-title">متغيرات البيئة الأساسية في Hyprland</h1>
+      <p class="article-page-desc">متغيرات البيئة التي لا يخبرك أحد عنها — لإصلاح تطبيقات Electron والـ GTK والـ Qt وضبط الـ Wayland.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>لماذا هذه المتغيرات مهمة؟</h2>
+    <p>
+      بدون متغيرات البيئة الصحيحة، تطبيقات مثل Spotify وVSCode والمتصفحات لا تشتغل على Wayland أو تعمل بأداء منخفض عبر XWayland.
+    </p>
+
+    <h2>ملف env.conf — المتغيرات الأساسية</h2>
+    <pre><code># في ~/.config/hypr/env.conf أو hyprland.conf
+
+# GTK على Wayland أولاً
+env = GDK_BACKEND,wayland,x11
+
+# Qt على Wayland أولاً
+env = QT_QPA_PLATFORM,wayland;xcb
+
+# SDL2 (ألعاب وتطبيقات وسائط)
+env = SDL_VIDEODRIVER,wayland
+
+# Clutter (بعض تطبيقات GNOME)
+env = CLUTTER_BACKEND,wayland
+
+# المسمى الرسمي للـ compositor
+env = XDG_CURRENT_DESKTOP,Hyprland
+env = XDG_SESSION_TYPE,wayland
+env = XDG_SESSION_DESKTOP,Hyprland
+
+# تعطيل window decorations في Qt
+env = QT_WAYLAND_DISABLE_WINDOWDECORATION,1
+
+# أداة تخصيص Qt
+env = QT_QPA_PLATFORMTHEME,qt5ct</code></pre>
+
+    <h2>متغيرات Nvidia (إن كنت على كرت Nvidia)</h2>
+    <pre><code>env = LIBVA_DRIVER_NAME,nvidia
+env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+env = GBM_BACKEND,nvidia-drm
+env = __NV_PRIME_RENDER_OFFLOAD,1</code></pre>
+
+    <blockquote>
+      ⚠️ لا تضف متغيرات Nvidia إن لم يكن لديك كرت Nvidia — ستسبب مشاكل في تطبيقات مثل OBS.
+    </blockquote>
+
+    <h2>متغيرات تطبيقات Chromium والمتصفحات</h2>
+    <pre><code># لتشغيل Chromium/Brave/Chrome على Wayland
+env = NIXOS_OZONE_WL,1
+
+# Firefox
+env = MOZ_ENABLE_WAYLAND,1</code></pre>
+
+    <h2>متغيرات لا تضبطها بشكل ثابت</h2>
+    <p>هذه المتغيرات تتعارض مع theme switchers الديناميكية:</p>
+    <ul>
+      <li><code>GTK_THEME</code> — اضبط الثيم عبر gsettings أو nwg-look</li>
+      <li><code>XCURSOR_THEME</code> — استخدم <code>hyprctl setcursor</code> بدلاً منه</li>
+    </ul>
+
+    <h2>أين تضع المتغيرات؟</h2>
+    <pre><code># في hyprland.conf مباشرة
+env = GDK_BACKEND,wayland,x11
+
+# أو في ملف منفصل مصدره hyprland.conf
+source = ~/.config/hypr/env.conf</code></pre>
+
+    <blockquote>
+      💡 المستخدمون الذين يستخدمون UWSM لتشغيل Hyprland يحتاجون وضع المتغيرات في مكان مختلف — راجع الـ Wiki.
+    </blockquote>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

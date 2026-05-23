@@ -1,0 +1,366 @@
+<!--
+  title: الطريقة الوحيدة التي تنجح فعلاً لتثيم GTK على Hyprland
+  description: كيف تصنع ثيم GTK3 وGTK4 بألوانك الخاصة تماماً باستخدام Colloid وSASS — بدون Oomox أو تعديل CSS مباشر
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🎨
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+  author-bio: مطور ومهتم بلينكس وتخصيص سطح المكتب
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html" class="active">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">الطريقة الوحيدة التي تنجح فعلاً لتثيم GTK على Hyprland</h1>
+      <p class="article-page-desc">كيف تصنع ثيم GTK3 وGTK4 بألوانك الخاصة تماماً باستخدام Colloid وSASS — بدون Oomox أو تعديل CSS مباشر.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٧ يناير ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المشكلة — الـ Boss الأخير في الـ Ricing</h2>
+    <p>
+      قضيت ساعات في ضبط الـ rice. الـ bar مثالي، ألوان الترمنل متناسقة، كل شيء يتطابق.
+      ثم تفتح Thunar — مدير الملفات — فيبدو كأنه من جهاز آخر تماماً.
+    </p>
+    <p>
+      تثيم GTK هو الـ final boss في رحلة الـ ricing. معظم الناس يختارون أقرب ثيم موجود
+      ويتعايشون مع عدم التطابق. المقالة دي هتريك كيف تصنع ثيم GTK3 وGTK4 بألوانك الدقيقة
+      في حوالي عشر دقايق.
+    </p>
+
+    <blockquote>
+      💡 النتيجة: تطبيقات GTK3 مثل Calculator، وGTK4 مثل Clocks وNautilus — كلها بنفس لوحة الألوان بالضبط.
+    </blockquote>
+
+    <h2>لماذا الطرق الشائعة تفشل</h2>
+    <p>تثيم GTK معروف بأنه فوضوي تاريخياً، وأسباب ذلك واضحة:</p>
+    <ul>
+      <li>ثيمات GTK3 لا تعمل بالكامل على GTK4</li>
+      <li>تطبيقات libadwaita تتجاهل معظم الثيمات كلياً</li>
+      <li>تجد ثيماً يعجبك لكن لون الـ accent خطأ — تحاول تعديل CSS مباشرة فتختفي الأزرار وتتكسر الـ checkboxes</li>
+    </ul>
+
+    <p>معظم الناس يجربون أحد خيارين:</p>
+
+    <h3>١. Oomox / Themix</h3>
+    <p>
+      أدوات قديمة والناتج منها خشن. والأسوأ أنها لا تدعم libadwaita أو GTK4 بشكل صحيح.
+    </p>
+
+    <h3>٢. تعديل ثيم Compiled مباشرة</h3>
+    <p>
+      تدخل مجلد الثيم وتغير قيم hex في CSS — يشتغل جزئياً حتى تختلف الـ metadata مع الألوان،
+      فيظهر الثيم باسم مختلف عن الألوان اللي اخترتها، ويصبح التنقل بين الثيمات فوضى.
+    </p>
+
+    <blockquote>
+      ✅ الحل الصحيح: تعدّل الثيم على مستوى الـ source قبل الـ compile — فكل شيء يبقى متسق،
+      وعملية البناء تتولى كل حالات الحافة، وتحصل على ثيم يشتغل فعلاً.
+    </blockquote>
+
+    <h2>الأداة: Colloid GTK Theme</h2>
+    <p>
+      الثيم الأساسي اللي سنستخدمه هو <strong>Colloid GTK Theme</strong> من المطور Vince Lewis.
+      اخترناه لأسباب محددة:
+    </p>
+    <ul>
+      <li>يُحدَّث باستمرار — آخر تغييرات الشهر الماضي وليس قبل سنتين</li>
+      <li>يدعم GTK3 وGTK4 وlibadwaita</li>
+      <li>مصمم بطريقة تجعل إضافة لوحات ألوان جديدة سهلة جداً</li>
+    </ul>
+    <p>
+      بديل مناسب هو <strong>Graphite</strong> من نفس المطور إن أردت مظهراً أكثر إحكاماً،
+      لكن تحذير: ثيمات أخرى قد لا تكون مُعدَّة لهذا الـ workflow بالضبط.
+    </p>
+
+    <h2>المتطلبات</h2>
+    <p>قبل أي شيء، ثبّت هذه الحزم:</p>
+    <pre><code># sass-c ضروري — الثيم لن يُبنى بدونه
+sudo pacman -S sassc
+
+# اختياري: لو ستستخدم GTK2
+sudo pacman -S gtk-engine-murrine
+</code></pre>
+
+    <h2>الخطوة ١ — Clone الـ Repo</h2>
+    <pre><code>git clone https://github.com/vinceliuice/Colloid-gtk-theme.git
+cd Colloid-gtk-theme
+</code></pre>
+
+    <p>
+      بعد دخولك للمجلد ستجد بنية واضحة. المجلد المهم هو <code>src/sass/</code> —
+      هنا تسكن ملفات لوحات الألوان.
+    </p>
+
+    <h2>الخطوة ٢ — قرر لوحة ألوانك أولاً</h2>
+    <p>
+      قبل أي كود، احتاج تحدد ألوانك. على الأقل تحتاج <strong>16 لوناً</strong>:
+      لون خلفية، لون نص، لون accent، وعدة درجات بينها للـ hover states والـ borders.
+    </p>
+    <p>
+      إذا كنت تبني ثيماً موجوداً (مثل Horizon أو Catppuccin)، ابحث عن ملف الألوان الرسمي.
+      أما ألوان الخلفية المتدرجة (shades) فهذا الموقع يوفرها بشكل مباشر:
+    </p>
+
+    <blockquote>
+      🌐 اذهب إلى <strong>colorhexa.com</strong> وادخل لون الخلفية الأساسي لديك.
+      ستجد قسم <em>Shades</em> وقسم <em>Tints</em> — الـ shade يضيف أسود للون، الـ tint يضيف أبيض.
+      اختر التدرجات من 050 إلى 900 واحفظها.
+    </blockquote>
+
+    <p>مثال: لو لون خلفيتك هو Horizon (<code>#1C1E26</code>):</p>
+    <pre><code># ادخل هذا على colorhexa.com
+1C1E26
+
+# ستحصل على تدرجات مثل:
+# 050 → أغمق درجة (تقريباً أسود)
+# 900 → أفتح درجة (تقريباً أبيض)
+# اختر ما يتناسب مع لوحتك
+</code></pre>
+
+    <h2>الخطوة ٣ — أنشئ ملف لوحة الألوان</h2>
+    <pre><code>cd src/sass
+
+# انسخ ملف موجود كقاعدة (Cappuccino مثلاً)
+cp _color-palette-cappuccin.scss _color-palette-horizon.scss
+</code></pre>
+
+    <p>افتح الملف الجديد وعدّل الألوان:</p>
+    <pre><code>// _color-palette-horizon.scss
+
+// اسم اللوحة
+$scheme-name: 'Horizon Color Palette';
+
+// الألوان الأساسية (الـ 16 terminal colors)
+$red:        #E95678;
+$red-light:  #F09383;
+$green:      #29D398;
+$green-light:#27D796;
+$yellow:     #FAB795;
+$blue:       #26BBD9;
+$blue-light: #59E3E3;
+$magenta:    #EE64AC;
+$cyan:       #59E3E3;
+$cyan-light: #59E3E3;
+
+// درجات الخلفية (من colorhexa.com)
+$bg-050:  #141620;
+$bg-100:  #16181E;
+$bg-150:  #1A1C22;
+$bg-200:  #1C1E26;   // ← لون الخلفية الأساسي
+$bg-300:  #232530;
+$bg-400:  #2E303E;
+$bg-500:  #3D3F4E;
+// ... وهكذا حتى bg-900
+
+// الأبيض والأسود
+$white:   #D5D8DA;   // foreground color
+$black:   #1C1E26;   // background color
+</code></pre>
+
+    <blockquote>
+      💡 لوحات الألوان الجاهزة مثل Catppuccin وDracula وEverforest موجودة بالفعل في الـ repo —
+      ابحث في <code>src/sass/</code> عن اسمها.
+    </blockquote>
+
+    <h2>الخطوة ٤ — سجّل اللوحة في install.sh</h2>
+    <p>
+      إنشاء الملف وحده لا يكفي — يجب إخبار سكربت البناء بوجوده.
+      افتح <code>install.sh</code> في جذر الـ repo وأضف اسمك في ثلاثة أماكن:
+    </p>
+
+    <h3>المكان الأول — scheme_variants</h3>
+    <pre><code># ابحث عن هذا السطر وأضف اسمك
+scheme_variants=("default" "rayan" "horizon")
+#                                   ↑ أضفه هنا
+</code></pre>
+
+    <h3>المكان الثاني — نص المساعدة (usage)</h3>
+    <pre><code># داخل قسم --tweaks في نص help
+# أضف:
+horizon
+</code></pre>
+
+    <h3>المكان الثالث — case statement في دالة color_schemes</h3>
+    <pre><code># انسخ block موجود مثل cappuccin وعدّله:
+horizon)
+  scheme_color='horizon'
+  color_scheme="$scheme_color"
+  ;;
+</code></pre>
+
+    <p>للتحقق أن كل شيء صحيح:</p>
+    <pre><code>./install.sh --help
+# يجب أن ترى "horizon" ضمن الخيارات المتاحة
+</code></pre>
+
+    <h2>الخطوة ٥ — ابنِ الثيم</h2>
+    <pre><code># بناء النسخة الداكنة من ثيم Horizon
+./install.sh --tweaks horizon --color dark
+
+# بناء النسخة الفاتحة أيضاً إن أردت
+./install.sh --tweaks horizon --color light
+</code></pre>
+
+    <p>
+      بعد اكتمال البناء، ستجد مجلد الثيم في <code>~/.themes/</code>.
+    </p>
+
+    <h2>الخطوة ٦ — فعّل الثيم</h2>
+    <h3>GTK3</h3>
+    <p>الثيم يُفعَّل تلقائياً من <code>~/.themes/</code> عبر أي أداة مثل nwg-look أو gsettings:</p>
+    <pre><code>gsettings set org.gnome.desktop.interface gtk-theme 'Colloid-Dark-Horizon'
+</code></pre>
+
+    <h3>GTK4 وlibadwaita</h3>
+    <p>هذا الجزء يختلف — GTK4 يقرأ من مكان مختلف:</p>
+    <pre><code># انسخ مجلد GTK4 إلى config
+cp -r ~/.themes/Colloid-Dark-Horizon/gtk-4.0 ~/.config/gtk-4.0
+
+# تأكد من وجود هذين الملفين
+ls ~/.config/gtk-4.0/
+# gtk.css  gtk-dark.css
+</code></pre>
+
+    <blockquote>
+      ⚠️ لا تلمس أي إعداد آخر في مجلد GTK4. هذان الملفان فقط هما المطلوبان لتطبيقات libadwaita.
+    </blockquote>
+
+    <h2>أخطاء شائعة تجنّبها</h2>
+
+    <h3>❌ لا تستخدم Oomox أو Themix</h3>
+    <p>
+      أدوات قديمة والناتج منها يحتوي عناصر مكسورة. لا تدعم GTK4 الحديثة.
+      هذه الطريقة أكثر يدوية لكن الناتج يُستخدم فعلاً.
+    </p>
+
+    <h3>❌ لا تعدّل ثيماً Compiled</h3>
+    <p>
+      تغيير hex values داخل CSS الثيم يسبب عدم تطابق الـ metadata مع الألوان.
+      ابنِ من الـ source دائماً عبر SASSC — هذا هو الفرق.
+    </p>
+
+    <h3>✅ إذا ظهر شيء خطأ بعد البناء</h3>
+    <p>
+      في الغالب لون واحد خاطئ في ملف اللوحة. تحقق من الـ shades والـ accent color،
+      أعد البناء، وجرب مجدداً. نادراً تحتاج أكثر من ٢-٣ تكرارات.
+    </p>
+
+    <h2>أكثر من ثيم — بنفس الطريقة</h2>
+    <p>
+      هذه الطريقة قابلة للتوسع. تريد ثيماً داكناً وآخر فاتحاً؟ أو مجموعة كاملة لكل موسم؟
+      كرر نفس العملية:
+    </p>
+    <ol>
+      <li>أنشئ ملف <code>_color-palette-YOURNAME.scss</code> جديد</li>
+      <li>سجّله في <code>install.sh</code></li>
+      <li>ابنِه باسم مختلف</li>
+    </ol>
+    <pre><code># مثال: بناء ثيمات متعددة
+./install.sh --tweaks horizon  --color dark
+./install.sh --tweaks catppuccin --color dark
+./install.sh --tweaks dracula  --color dark
+</code></pre>
+    <p>
+      يمكنك بعدها ربطها بـ theme switcher يغير الثيم مع الخلفية تلقائياً —
+      وهذا موضوع مقالة منفصلة.
+    </p>
+
+    <h2>خلاصة</h2>
+    <p>العملية بالكامل في ٦ خطوات:</p>
+    <ol>
+      <li>ثبّت <code>sassc</code> و<code>gtk-engine-murrine</code></li>
+      <li>Clone مستودع Colloid GTK Theme</li>
+      <li>حدد 16 لوناً للوحتك (استخدم colorhexa.com للتدرجات)</li>
+      <li>أنشئ <code>_color-palette-YOURNAME.scss</code> في <code>src/sass/</code></li>
+      <li>سجّل اللوحة في <code>install.sh</code> في ثلاثة أماكن</li>
+      <li>ابنِ بـ <code>./install.sh --tweaks YOURNAME --color dark</code> وانسخ GTK4 لـ <code>~/.config/gtk-4.0</code></li>
+    </ol>
+
+    <blockquote>
+      🎨 النتيجة النهائية: تطبيقاتك GTK3 وGTK4 كلها بنفس لوحة الألوان بالضبط — بدون حلول وسط.
+    </blockquote>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

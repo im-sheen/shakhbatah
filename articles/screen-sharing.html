@@ -1,0 +1,169 @@
+<!--
+  title: مشاركة الشاشة في Hyprland — الدليل الكامل
+  description: كيف تضبط screen sharing في Hyprland بشكل صحيح — pipewire وxdg-desktop-portal-hyprland والأدوات المطلوبة خطوة بخطوة
+  tag: الإعداد
+  date: 2026-05-16
+  icon: 🖥️
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الإعداد</div>
+      <h1 class="article-page-title">️ مشاركة الشاشة في Hyprland — الدليل الكامل</h1>
+      <p class="article-page-desc">كيف تضبط screen sharing في Hyprland بشكل صحيح — pipewire وxdg-desktop-portal-hyprland خطوة بخطوة.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>لماذا تعمل مشاركة الشاشة بشكل مختلف على Wayland؟</h2>
+    <p>
+      على X11، كان أي تطبيق يستطيع قراءة محتوى الشاشة مباشرة. على Wayland، هذا ممنوع أمنياً. مشاركة الشاشة تمر الآن عبر بروتوكول موحّد اسمه XDG Desktop Portal — وهو ما نحتاج إعداده بشكل صحيح.
+    </p>
+
+    <h2>المتطلبات</h2>
+    <p>ثلاثة مكونات يجب أن تكون مثبّتة وتعمل:</p>
+    <ul>
+      <li><strong>pipewire</strong> — خادم الصوت والوسائط، يتولى نقل بيانات الشاشة</li>
+      <li><strong>wireplumber</strong> — مدير جلسة pipewire</li>
+      <li><strong>xdg-desktop-portal-hyprland</strong> — البوابة الخاصة بـ Hyprland للتعامل مع مشاركة الشاشة</li>
+    </ul>
+
+    <h2>التثبيت</h2>
+    <pre><code>sudo pacman -S --needed pipewire wireplumber xdg-desktop-portal-hyprland</code></pre>
+
+    <blockquote>
+      💡 إن كنت ثبّتت Arch Linux بالطريقة العادية واخترت pipewire كخادم صوت، فهو على الأرجح مثبّت ومفعّل مسبقاً.
+    </blockquote>
+
+    <h2>بوابات XDG — ملاحظة مهمة</h2>
+    <p>
+      تأكد أن البوابات المثبّتة على جهازك هي <code>xdg-desktop-portal-hyprland</code> و<code>xdg-desktop-portal-gtk</code> فقط. وجود بوابات أخرى قد يتسبب في تعارضات. اطّلع على ما لديك:
+    </p>
+    <pre><code>pacman -Qs xdg-desktop-portal</code></pre>
+    <p>إن وجدت بوابات غير هذين، قم بإزالتها:</p>
+    <pre><code># مثال إن وجدت بوابة KDE غير مرغوب فيها
+sudo pacman -R xdg-desktop-portal-kde</code></pre>
+
+    <h2>إضافة السطر المطلوب في الكونفيغ</h2>
+    <p>
+      افتح ملف <code>hyprland.conf</code> وأضف هذا السطر في قسم الـ autostart:
+    </p>
+    <pre><code>exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP</code></pre>
+
+    <p>ثم أعد تسجيل الدخول أو أعد تشغيل الجهاز.</p>
+
+    <h2>اختبار مشاركة الشاشة في OBS</h2>
+    <p>افتح OBS وأضف مصدر جديد من نوع <strong>Screen Capture (PipeWire)</strong>. ستظهر نافذة تطلب منك اختيار الشاشة أو النافذة المراد مشاركتها — اختر ما تريد وانقر سماح.</p>
+
+    <blockquote>
+      ⚠️ إن لم يظهر خيار PipeWire في OBS، تأكد من تثبيت <code>obs-studio</code> من المستودعات الرسمية وليس من Flatpak القديم — إصدارات Flatpak القديمة لا تدعم PipeWire بشكل كامل.
+    </blockquote>
+
+    <h2>استكشاف الأخطاء</h2>
+
+    <h3>مشاركة الشاشة لا تعمل في المتصفح</h3>
+    <p>تأكد أن المتصفح يشغّل Wayland natively وليس عبر XWayland. أضف هذا لملف الـ autostart:</p>
+    <pre><code>env = NIXOS_OZONE_WL, 1   # للمتصفحات المبنية على Chromium
+env = MOZ_ENABLE_WAYLAND, 1  # لـ Firefox</code></pre>
+
+    <h3>البوابة لا تبدأ تلقائياً</h3>
+    <p>شغّلها يدوياً للتحقق:</p>
+    <pre><code>/usr/lib/xdg-desktop-portal-hyprland &amp;</code></pre>
+
+    <h3>مشكلة bit depth</h3>
+    <p>
+      إن واجهت مشاكل في الألوان أثناء المشاركة، تأكد أن إعداد <code>monitor</code> في الكونفيغ يحدد bit depth يتوافق مع شاشتك الفعلية (10-bit مقابل 8-bit).
+    </p>
+
+    <h2>خلاصة — ما يجب التحقق منه</h2>
+    <ul>
+      <li>✅ <code>pipewire</code> و<code>wireplumber</code> مثبتَّان وتعملان</li>
+      <li>✅ <code>xdg-desktop-portal-hyprland</code> مثبّت</li>
+      <li>✅ لا توجد بوابات XDG متعارضة</li>
+      <li>✅ السطر المطلوب مضاف في autostart</li>
+      <li>✅ OBS يستخدم Screen Capture (PipeWire)</li>
+    </ul>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

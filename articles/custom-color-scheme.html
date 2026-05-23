@@ -1,0 +1,151 @@
+<!--
+  title: كيف تبني لوحة ألوانك الخاصة في Hyprland
+  description: منهجية خطوة بخطوة لإنشاء color scheme خاص بك من الصفر — من تحديد المزاج وتحديد الألوان الأساسية حتى الـ 16 لون الكاملة
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🎨
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">كيف تبني لوحة ألوانك الخاصة</h1>
+      <p class="article-page-desc">منهجية لإنشاء color scheme خاص من الصفر — من تحديد المزاج حتى الـ 16 لون الكاملة.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>لماذا ثيم خاص بك؟</h2>
+    <p>
+      الثيمات الجاهزة ممتازة، لكنها مصمّمة للجميع — ليست مصمّمة لك تحديداً. بناء ثيمك الخاص يمنحك تحكماً كاملاً في المزاج والشعور الذي يوحيه إعدادك.
+    </p>
+
+    <h2>الخطوة 1: حدّد المزاج</h2>
+    <p>اختر محورين:</p>
+    <ul>
+      <li><strong>الدفء</strong>: دافئ (برتقالي/بني) أو بارد (أزرق/بنفسجي)</li>
+      <li><strong>الطاقة</strong>: نابض (ألوان مشبعة) أو هادئ (ألوان مكتومة)</li>
+    </ul>
+
+    <h2>الخطوة 2: اجمع مصادر الإلهام</h2>
+    <p>لا تنسخ — ادرس:</p>
+    <ul>
+      <li>ثيمات VS Code من <code>category:themes</code></li>
+      <li>قواعد Base16 وNvChad themes</li>
+      <li>صور ولوحات فنية تناسب المزاج الذي اخترته</li>
+      <li>r/unixporn — ابحث بالاستيتيك المطلوب</li>
+    </ul>
+
+    <h2>الخطوة 3: اختر الألوان الخمسة الأساسية</h2>
+    <ul>
+      <li><strong>Background</strong> — خلفية داكنة بلمسة لونية خفية</li>
+      <li><strong>Foreground</strong> — لون النص الرئيسي (ليس أبيض نقي)</li>
+      <li><strong>Red</strong> — للأخطاء والتحذيرات</li>
+      <li><strong>Green</strong> — للنجاح والإضافات</li>
+      <li><strong>Blue</strong> — للمعلومات والروابط</li>
+    </ul>
+
+    <h2>الخطوة 4: أكمل إلى 16 لوناً</h2>
+    <p>أضف Yellow وMagenta وCyan لإكمال الـ 8 ألوان الأساسية، ثم أنشئ نسخ أفتح (Bright) من كل لون:</p>
+    <pre><code># Color 0-7 (ألوان عادية)
+color0  = #1e1e2e  # Black (خلفية)
+color1  = #f38ba8  # Red
+color2  = #a6e3a1  # Green
+color3  = #f9e2af  # Yellow
+color4  = #89b4fa  # Blue
+color5  = #cba6f7  # Magenta
+color6  = #89dceb  # Cyan
+color7  = #cdd6f4  # White (foreground)
+
+# Color 8-15 (نسخ أفتح — زد الـ lightness بـ 15-20%)
+color8  = #313244
+color9  = #eba0ac
+# ... إلخ</code></pre>
+
+    <h2>أدوات مفيدة</h2>
+    <ul>
+      <li><a href="https://www.colorhexa.com" target="_blank" rel="noopener">colorhexa.com</a> — تدرجات وظلال أي لون</li>
+      <li><code>hyprpicker</code> — التقط ألوان من الشاشة</li>
+      <li><code>gpick</code> — Color wheel تفاعلي</li>
+    </ul>
+
+    <blockquote>
+      💡 نصيحة: بدلاً من الرمادي النقي للخلفية، أضف لمسة خفية من درجة لونك — مثلاً <code>#1f1d1a</code> بدلاً من <code>#1a1a1a</code> للثيمات الدافئة.
+    </blockquote>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

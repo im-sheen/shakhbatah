@@ -1,0 +1,193 @@
+<!--
+  title: Walker — مشغّل التطبيقات السريع لـ Hyprland
+  description: كيف تثبّت وتضبط Walker، مشغّل التطبيقات المبني على GTK4 مع سوكيت للتشغيل الفوري — مع مقارنة بـ Rofi
+  tag: أدوات
+  date: 2026-05-16
+  icon: 🚀
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">أدوات</div>
+      <h1 class="article-page-title">Walker — مشغّل التطبيقات السريع لـ Hyprland</h1>
+      <p class="article-page-desc">كيف تثبّت وتضبط Walker، مشغّل التطبيقات المبني على GTK4 مع سوكيت للتشغيل الفوري — ومقارنة بـ Rofi.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو Walker؟</h2>
+    <p>
+      Walker هو مشغّل تطبيقات (app launcher) مبني على GTK4 لـ Wayland. ميزته الكبرى أنه يعمل على نموذج client-server عبر سوكيت — مما يجعل فتحه شبه فوري مقارنة بـ Rofi الذي يُنشأ من الصفر عند كل استدعاء.
+    </p>
+
+    <h2>التثبيت</h2>
+    <p>على Arch Linux، ثبّت النسخة الثنائية (bin) لتجنّب وقت الترجمة الطويل:</p>
+    <pre><code># Walker والـ data source الخاص به
+yay -S walker-bin aylur-gtk-shell-bin
+
+# إضافات aylur-gtk-shell المطلوبة
+yay -S aylur-gtk-shell-provider-applications-bin aylur-gtk-shell-provider-list-bin</code></pre>
+
+    <blockquote>
+      💡 عند تثبيت <code>aylur-gtk-shell-bin</code>، سيطلب منك تثبيت تبعياته تلقائياً — وافق عليها جميعاً.
+    </blockquote>
+
+    <h2>تشغيل Walker للمرة الأولى</h2>
+    <pre><code># شغّل الـ data source أولاً في الخلفية
+aylur-gtk-shell &amp;
+
+# ثم شغّل Walker
+walker</code></pre>
+
+    <blockquote>
+      ⚠️ إن فتحت Walker بدون تشغيل <code>aylur-gtk-shell</code> أولاً، لن يعمل بشكل صحيح. تأكد أن الـ data source يعمل في الخلفية دائماً.
+    </blockquote>
+
+    <h2>تفعيل التشغيل الفوري بالسوكيت</h2>
+    <p>
+      Walker يدعم الاتصال عبر سوكيت لتشغيل أسرع بكثير. استخدم الأمر التالي بدلاً من <code>walker</code> مباشرة:
+    </p>
+    <pre><code># تشغيل Walker عبر السوكيت (أسرع)
+echo "" | nc -U /run/user/$(id -u)/walker.sock</code></pre>
+
+    <p>الفرق واضح: Walker العادي يستغرق بضع ثوانٍ، بينما السوكيت يفتحه فورياً تقريباً.</p>
+
+    <h2>إضافة Walker لـ autostart</h2>
+    <p>أضف هذا في ملف <code>hyprland.conf</code> أو <code>autostart.conf</code>:</p>
+    <pre><code>exec-once = aylur-gtk-shell
+exec-once = walker --gapplication-service</code></pre>
+
+    <h2>ربط اختصار لوحة المفاتيح</h2>
+    <pre><code># في binds.conf
+bind = SUPER SHIFT, D, exec, echo "" | nc -U /run/user/1000/walker.sock</code></pre>
+
+    <blockquote>
+      ⚠️ عند استخدام السوكيت لا يمكنك تمرير arguments مثل <code>--theme</code> — هذا قيد في طريقة عمل الـ socket. إن أردت تحديد ثيم، استخدم <code>walker --theme mytheme</code> مباشرة.
+    </blockquote>
+
+    <h2>إمكانيات Walker</h2>
+    <p>Walker لا يفتح التطبيقات فقط، بل يدعم أيضاً:</p>
+    <ul>
+      <li>حاسبة مدمجة</li>
+      <li>تصفّح الملفات</li>
+      <li>تشغيل أوامر shell</li>
+      <li>بحث ويب</li>
+      <li>سجل الحافظة (clipboard history)</li>
+    </ul>
+    <p>يُفعَّل كل وضع من هذه في ملف الكونفيغ <code>~/.config/walker/config.toml</code>.</p>
+
+    <h2>التخصيص والثيمات</h2>
+    <p>
+      Walker مبني على GTK4 مما يعني تخصيصه عبر CSS — لكن تخصيص GTK4 أصعب من GTK3. لإنشاء ثيم مخصص:
+    </p>
+    <pre><code># هيكل مجلد الثيمات
+~/.config/walker/themes/
+├── my-theme/
+│   └── style.css
+└── dark/
+    └── style.css</code></pre>
+
+    <p>لتطبيق ثيم معين:</p>
+    <pre><code>walker --theme my-theme</code></pre>
+
+    <h2>Walker مقابل Rofi — متى تختار أيهما؟</h2>
+    <table>
+      <thead>
+        <tr><th></th><th>Walker</th><th>Rofi</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>السرعة</td><td>⚡ أسرع (سوكيت)</td><td>جيد</td></tr>
+        <tr><td>التخصيص</td><td>GTK4 (أصعب)</td><td>CSS بسيط</td></tr>
+        <tr><td>دعم Wayland</td><td>أصلي</td><td>أصلي</td></tr>
+        <tr><td>القوالب الجاهزة</td><td>محدودة</td><td>وفيرة</td></tr>
+        <tr><td>التكامل مع Theme Switcher</td><td>معقّد</td><td>سهل</td></tr>
+      </tbody>
+    </table>
+
+    <blockquote>
+      💡 إن كنت تريد theme switcher يغيّر مظهر الـ launcher مع باقي الإعداد تلقائياً، Rofi أسهل بكثير. Walker رائع للسرعة لكن تخصيصه يتطلب جهداً أكبر.
+    </blockquote>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

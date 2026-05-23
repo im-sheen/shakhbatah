@@ -1,0 +1,302 @@
+<!--
+  title: خلفيات ديناميكية تتغير مع الوقت في Hyprland
+  description: كيف تضبط خلفيات تتغير تلقائياً حسب وقت اليوم مثل macOS — مصادر الخلفيات، استخراجها، وسكريبت systemd يجري كل 15 دقيقة
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🌅
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html" class="active">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">خلفيات ديناميكية تتغير مع الوقت في Hyprland</h1>
+      <p class="article-page-desc">ضبط خلفيات تتغير تلقائياً حسب وقت اليوم مثل macOS — مصادر الخلفيات، استخراجها، وسكريبت systemd يجري كل 15 دقيقة.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+      <!-- شريحة الكاتب تُضاف تلقائياً بواسطة app.js -->
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هي الخلفيات الديناميكية؟</h2>
+    <p>
+      الخلفية الديناميكية هي مجموعة صور مرتبطة بأوقات اليوم — تبدأ فاتحة عند الفجر،
+      تتدرج إلى ألوان الظهيرة، ثم تغمق تدريجياً حتى منتصف الليل.
+      نفس الميزة التي اشتهرت بها macOS منذ Mojave.
+    </p>
+    <p>
+      في Hyprland يمكنك تحقيق نفس الشيء تماماً: سكريبت بسيط يحسب الصورة المناسبة
+      لكل وقت ويطبّقها تلقائياً، ثم timer بـ systemd يشغّله كل 15 دقيقة.
+    </p>
+
+    <h2>أين تجد الخلفيات الديناميكية؟</h2>
+    <p>
+      الموقع الأفضل حتى الآن هو <strong>dynamic-wallpaper.com</strong> — مجاني تماماً
+      ويحتوي على عشرات الخلفيات بدقة 5K بأسلوب macOS والأسلوب الياباني والبانورامي وغيره.
+    </p>
+    <p>
+      عند اختيار خلفية، انتبه لعدد الصور التي تحتوي عليها — كلما زاد العدد، كان التغيير أكثر سلاسة:
+    </p>
+    <ul>
+      <li><strong>96 صورة:</strong> تغيير كل 15 دقيقة — انتقال شبه مستمر وواقعي</li>
+      <li><strong>17 صورة:</strong> تغيير كل ~85 دقيقة — ملحوظ ولطيف</li>
+      <li><strong>6 صور:</strong> تغيير كل 4 ساعات — تغيير واضح في كل مرة</li>
+    </ul>
+    <blockquote>
+      💡 الحساب: 1440 دقيقة في اليوم ÷ عدد الصور = الفترة بين كل تغيير.
+    </blockquote>
+
+    <h2>استخراج الصور من ملف HEIC</h2>
+    <p>
+      الخلفيات تأتي بصيغة <code>.heic</code> — ملف واحد يحتوي على كل الصور داخله.
+      ثبّت أداة <code>heif-tools</code> لاستخراجها:
+    </p>
+    <pre><code>sudo pacman -S libheif</code></pre>
+
+    <p>ثم استخرج الصور:</p>
+    <pre><code># أنشئ مجلداً للخلفية
+mkdir -p ~/Pictures/dynamic/my-wallpaper
+cd ~/Pictures/dynamic/my-wallpaper
+
+# استخرج الصور من ملف HEIC
+heif-convert wallpaper.heic wallpaper.jpg
+
+# أو إذا واجهت خطأ في عدد الصور
+heif-convert --disable-limits wallpaper.heic wallpaper.jpg</code></pre>
+
+    <p>
+      بعد الاستخراج ستجد ملفات مرقّمة: <code>wallpaper-1.jpg</code>، <code>wallpaper-2.jpg</code>، إلخ.
+      هذه هي الصور التي سيدور بينها السكريبت.
+    </p>
+
+    <h2>السكريبت: dynamic-wallpaper</h2>
+    <p>
+      أنشئ السكريبت في <code>~/.local/bin/dynamic-wallpaper</code>:
+    </p>
+    <pre><code>#!/bin/bash
+
+# ══════════════════════════════════════
+#  اضبط هذين المتغيرين حسب خلفيتك
+# ══════════════════════════════════════
+WALLPAPER_DIR="$HOME/Pictures/dynamic/my-wallpaper"
+NUM_IMAGES=17   # عدد الصور داخل المجلد
+
+# ══════════════════════════════════════
+#  حساب الصورة المناسبة للوقت الحالي
+# ══════════════════════════════════════
+HOUR=$(date +%H)
+MINUTE=$(date +%M)
+
+# إجمالي الدقائق منذ منتصف الليل
+TOTAL_MINUTES=$(( HOUR * 60 + MINUTE ))
+
+# الدقائق في اليوم الكامل
+MINUTES_IN_DAY=1440
+
+# احسب رقم الصورة المناسبة (0-indexed)
+INDEX=$(( (TOTAL_MINUTES * NUM_IMAGES) / MINUTES_IN_DAY ))
+
+# تأكد أن الرقم لا يتجاوز العدد الكلي
+if [ "$INDEX" -ge "$NUM_IMAGES" ]; then
+  INDEX=$(( NUM_IMAGES - 1 ))
+fi
+
+# رقّم الصور من 1 (اضبط الصيغة حسب أسماء ملفاتك)
+IMG_NUM=$(( INDEX + 1 ))
+IMAGE_PATH="$WALLPAPER_DIR/wallpaper-${IMG_NUM}.jpg"
+
+# ══════════════════════════════════════
+#  تطبيق الخلفية
+# ══════════════════════════════════════
+if [ -f "$IMAGE_PATH" ]; then
+  swww img "$IMAGE_PATH" \
+    --transition-type fade \
+    --transition-duration 2
+fi</code></pre>
+
+    <pre><code># اجعل السكريبت قابلاً للتشغيل
+chmod +x ~/.local/bin/dynamic-wallpaper
+
+# اختبره يدوياً
+dynamic-wallpaper</code></pre>
+
+    <blockquote>
+      🔄 السكريبت يحسب رقم الصورة الصحيح لأي وقت تشغّله فيه — لا يعتمد على تتبع الحالة السابقة.
+      إذا أعدت التشغيل في أي وقت، سيختار الصورة الصحيحة مباشرة.
+    </blockquote>
+
+    <h2>اختبار وضع مؤقت</h2>
+    <p>
+      قبل ربطه بـ systemd، يمكنك اختباره بتمرير وقت وهمي عن طريق تعديل مؤقت لمتغير الساعة:
+    </p>
+    <pre><code># عدّل السكريبت مؤقتاً واستبدل
+HOUR=$(date +%H)
+# بـ
+HOUR=20   # اختبر ساعة 8 مساءً
+
+# شغّل وراقب الخلفية تتغير
+dynamic-wallpaper</code></pre>
+
+    <h2>الربط بـ systemd — تشغيل تلقائي كل 15 دقيقة</h2>
+    <p>
+      أنشئ ملف الـ service أولاً في <code>~/.config/systemd/user/dynamic-wallpaper.service</code>:
+    </p>
+    <pre><code>[Unit]
+Description=Dynamic Wallpaper Switcher
+After=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/dynamic-wallpaper
+Environment=WAYLAND_DISPLAY=wayland-1
+Environment=XDG_RUNTIME_DIR=/run/user/%U</code></pre>
+
+    <p>
+      ثم أنشئ ملف الـ timer في <code>~/.config/systemd/user/dynamic-wallpaper.timer</code>:
+    </p>
+    <pre><code>[Unit]
+Description=Run Dynamic Wallpaper every 15 minutes
+Requires=dynamic-wallpaper.service
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target</code></pre>
+
+    <p>فعّله وشغّله:</p>
+    <pre><code># أعد تحميل إعدادات systemd
+systemctl --user daemon-reexec
+
+# فعّل الـ timer ليبدأ مع كل إقلاع
+systemctl --user enable --now dynamic-wallpaper.timer
+
+# تحقق من حالته
+systemctl --user status dynamic-wallpaper.timer</code></pre>
+
+    <blockquote>
+      ⏱️ الخيار <code>Persistent=true</code> مهم — إذا أُغلق الجهاز ثم فُتح، سيشغّل الـ timer فوراً
+      لتعويض أي دورة فاتت خلال فترة الإغلاق.
+    </blockquote>
+
+    <h2>تشغيل swww عند بدء Hyprland</h2>
+    <p>
+      تأكد أن <code>swww-daemon</code> يشتغل قبل أي محاولة لتغيير الخلفية.
+      أضف في <code>hyprland.conf</code>:
+    </p>
+    <pre><code>exec-once = swww-daemon
+exec-once = sleep 1 && dynamic-wallpaper</code></pre>
+
+    <p>
+      الـ <code>sleep 1</code> يعطي <code>swww-daemon</code> ثانية لينهض قبل أن يُستدعى السكريبت.
+    </p>
+
+    <h2>ربط الخلفية بألوان النظام (اختياري)</h2>
+    <p>
+      إذا كنت تستخدم Matugen لتوليد الألوان من الخلفية، يمكنك إضافة استدعائه داخل السكريبت
+      مباشرة بعد تطبيق الخلفية:
+    </p>
+    <pre><code># في نهاية dynamic-wallpaper، بعد swww img ...
+matugen image "$IMAGE_PATH"</code></pre>
+
+    <p>
+      هكذا كلما تغيرت الخلفية تلقائياً، تتغير معها ألوان الـ terminal والـ bar وكل ما يعتمد على Matugen —
+      سطح مكتب يتنفس مع الوقت حقاً.
+    </p>
+
+    <h2>أوامر مفيدة للإدارة</h2>
+    <pre><code># إيقاف الـ timer مؤقتاً
+systemctl --user stop dynamic-wallpaper.timer
+
+# تشغيل الخلفية يدوياً الآن
+systemctl --user start dynamic-wallpaper.service
+
+# متابعة logs الـ timer
+journalctl --user -u dynamic-wallpaper.service -f
+
+# عرض جميع الـ timers النشطة
+systemctl --user list-timers</code></pre>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

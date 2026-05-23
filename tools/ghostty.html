@@ -1,0 +1,237 @@
+<!--
+  title: Ghostty — هل هذا مستقبل طرفيات Hyprland؟
+  description: مراجعة شاملة لـ Ghostty من منظور مستخدم Hyprland — الأداء، التخصيص، ودعم Wayland
+  tag: طرفيات
+  date: 2026-04-23
+  icon: 👻
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+      
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../tools/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        أدوات وطرفيات
+      </a>
+      <div class="article-meta-tag">طرفيات</div>
+      <h1 class="article-page-title">Ghostty 👻 — هل هذا مستقبل طرفيات Hyprland؟</h1>
+      <p class="article-page-desc">مراجعة كاملة من منظور مستخدم Hyprland — لا مراجعة عامة، بل إجابة على الأسئلة التي تهمنا فعلاً.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        ٢٣ أبريل ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو Ghostty؟</h2>
+    <p>
+      Ghostty هو محاكي طرفية أُطلق في ديسمبر 2024، وصل إلى 50,000 نجمة على GitHub في أقل من سنة،
+      وأُضيف إلى مستودعات Ubuntu الافتراضية. بناه <strong>Mitchell Hashimoto</strong> —
+      الشخص الذي أنشأ Terraform وVagrant — وكُتب بالكامل بلغة <strong>Zig</strong>
+      مع تسريع GPU للرسم.
+    </p>
+    <p>
+      لكن السؤال الذي يهمنا نحن مستخدمي Hyprland: هل يستحق التبديل إليه، أم أنه مجرد ضجة من مجتمع macOS؟
+    </p>
+
+    <blockquote>
+      🎯 هذه ليست مراجعة عامة — هي إجابة على الأسئلة التي تهم مستخدمي Hyprland تحديداً:
+      كيف يعمل على Wayland؟ ما مدى قابليته للتخصيص؟ وكيف يقارن بـ Kitty وFoot؟
+    </blockquote>
+
+    <h2>البنية التقنية</h2>
+    <p>Ghostty مبني بشكل مختلف عن معظم الطرفيات:</p>
+    <ul>
+      <li><strong>اللغة:</strong> Zig — لغة أنظمة تعطيك أداء C بدون مشاكله</li>
+      <li><strong>على Linux:</strong> تطبيق GTK4 + libadwaita حقيقي مع OpenGL rendering</li>
+      <li><strong>على macOS:</strong> تطبيق SwiftUI حقيقي مع Metal rendering</li>
+      <li><strong>Multi-threaded:</strong> خيط منفصل للقراءة والكتابة والرسم لكل instance</li>
+      <li><strong>الترخيص:</strong> MIT مفتوح المصدر، يُدار كـ nonprofit بدون شركة خلفه</li>
+    </ul>
+    <p>
+      الفارق المهم: Ghostty ليس wrapper متعدد المنصات — هو مبني مع Linux graphics stack في الاعتبار من البداية.
+    </p>
+
+    <h2>دعم Wayland</h2>
+    <p>
+      Ghostty يعمل على Wayland بشكل أصلي عبر GTK4. <strong>لا يوجد XWayland fallback.</strong>
+      هذا يعني:
+    </p>
+    <ul>
+      <li>تكبير/تصغير صحيح على شاشات HiDPI</li>
+      <li>تعامل سليم مع input Hyprland</li>
+      <li>تكامل كامل مع قواعد النوافذ window rules</li>
+      <li>يتصرف كـ "مواطن Wayland محترم" — بدون مشاكل التوافق الشائعة</li>
+    </ul>
+
+    <h2>بروتوكول Kitty للصور</h2>
+    <p>
+      Ghostty يدعم <strong>Kitty Graphics Protocol</strong> بالكامل، يعني عرض الصور مباشرة داخل الطرفية يعمل.
+      إذا كنت تستخدم أدوات مثل <code>yazi</code> أو <code>lf</code> مع معاينة الصور، أو تعرض مخططات على الطرفية —
+      كل هذا يعمل بشكل مثالي.
+    </p>
+    <pre><code># اختبار بروتوكول الصور
+kitten icat ~/Pictures/wallpaper.png</code></pre>
+
+    <h2>جودة عرض الخطوط</h2>
+    <p>
+      عرض الخطوط في Ghostty ممتاز ويشبه جداً ما تراه في Kitty:
+    </p>
+    <ul>
+      <li>دعم كامل للـ ligatures</li>
+      <li>Nerd Fonts تعمل out of the box</li>
+      <li>Unicode و grapheme clustering صحيحَان — حتى الـ emoji المعقدة تظهر كحرف واحد</li>
+    </ul>
+    <p>
+      إذا قارنت بـ <strong>Foot</strong>: Foot أكثر حدة وصراحة، بينما Ghostty وKitty لهما نعومة مشابهة لما تراه على macOS.
+      الفرق خفي جداً إلا لمن يلاحظ التفاصيل.
+    </p>
+
+    <h2>الإعداد والتخصيص</h2>
+    <p>
+      ملف الإعداد في <code>~/.config/ghostty/config</code> — بدون JSON أو YAML أو TOML،
+      فقط <strong>key = value</strong> سطر بسطر.
+    </p>
+    <pre><code># مثال على إعداد Ghostty
+font-family = JetBrainsMono Nerd Font
+font-size = 13
+theme = catppuccin-mocha
+background-opacity = 0.95
+window-padding-x = 12
+window-padding-y = 8</code></pre>
+
+    <p>
+      لتطبيق التغييرات فوراً بدون إعادة تشغيل: <code>Ctrl+Shift+,</code>
+    </p>
+
+    <h3>الثيمات المدمجة</h3>
+    <p>
+      Ghostty يأتي مع مئات الثيمات المدمجة. تجدها في:
+    </p>
+    <pre><code>ls /usr/share/ghostty/themes/</code></pre>
+    <p>لتفعيل ثيم:</p>
+    <pre><code>theme = catppuccin-mocha</code></pre>
+
+    <p>
+      يدعم أيضاً ثيمات منفصلة للـ light/dark mode، وهو مفيد جداً مع نظام تبديل الثيمات الديناميكي.
+      كل ما تحتاجه هو template يكتب في ملف الإعداد عند تغيير الثيم.
+    </p>
+
+    <h2>Ghostty مقابل Kitty مقابل Foot</h2>
+    <table>
+      <thead>
+        <tr><th>الخاصية</th><th>Ghostty</th><th>Kitty</th><th>Foot</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Wayland Native</td><td>✅</td><td>✅</td><td>✅</td></tr>
+        <tr><td>GPU Acceleration</td><td>✅ OpenGL</td><td>✅ OpenGL</td><td>❌</td></tr>
+        <tr><td>Kitty Graphics Protocol</td><td>✅</td><td>✅</td><td>❌</td></tr>
+        <tr><td>جودة الخطوط</td><td>ممتازة</td><td>ممتازة</td><td>حادة/بسيطة</td></tr>
+        <tr><td>الثيمات المدمجة</td><td>مئات</td><td>محدودة</td><td>لا شيء</td></tr>
+        <tr><td>سرعة التهيئة</td><td>سريع</td><td>سريع</td><td>الأسرع</td></tr>
+        <tr><td>استهلاك الذاكرة</td><td>متوسط</td><td>متوسط</td><td>منخفض جداً</td></tr>
+        <tr><td>GTK4</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      </tbody>
+    </table>
+
+    <h2>هل يستحق التبديل؟</h2>
+    <p>
+      <strong>نعم، إذا:</strong>
+    </p>
+    <ul>
+      <li>تريد طرفية GTK4 تندمج بشكل طبيعي مع ثيمات libadwaita</li>
+      <li>تريد ثيمات مدمجة كثيرة بدون إعداد إضافي</li>
+      <li>تستخدم yazi أو أدوات تحتاج Kitty Graphics Protocol</li>
+      <li>تريد إعاداً ديناميكياً مع light/dark mode</li>
+    </ul>
+    <p>
+      <strong>ابقَ مع Kitty، إذا:</strong>
+    </p>
+    <ul>
+      <li>عندك إعداد Kitty متقدم تعبت في بنائه</li>
+      <li>تستخدم Kitty kittens (أدوات Kitty المدمجة)</li>
+    </ul>
+    <p>
+      <strong>ابقَ مع Foot، إذا:</strong>
+    </p>
+    <ul>
+      <li>تريد أقل استهلاك موارد ممكن</li>
+      <li>لا تحتاج Kitty Graphics Protocol</li>
+    </ul>
+
+    <blockquote>
+      💡 الخلاصة: Ghostty ليس مجرد hype. هو طرفية حقيقية مبنية بجدية لـ Linux، وتدعم Wayland بشكل أصلي.
+      إذا كنت تبحث عن بديل لـ Kitty أو تجربة جديدة — يستحق التجربة.
+    </blockquote>
+
+  </main>
+  <script src="../assets/js/app.js"></script>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

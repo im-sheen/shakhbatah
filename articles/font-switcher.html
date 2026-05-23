@@ -1,0 +1,148 @@
+<!--
+  title: بناء قائمة تغيير الخط في Hyprland باستخدام YAD
+  description: كيف تبني GUI font switcher لـ Hyprland باستخدام YAD لعرض نافذة اختيار الخط وتطبيقه على GTK3 وGTK4 عبر gsettings
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🔤
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">بناء قائمة تغيير الخط في Hyprland باستخدام YAD</h1>
+      <p class="article-page-desc">كيف تبني GUI font switcher باستخدام YAD لعرض نافذة اختيار الخط وتطبيقه على GTK.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو YAD؟</h2>
+    <p>
+      YAD (Yet Another Dialog) أداة تتيح بناء نوافذ GUI من Bash — بما فيها نافذة اختيار الخط. مثالية لبناء font switcher بدون كتابة أي كود GTK.
+    </p>
+
+    <h2>التثبيت</h2>
+    <pre><code>yay -S yad</code></pre>
+
+    <h2>عرض نافذة اختيار الخط</h2>
+    <pre><code>yad --font</code></pre>
+    <p>تعرض نافذة اختيار الخط مع قائمة جميع الخطوط المثبّتة وخيار الحجم والـ Style.</p>
+
+    <h2>سكريبت Font Switcher</h2>
+    <pre><code>#!/bin/bash
+# ~/.local/bin/font-switcher.sh
+
+# عرض نافذة اختيار الخط
+CHOSEN_FONT=$(yad --font   --title "اختر الخط"   --button="تطبيق:0"   --button="إلغاء:1")
+
+# إن تم اختيار خط
+if [ $? -eq 0 ] && [ -n "$CHOSEN_FONT" ]; then
+    # تطبيق على GTK3 وGTK4
+    gsettings set org.gnome.desktop.interface font-name "$CHOSEN_FONT"
+    
+    # إشعار بالتغيير
+    notify-send "الخط" "تم تطبيق: $CHOSEN_FONT"
+fi</code></pre>
+    <pre><code>chmod +x ~/.local/bin/font-switcher.sh</code></pre>
+
+    <h2>إضافة window rule لنافذة YAD</h2>
+    <pre><code># في windowrules.conf
+windowrulev2 = float, title:^(اختر الخط)$
+windowrulev2 = center, title:^(اختر الخط)$
+windowrulev2 = size 600 500, title:^(اختر الخط)$</code></pre>
+
+    <h2>تطبيق الخط على تطبيقات محددة</h2>
+    <p>بعد اختيار الخط، يمكن تطبيقه على تطبيقات بعينها:</p>
+    <pre><code># Waybar — في style.css
+* { font-family: "اسم الخط"; }
+
+# Rofi — في ملف الثيم
+font: "اسم الخط 11";
+
+# Kitty
+font_family اسم الخط</code></pre>
+
+    <h2>تغيير وزن الخط لـ GTK</h2>
+    <p>
+      تغيير الوزن (Bold/Medium) عبر gsettings لا يعمل دائماً. الطريقة الموثوقة هي <code>gtk.css</code>:
+    </p>
+    <pre><code>/* ~/.config/gtk-3.0/gtk.css */
+* {
+    font-weight: 500;  /* Medium */
+}</code></pre>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

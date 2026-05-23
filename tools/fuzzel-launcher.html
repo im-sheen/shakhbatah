@@ -1,0 +1,354 @@
+<!--
+  title: Fuzzel — مشغّل التطبيقات الذي لم تجرّبه بعد
+  description: مشغّل Wayland خفيف وسريع جداً، يظهر في لحظة واحدة ويختفي بنفس السرعة — إعداد، تخصيص، واستخدامه أكثر من مجرد launcher
+  tag: الأدوات
+  date: 2026-04-26
+  icon: ⚡
+  author: شخبطه
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه | Fuzzel</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html" class="active">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../tools/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للأدوات
+      </a>
+      <div class="article-meta-tag">الأدوات</div>
+      <h1 class="article-page-title">Fuzzel — مشغّل التطبيقات الذي لم تجرّبه بعد</h1>
+      <p class="article-page-desc">مشغّل Wayland خفيف وسريع جداً، يظهر في لقطة واحدة — إعداد كامل، تخصيص، وأكثر من مجرد app launcher.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ٢٦ أبريل ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما المشكلة مع Rofi؟</h2>
+    <p>
+      كم من الوقت يستغرق مشغّل التطبيقات لديك ليظهر على الشاشة بعد ضغطة المفتاح؟ فكّر في الأمر. تضغط
+      <code>Super+D</code> أو أي مفتاح مخصّص لديك، ثم هناك توقّف — ربما 200 ميلي ثانية، ربما 400.
+      Rofi يحتاج لتحميل الثيم، تحليل CSS، رسم الأيقونات، وبناء التخطيط. إنه سريع بالمقاييس العادية،
+      لكنك تشعر بالتأخير في كل مرة تقريباً.
+    </p>
+    <p>
+      تخيّل الآن مشغّلاً يظهر في لقطة واحدة. لا مبالغة — لقطة واحدة فعلاً. تضغط المفتاح وهو هناك.
+      جاهز للإدخال. لا تحميل، لا وميض، فقط فوري. هذا هو <strong>Fuzzel</strong>.
+    </p>
+
+    <h2>ما هو Fuzzel؟</h2>
+    <p>
+      Fuzzel هو مشغّل تطبيقات Wayland أصيل وأداة بحث ضبابي (fuzzy finder)، من تطوير نفس صاحب
+      الطرفية <code>foot</code> — الطرفية فائقة السرعة تلك. مكتوب بلغة C، ويرسم مباشرةً عبر بروتوكول
+      Wayland layer shell. لا XWayland، لا طبقات توافق، مصمّم لفعل شيء واحد بامتياز: أن تجد التطبيق
+      وتشغّله بأسرع ما يمكن جسدياً.
+    </p>
+
+    <p>النموذج الذهني بسيط: <strong>Fuzzel هو لـ Rofi ما foot هو لـ kitty</strong>.</p>
+
+    <ul>
+      <li>حيث Rofi غني بالميزات — تخصيص معقّد، أوضاع متعددة، قدرات scripting واسعة</li>
+      <li>Fuzzel يجرّد كل ذلك إلى الأساسيات: يفتح، تكتب، يطابق، تضغط Enter، يشغّل</li>
+      <li>التفاعل بالكامل يستغرق وقتاً أقل مما تحتاجه رسوم fade في Rofi</li>
+    </ul>
+
+    <p>وله وضعان:</p>
+    <ul>
+      <li><strong>وضع المشغّل الافتراضي:</strong> يمسح مجلد <code>~/.local/share/applications</code> وكل تطبيقات النظام</li>
+      <li><strong>وضع dmenu:</strong> يقرأ أسطراً من stdin ويسمح باختيار واحدة تُطبع في stdout — أداة تحديد عامة لأي workflow</li>
+    </ul>
+
+    <h2>لماذا يبدو Fuzzel فورياً؟</h2>
+
+    <h3>١. الرسم المباشر على Wayland</h3>
+    <p>
+      Fuzzel يرسم عبر Wayland layer shell مباشرةً. لا pipeline لـ toolkit، لا محرّك CSS، لا ملف ثيم
+      معقّد بتدرّجات وظلال وحاويات متداخلة. يرسم مباشرةً على سطح Wayland. المسار من ضغطة المفتاح
+      إلى البكسل على الشاشة أقل خطوات من أي مكافئ في Rofi.
+    </p>
+
+    <h3>٢. Cache للتطبيقات</h3>
+    <p>
+      Fuzzel يتذكّر التطبيقات الأكثر استخداماً ويرتّبها في الأعلى. المرة الأولى يمسح ملفات <code>.desktop</code>،
+      وبعدها القائمة محفوظة — لا مسح، لا تحليل، لا بناء. تفتحه والقائمة هناك فوراً.
+    </p>
+
+    <h3>٣. خوارزمية مطابقة محسّنة</h3>
+    <p>
+      Fuzzel يتحمّل أكثر من 100,000 سطر من الإدخال ويفلتر في الوقت الفعلي أثناء الكتابة.
+      لتطبيق يحتوي على ~200 تطبيق فقط، المطابقة فورية تماماً. لن تكتب أسرع مما يفلتر Fuzzel.
+    </p>
+
+    <blockquote>
+      💡 النتيجة: عنق الزجاجة هو أصابعك وليس البرنامج.
+    </blockquote>
+
+    <h2>التثبيت</h2>
+
+    <p>Fuzzel موجود في المستودعات الرسمية:</p>
+
+    <pre><code># Arch Linux
+yay -S fuzzel
+# أو
+sudo pacman -S fuzzel</code></pre>
+
+    <h2>إضافته لإعدادات Hyprland</h2>
+
+    <p>في ملف <code>binds.conf</code>:</p>
+
+    <pre><code># تبديل Fuzzel (toggle) — يغلق إن كان مفتوحاً
+bind = $mainMod, D, exec, pkill fuzzel || fuzzel</code></pre>
+
+    <p>
+      الجملة السحرية هنا هي <code>pkill fuzzel || fuzzel</code>: إذا كان Fuzzel يعمل يقتله،
+      وإذا لم يكن يعمل يشغّله. زر واحد للفتح والإغلاق.
+    </p>
+
+    <h2>إلغاء الأنيميشن لتجربة حقيقية فورية</h2>
+
+    <p>
+      بشكل افتراضي سيظهر بنفس أنيميشن النوافذ العادية. لتعطيله في <code>windowrules.conf</code>:
+    </p>
+
+    <pre><code>windowrulev2 = noanim, class:^(fuzzel)$</code></pre>
+
+    <p>بعد هذا يظهر Fuzzel بلا أي تأخير — حرفياً فورياً.</p>
+
+    <h2>ملف الإعداد</h2>
+
+    <p>ملف الإعداد موجود في: <code>~/.config/fuzzel/fuzzel.ini</code></p>
+
+    <pre><code>[main]
+font=Tajawal:size=12
+fields=name,generic,comment,categories,keywords
+show-actions=yes
+lines=10
+width=35
+layer=overlay
+exit-on-keyboard-focus-loss=yes
+
+[colors]
+background=0f0f0fff
+text=f0e6c8ff
+match=f5c518ff
+selection=1a1a1aff
+selection-text=f5c518ff
+selection-match=ffe066ff
+border=c9920aff
+
+[border]
+width=2
+radius=12
+
+[dmenu]
+mode=text</code></pre>
+
+    <h3>شرح الخيارات المهمة</h3>
+
+    <ul>
+      <li>
+        <code>fields</code> — يتحكم فيما يطابقه Fuzzel. بالإضافة للاسم يطابق الأوصاف والفئات والكلمات المفتاحية.
+        يعني كتابة <code>browser</code> ستجد Firefox حتى لو الكلمة ليست في اسمه.
+      </li>
+      <li>
+        <code>lines=10</code> — عدد النتائج المرئية. 10 كافية دون أن تسيطر على الشاشة.
+      </li>
+      <li>
+        <code>width=35</code> — العرض بالحروف لا البكسل. 35 حرفاً مثالية لأسماء التطبيقات.
+      </li>
+      <li>
+        <code>layer=overlay</code> — يجعل Fuzzel يظهر فوق كل شيء بما فيه النوافذ كاملة الشاشة.
+      </li>
+      <li>
+        <code>exit-on-keyboard-focus-loss</code> — يغلق Fuzzel عند الضغط خارجه.
+      </li>
+    </ul>
+
+    <h3>الألوان</h3>
+    <p>
+      ألوان Fuzzel بصيغة RGBA hex — ثمانية أحرف. الحرفان الأخيران هما الشفافية:
+      <code>ff</code> معتم تماماً، <code>ee</code> شفافية خفيفة، <code>dd</code> أكثر.
+    </p>
+
+    <h3>خاصية include — لمن يستخدم Theme Switcher</h3>
+    <p>
+      Fuzzel يدعم توجيه <code>include</code> — يمكنك وضع الألوان في ملف منفصل واستيراده:
+    </p>
+
+    <pre><code>[main]
+include=~/.config/fuzzel/colors.ini</code></pre>
+
+    <p>
+      هذا مثالي لربط Fuzzel بنظام تبديل الثيمات الخاص بك. كل ما تحتاجه هو تحديث ملف الألوان
+      وإعادة تشغيل Fuzzel.
+    </p>
+
+    <h2>Fuzzel أكثر من مجرد launcher</h2>
+
+    <p>
+      هنا تصبح الأمور مثيرة. وضع dmenu يحوّل Fuzzel من مشغّل تطبيقات إلى أداة تحديد عامة.
+    </p>
+
+    <h3>قائمة الطاقة (Power Menu)</h3>
+
+    <pre><code>#!/bin/bash
+# power-menu.sh
+
+choice=$(printf "🔒 قفل\n💤 سكون\n🚪 تسجيل خروج\n🔄 إعادة تشغيل\n⏻ إيقاف" \
+  | fuzzel --dmenu --lines=5 --width=20 --prompt="الطاقة: ")
+
+case "$choice" in
+  *"قفل"*)     hyprlock ;;
+  *"سكون"*)    systemctl suspend ;;
+  *"خروج"*)    hyprctl dispatch exit ;;
+  *"إعادة"*)   systemctl reboot ;;
+  *"إيقاف"*)   systemctl poweroff ;;
+esac</code></pre>
+
+    <p>ثم ربطه في Hyprland:</p>
+
+    <pre><code>bind = $mainMod SHIFT, E, exec, ~/.config/hypr/scripts/power-menu.sh</code></pre>
+
+    <h3>سجل الحافظة مع cliphist</h3>
+
+    <pre><code>bind = $mainMod, V, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy</code></pre>
+
+    <p>
+      سجل الحافظة بالكامل قابل للبحث عبر Fuzzel — وهو أسرع من Rofi لهذا الغرض بسبب
+      قدرته على التعامل مع آلاف الإدخالات بسرعة فائقة.
+    </p>
+
+    <h3>البحث في الويب</h3>
+
+    <pre><code>bind = $mainMod, W, exec, \
+  fuzzel --dmenu --lines=0 --prompt="بحث: " | \
+  xargs -I{} xdg-open "https://duckduckgo.com/?q={}"</code></pre>
+
+    <p>اكتب أي شيء واضغط Enter ليفتح في المتصفح فوراً.</p>
+
+    <h2>Fuzzel مقابل Rofi — المقارنة الصادقة</h2>
+
+    <h3>ما تكسبه مع Fuzzel</h3>
+    <ul>
+      <li>⚡ سرعة ظهور حقيقية — ليست مجرد انطباع</li>
+      <li>🎯 إعداد بسيط وملف INI صغير سهل الصيانة</li>
+      <li>🖼️ دعم أيقونات مدمج بدون إعدادات إضافية</li>
+      <li>📊 ترتيب بالتكرار تلقائياً من الصندوق</li>
+      <li>💾 استهلاك موارد أقل بكثير</li>
+    </ul>
+
+    <h3>ما تخسره</h3>
+    <ul>
+      <li>🎨 التخصيص البصري المعقّد — Rofi يتيح CSS كامل، Fuzzel يعطيك ألوان وهوامش وخط فقط</li>
+      <li>📝 أوضاع Scripting المتقدمة — Rofi له بروتوكول scripting مدمج لقوائم متعددة الخطوات بحالة</li>
+      <li>🔧 أوضاع متعددة مدمجة (SSH، window switching، إلخ)</li>
+    </ul>
+
+    <blockquote>
+      💡 الخلاصة: إذا كان ثيم Rofi جزء مرئي أساسي من رايسك وقضيت ساعات في صنعه — احتفظ بـ Rofi.
+      إذا كان مشغّل التطبيقات أداة تريدها تظهر فوراً، تعمل، وتختفي — Fuzzel أفضل من أي شيء آخر على Wayland.
+    </blockquote>
+
+    <h2>ملف الإعداد الكامل الجاهز للاستخدام</h2>
+
+    <pre><code>[main]
+font=Tajawal:size=12
+fields=name,generic,comment,categories,keywords
+show-actions=yes
+lines=10
+width=35
+layer=overlay
+exit-on-keyboard-focus-loss=yes
+icons.enabled=yes
+icons.size=24
+
+[colors]
+background=0f0f0fff
+text=f0e6c8ff
+match=f5c518ff
+selection=1e1e1eff
+selection-text=f5c518ff
+selection-match=ffe066ff
+border=c9920aff
+prompt=9a8a6aff
+
+[border]
+width=2
+radius=12</code></pre>
+
+    <p>ضعه في <code>~/.config/fuzzel/fuzzel.ini</code> وشغّل Fuzzel لترى النتيجة فوراً.</p>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

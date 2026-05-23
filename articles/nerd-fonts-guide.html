@@ -1,0 +1,142 @@
+<!--
+  title: استخدام Nerd Fonts بالطريقة الصحيحة في Hyprland
+  description: الفرق بين نسخ Regular وMono وPropo من Nerd Fonts وأيها تستخدم في Waybar مقابل التيرمنال لضمان محاذاة صحيحة للأيقونات
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🔤
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">استخدام Nerd Fonts بالطريقة الصحيحة في Hyprland</h1>
+      <p class="article-page-desc">الفرق بين نسخ Regular وMono وPropo — وأيها تستخدم في Waybar مقابل التيرمنال.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المشكلة الشائعة</h2>
+    <p>
+      إن لاحظت أيقونات Nerd Font غير محاذية بشكل صحيح في Waybar — إما متلاصقة مع النص أو بينها مسافة كبيرة — فالسبب هو اختيار نسخة الخط الخاطئة.
+    </p>
+
+    <h2>أنواع نسخ Nerd Fonts</h2>
+    <table>
+      <thead><tr><th>النسخة</th><th>الاستخدام</th><th>الوصف</th></tr></thead>
+      <tbody>
+        <tr><td>Regular</td><td>عام</td><td>النسخة الأصلية بدون تعديلات على التباعد</td></tr>
+        <tr><td>Mono</td><td>التيرمنال</td><td>أيقونات أصغر، مثالية لنصوص monospace</td></tr>
+        <tr><td>Propo</td><td>Waybar والـ UI</td><td>تباعد proportional — الأيقونات تظهر بحجمها الصحيح في السياقات غير-monospace</td></tr>
+      </tbody>
+    </table>
+
+    <h2>القاعدة العملية</h2>
+    <ul>
+      <li><strong>Waybar وRofi وأي واجهة UI</strong> → استخدم نسخة <code>Propo</code></li>
+      <li><strong>التيرمنال (Kitty أو Foot)</strong> → استخدم النسخة العادية أو <code>Mono</code></li>
+    </ul>
+
+    <h2>مثال: Waybar</h2>
+    <pre><code>/* في style.css */
+* {
+    font-family: "JetBrainsMono Nerd Font Propo", "SF Pro Display";
+}</code></pre>
+
+    <h2>مثال: Kitty</h2>
+    <pre><code># في kitty.conf
+font_family      JetBrainsMono Nerd Font
+# أو
+font_family      GeistMono Nerd Font</code></pre>
+
+    <h2>تحميل Nerd Fonts</h2>
+    <pre><code># من AUR (مثال: JetBrains Mono)
+yay -S ttf-jetbrains-mono-nerd
+
+# أو من الموقع الرسمي
+# nerdfonts.com → Downloads → اختر الخط</code></pre>
+
+    <h2>معاينة الأيقونات</h2>
+    <p>
+      موقع <a href="https://www.nerdfonts.com/cheat-sheet" target="_blank" rel="noopener">nerdfonts.com/cheat-sheet</a> يعرض جميع الأيقونات مع أسمائها وكود Unicode الخاص بها.
+    </p>
+
+    <blockquote>
+      💡 بمجرد اختيار نسخة Propo لـ Waybar، ستختفي مشكلة التباعد تلقائياً دون الحاجة لإضافة مسافات يدوياً في الكونفيغ.
+    </blockquote>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

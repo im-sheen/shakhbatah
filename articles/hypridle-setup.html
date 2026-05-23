@@ -1,0 +1,262 @@
+<!--
+  title: Hypridle — إدارة الخمول في Hyprland
+  description: كيف تضبط Hypridle لإيقاف الشاشة وقفل الجلسة وتعليق النظام تلقائياً عند الغياب — شرح كل خيار مع config جاهز للنسخ
+  tag: الإعداد
+  date: 2026-05-16
+  icon: 💤
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الإعداد</div>
+      <h1 class="article-page-title">Hypridle — إدارة الخمول في Hyprland</h1>
+      <p class="article-page-desc">كيف تضبط Hypridle لإيقاف الشاشة وقفل الجلسة وتعليق النظام تلقائياً — شرح كامل مع config جاهز للنسخ.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المشكلة: Hyprland لا يفعل شيئاً عند الغياب</h2>
+    <p>
+      بدون Hypridle، شاشتك تبقى مضاءة إلى الأبد ما إن تبتعد عن الجهاز. لا قفل تلقائي، لا إيقاف للشاشة، لا تعليق للنظام. إذا كنت على لابتوب فبطاريتك تستنزف بلا مبرر، وعلى الديسكتوب فأنت تهدر طاقة في كل مرة تبتعد.
+    </p>
+    <p>
+      <strong>Hypridle</strong> هو daemon إدارة الخمول الرسمي لـ Hyprland. يراقب غياب أي حركة (ماوس أو كيبورد)، ثم ينفّذ ما تأمره به — سواء كان إطفاء الشاشة أو قفل الجلسة أو تعليق النظام كلياً.
+    </p>
+
+    <h2>التثبيت</h2>
+    <p>
+      إذا كنت على Arch Linux مع Hyprland الرسمي:
+    </p>
+    <pre><code>sudo pacman -S hypridle</code></pre>
+    <p>
+      وإذا كنت تستخدم نسخة <code>hyprland-git</code>، ستحتاج إلى النسخة المقابلة:
+    </p>
+    <pre><code>yay -S hypridle-git</code></pre>
+    <blockquote>
+      ⚠️ تأكد من تطابق النسخة: إذا ثبّتت <code>hyprland-git</code>، استخدم <code>hypridle-git</code> أيضاً لتجنب مشاكل التوافق.
+    </blockquote>
+
+    <h2>التشغيل التلقائي مع Hyprland</h2>
+    <p>
+      حتى يعمل Hypridle عند كل تسجيل دخول، أضف هذا السطر إلى ملف إعدادات Hyprland:
+    </p>
+    <pre><code>exec-once = hypridle</code></pre>
+    <p>
+      إذا كنت تستخدم UWSM لإدارة الجلسة بدلاً من ذلك:
+    </p>
+    <pre><code>systemctl --user enable --now hypridle.service</code></pre>
+
+    <h2>ملف الإعداد</h2>
+    <p>
+      Hypridle يقرأ إعداداته من:
+    </p>
+    <pre><code>~/.config/hypr/hypridle.conf</code></pre>
+    <blockquote>
+      📌 هذا الملف <strong>مطلوب</strong> — بدونه لن يعمل Hypridle.
+    </blockquote>
+    <p>
+      بنية الملف تتكون من قسمين:
+    </p>
+    <ul>
+      <li><strong>general</strong> — إعدادات عامة تسري على كل شيء (مثل أمر القفل وما يحدث قبل/بعد السكون)</li>
+      <li><strong>listener</strong> — قواعد مُوقَّتة، كل واحدة تنتظر فترة خمول محددة ثم تنفّذ أمراً</li>
+    </ul>
+
+    <h2>شرح قسم general</h2>
+    <pre><code>general {
+    lock_cmd = pidof hyprlock || hyprlock
+    before_sleep_cmd = loginctl lock-session
+    after_sleep_cmd = hyprctl dispatch dpms on
+}</code></pre>
+
+    <h3>lock_cmd</h3>
+    <p>
+      هذا الأمر يُنفَّذ حين يريد Hypridle قفل الجلسة. السطر <code>pidof hyprlock || hyprlock</code> يعمل بذكاء: يتحقق أولاً إذا كان Hyprlock يعمل بالفعل، فإذا كان كذلك لا يفعل شيئاً، وإذا لم يكن يشغّله. هذا يمنع فتح أكثر من شاشة قفل واحدة فوق بعضها — وهو خطأ شائع يسبب مشاكل بصرية كبيرة.
+    </p>
+
+    <h3>before_sleep_cmd</h3>
+    <p>
+      ينفَّذ قُبيل دخول الجهاز في وضع السكون. <code>loginctl lock-session</code> يقفل الجلسة حتى يرى المستخدم شاشة القفل حين يعود ويفتح الغطاء.
+    </p>
+
+    <h3>after_sleep_cmd</h3>
+    <p>
+      ينفَّذ حين يستيقظ الجهاز من السكون. الأمر <code>hyprctl dispatch dpms on</code> يعيد تشغيل الشاشة. بعض الإعدادات تحتاج هذا الأمر وبعضها لا — جرّب وشوف.
+    </p>
+
+    <h2>شرح قسم listener</h2>
+    <p>
+      كل <code>listener</code> يحتوي على ثلاثة عناصر:
+    </p>
+    <ul>
+      <li><code>timeout</code> — المدة بالثواني قبل تنفيذ الأمر</li>
+      <li><code>on-timeout</code> — الأمر الذي يُنفَّذ عند انتهاء المهلة</li>
+      <li><code>on-resume</code> — الأمر الذي يُنفَّذ حين يعود المستخدم (اختياري)</li>
+    </ul>
+    <blockquote>
+      💡 يمكنك إضافة عدد غير محدود من الـ listeners. وبما أن الأوامر نصية عادية، يمكنك ربط سكريبتات كاملة بها — مثل تبديل وضع GPU أو تغيير الثيم عند اكتشاف انخفاض البطارية.
+    </blockquote>
+
+    <h2>الـ Config الكامل الموصى به</h2>
+    <p>
+      هذا الإعداد يمر بأربع مراحل متتالية: تعتيم الشاشة، ثم إطفاؤها، ثم القفل، ثم التعليق بعد نصف ساعة.
+    </p>
+    <pre><code>general {
+    lock_cmd = pidof hyprlock || hyprlock
+    before_sleep_cmd = loginctl lock-session
+    after_sleep_cmd = hyprctl dispatch dpms on
+}
+
+# المرحلة 1: تعتيم الشاشة بعد 2.5 دقيقة
+listener {
+    timeout = 150
+    on-timeout = brightnessctl -s set 10
+    on-resume = brightnessctl -r
+}
+
+# المرحلة 2: قفل الجلسة بعد 5 دقائق
+listener {
+    timeout = 300
+    on-timeout = loginctl lock-session
+}
+
+# المرحلة 3: إطفاء الشاشة بعد 5.5 دقائق
+listener {
+    timeout = 330
+    on-timeout = hyprctl dispatch dpms off
+    on-resume = hyprctl dispatch dpms on && brightnessctl -r
+}
+
+# المرحلة 4: تعليق النظام بعد 30 دقيقة
+listener {
+    timeout = 1800
+    on-timeout = systemctl suspend
+}</code></pre>
+
+    <h3>ترتيب المراحل مهم</h3>
+    <p>
+      لاحظ أن إطفاء الشاشة (330 ثانية) يأتي بعد القفل (300 ثانية). يمكنك عكس الترتيب حسب تفضيلك — أو حتى دمجهما في نفس الـ listener باستخدام <code>&&</code>:
+    </p>
+    <pre><code>listener {
+    timeout = 300
+    on-timeout = loginctl lock-session && hyprctl dispatch dpms off
+    on-resume = hyprctl dispatch dpms on
+}</code></pre>
+
+    <h2>اختبار الإعداد بدون انتظار</h2>
+    <p>
+      لا تنتظر 5 دقائق لتختبر إعداداتك — غيّر الـ timeout مؤقتاً إلى 10 ثوانٍ واختبر:
+    </p>
+    <pre><code># تشغيل Hypridle يدوياً في الخلفية للاختبار
+hypridle &amp; disown</code></pre>
+    <p>
+      وإذا أردت التأكد من أنه يعمل فعلاً:
+    </p>
+    <pre><code>pgrep hypridle</code></pre>
+    <p>
+      إذا أعاد رقماً (PID)، فهو يعمل. بعد الانتهاء من الاختبار، أعد الـ timeouts لقيمها الأصلية وأعد تشغيل Hyprland.
+
+    <h2>مشاكل شائعة وحلولها</h2>
+
+    <h3>Hypridle لا يعمل أبداً</h3>
+    <p>
+      الأسباب المحتملة:
+    </p>
+    <ul>
+      <li>نسيت إضافة <code>exec-once = hypridle</code> في إعدادات Hyprland</li>
+      <li>ملف <code>hypridle.conf</code> غير موجود أو فيه خطأ في الصياغة</li>
+      <li>تعارض بين نسخة hypridle ونسخة hyprland (git vs stable)</li>
+    </ul>
+    <p>
+      تحقق بتشغيله يدوياً من الطرفية لتشاهد أي خطأ:
+    </p>
+    <pre><code>hypridle</code></pre>
+
+    <h3>الشاشة تُطفأ لكن لا يحدث قفل (أو العكس)</h3>
+    <p>
+      راجع ترتيب الـ listeners وقيم الـ timeout. إذا كان timeout القفل أكبر من timeout إطفاء الشاشة، ستُطفأ الشاشة أولاً ثم يحدث القفل — وهذا قد لا يكون ما تريده. قرر أي السلوكين تريد أن يأتي أولاً وعدّل الأرقام بناءً على ذلك.
+    </p>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

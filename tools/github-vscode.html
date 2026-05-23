@@ -1,0 +1,184 @@
+<!--
+  title: كيف تربط مشروعك بـ GitHub عبر VS Code
+  description: دليل عملي لربط مشروعك بـ GitHub من داخل VS Code، من تثبيت Git حتى رفع أول commit بدون أوامر معقدة.
+  tag: Git
+  date: 2026-03-07
+  icon: 🔗
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <meta name="description" content="دليل عملي لربط مشروعك بـ GitHub من داخل VS Code، من تثبيت Git حتى رفع أول commit بدون أوامر معقدة.">
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../tools/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        أدوات
+      </a>
+      <div class="article-meta-tag">Git</div>
+      <h1 class="article-page-title">كيف تربط مشروعك بـ GitHub عبر VS Code</h1>
+      <p class="article-page-desc">دليل عملي لربط مشروعك بـ GitHub من داخل VS Code، من تثبيت Git حتى رفع أول commit بدون أوامر معقدة.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        2026-03-07
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <p>
+        في هذا الدليل ستتعلم كيف تربط مشروعك بـ GitHub مباشرة من داخل VS Code،
+        بدون الحاجة لحفظ أوامر كثيرة — كل شيء من واجهة بسيطة.
+      </p>
+
+    <p>تأكد من توفر الأدوات التالية:</p>
+
+    <ul>
+<li><strong>Visual Studio Code</strong> — محرر الكود</li>
+<li><strong>Git</strong> — أداة إدارة النسخ (سنثبّتها في الخطوة التالية)</li>
+<li>حساب على <strong>GitHub</strong></li>
+</ul>
+
+    <pre><code>sudo apt install git</code></pre>
+
+    <p>قم بتحميله من الموقع الرسمي: <a href="https://git-scm.com" target="_blank">git-scm.com</a> ثم ثبّته بالإعدادات الافتراضية.</p>
+
+    <p>بعد التثبيت، تحقق أن كل شيء يعمل:</p>
+
+    <pre><code>git --version</code></pre>
+
+    <blockquote>💡إذا رجعت لك نسخة مثلgit version 2.x.xفالتثبيت نجح.</blockquote>
+
+    <ol>
+<li>افتح VS Code.</li>
+<li>افتح نافذة الإضافات بالضغط على <code>Ctrl + Shift + X</code>.</li>
+<li>ابحث عن: <strong>GitHub Pull Requests and Issues</strong></li>
+<li>اضغط <strong>Install</strong>.</li>
+</ol>
+
+    <blockquote>ℹ️هذه الإضافة تتيح لك تسجيل الدخول وإدارة مستودعاتك مباشرة من VS Code.</blockquote>
+
+    <ol>
+<li>بعد تثبيت الإضافة، سيظهر إشعار في الزاوية — اضغط <strong>Sign in</strong>.</li>
+<li>سيفتح المتصفح تلقائياً على صفحة تسجيل الدخول.</li>
+<li>سجّل دخولك إلى حساب GitHub.</li>
+<li>اضغط <strong>Authorize Visual Studio Code</strong>.</li>
+<li>عد إلى VS Code — ستجد حسابك متصلاً.</li>
+</ol>
+
+    <p>
+        هذه الخطوة مهمة — Git يستخدم هذه المعلومات لتعريف هوية كل commit تقوم بها.
+        افتح Terminal داخل VS Code بالضغط على <code>Ctrl + `</code> ثم اكتب:
+      </p>
+
+    <pre><code>git config --global user.name "اسم المستخدم"
+git config --global user.email "الايميل"</code></pre>
+
+    <p>مثال:</p>
+
+    <pre><code>git config --global user.name "2b-3c"
+git config --global user.email "ahmed@gmail.com"</code></pre>
+
+    <blockquote>⚠️استخدم نفس الإيميل المسجّل في حساب GitHub حتى تظهر مساهماتك بشكل صحيح في ملفك الشخصي.</blockquote>
+
+    <ol>
+<li>افتح مجلد مشروعك في VS Code عبر <code>File → Open Folder</code>.</li>
+<li>اضغط على أيقونة <strong>Source Control</strong> في الشريط الجانبي (أو <code>Ctrl + Shift + G</code>).</li>
+<li>اضغط <strong>Initialize Repository</strong> — سيُنشئ Git محلياً داخل مجلدك.</li>
+<li>في خانة الرسالة اكتب وصفاً للتغييرات، مثل: <code>first commit</code></li>
+<li>اضغط <strong>Commit</strong>.</li>
+<li>اضغط <strong>Publish to GitHub</strong>.</li>
+<li>اختر <strong>Public</strong> (مرئي للجميع) أو <strong>Private</strong> (خاص).</li>
+</ol>
+
+    <blockquote>🚀VS Code سيُنشئ المستودع في GitHub ويرفع جميع ملفاتك تلقائياً في خطوة واحدة.</blockquote>
+
+    <p>كلما أجريت تعديلات على مشروعك وأردت رفعها إلى GitHub:</p>
+
+    <ol>
+<li>افتح <strong>Source Control</strong>.</li>
+<li>اكتب رسالة تصف التعديل.</li>
+<li>اضغط <strong>Commit</strong>.</li>
+<li>اضغط <strong>Push</strong>.</li>
+</ol>
+
+    <p>سيتم تحديث المستودع في GitHub فوراً.</p>
+
+    <blockquote>💡اجعل رسائل الـ commit واضحة ومعبّرة، مثل:fix navbar bugأوadd about page.
+          هذا يساعدك لاحقاً على فهم تاريخ مشروعك.</blockquote>
+
+  </main>
+
+  <script src="../assets/js/app.js"></script>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!--
+  title: أفضل مدير ملفات لـ Hyprland
+  description: مقارنة بين أشهر مديري الملفات في Hyprland — Nautilus وThunar ومديري الملفات الآخرين مع ذكر المزايا والعيوب
+  tag: أدوات
+  date: 2026-05-16
+  icon: 📁
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">أدوات</div>
+      <h1 class="article-page-title">أفضل مدير ملفات لـ Hyprland</h1>
+      <p class="article-page-desc">مقارنة بين أشهر مديري الملفات — Nautilus وThunar وغيرهما مع ذكر المزايا والعيوب.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المقارنة السريعة</h2>
+    <table>
+      <thead><tr><th>المدير</th><th>الإطار</th><th>التخصيص</th><th>Live Theme Reload</th></tr></thead>
+      <tbody>
+        <tr><td>Nautilus</td><td>GTK4</td><td>محدود GTK4</td><td>❌ (يحتاج إعادة فتح)</td></tr>
+        <tr><td>Thunar</td><td>GTK3</td><td>ممتاز</td><td>✅</td></tr>
+        <tr><td>Dolphin</td><td>Qt</td><td>واسع</td><td>✅ (مع Kvantum)</td></tr>
+        <tr><td>Nemo</td><td>GTK3</td><td>جيد</td><td>✅</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Nautilus — الأجمل، لكن فيه عيب</h2>
+    <p>
+      Nautilus مبني على GTK4 — رسومياً هو الأجمل وأكثر المديرين حداثةً. لكن GTK4 لا يدعم Live Theme Reloading، مما يعني أنك ستحتاج لإغلاقه وإعادة فتحه عند تغيير الثيم.
+    </p>
+    <pre><code>sudo pacman -S nautilus</code></pre>
+    <p>
+      إغلاقه أحياناً لا يكفي — يجب قتله كاملاً:
+    </p>
+    <pre><code>killall -9 nautilus</code></pre>
+
+    <h2>Thunar — الأفضل مع Theme Switcher</h2>
+    <p>
+      Thunar مبني على GTK3 — يتغير مظهره فوراً مع كل تغيير للثيم دون الحاجة لإعادة فتحه. الخيار الأمثل إن كنت تستخدم theme switcher ديناميكي.
+    </p>
+    <pre><code>sudo pacman -S thunar thunar-archive-plugin</code></pre>
+
+    <h2>Dolphin — ملك Qt</h2>
+    <p>
+      إن كنت تستخدم تطبيقات KDE كثيراً وأعددت Kvantum بشكل صحيح، Dolphin يتوافق مع مظهر النظام ويقدّم ميزات قوية مثل Split View والـ Tabs المدمج.
+    </p>
+    <pre><code>sudo pacman -S dolphin</code></pre>
+
+    <h2>Yazi — مدير ملفات التيرمنال</h2>
+    <p>
+      إن كنت تفضّل العمل من التيرمنال، Yazi هو الأسرع والأجمل — مع دعم معاينة الصور مباشرة في التيرمنال.
+    </p>
+    <pre><code>sudo pacman -S yazi</code></pre>
+
+    <h2>التوصية</h2>
+    <p>
+      إن كنت تستخدم theme switcher ديناميكي → <strong>Thunar</strong>. إن كنت تهتم بالجماليات أكثر ولا تغيّر الثيم كثيراً → <strong>Nautilus</strong>. إن كنت تفضّل الـ terminal → <strong>Yazi</strong>.
+    </p>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

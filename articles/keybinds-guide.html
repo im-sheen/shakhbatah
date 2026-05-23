@@ -1,0 +1,237 @@
+<!--
+  title: دليل الـ Keybinds في Hyprland
+  description: كل ما تحتاج معرفته عن اختصارات لوحة المفاتيح في Hyprland — من الأساسيات وحتى الـ flags والـ global keybinds وأوامر pass
+  tag: الإعداد
+  date: 2026-05-16
+  icon: ⌨️
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الإعداد</div>
+      <h1 class="article-page-title">️ دليل الـ Keybinds في Hyprland</h1>
+      <p class="article-page-desc">كل ما تحتاج معرفته عن اختصارات لوحة المفاتيح — من الأساسيات وحتى الـ flags والـ global keybinds وأوامر pass.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو الـ Keybind؟</h2>
+    <p>
+      الـ keybind هو تسلسل من المفاتيح تضغطها لتنفيذ أمر معين — سواء كان فتح تيرمنال، أو تشغيل برنامج، أو أي شيء آخر تختاره. في Hyprland، يتم تعريف جميع الاختصارات داخل ملف الكونفيغ.
+    </p>
+
+    <h2>بنية الـ Keybind</h2>
+    <p>كل سطر keybind يبدأ بكلمة <code>bind</code> ويتبع هذا الشكل:</p>
+    <pre><code>bind = MODIFIER, KEY, DISPATCHER, PARAMS</code></pre>
+
+    <ul>
+      <li><strong>MODIFIER</strong> — مفتاح التعديل مثل <code>SUPER</code> أو <code>CTRL</code> أو <code>ALT</code></li>
+      <li><strong>KEY</strong> — المفتاح الأساسي مثل <code>T</code> أو <code>Return</code></li>
+      <li><strong>DISPATCHER</strong> — الأمر الذي سيُنفَّذ (الأكثر شيوعاً هو <code>exec</code>)</li>
+      <li><strong>PARAMS</strong> — المعامل الممرر للـ dispatcher</li>
+    </ul>
+
+    <h2>المفاتيح المعدِّلة (Modifiers)</h2>
+    <p>أشهر المعدِّلات التي ستستخدمها:</p>
+    <ul>
+      <li><code>SUPER</code> — مفتاح Windows أو Command</li>
+      <li><code>CTRL</code> أو <code>CONTROL</code></li>
+      <li><code>ALT</code></li>
+    </ul>
+    <p>يمكنك دمج أكثر من معدِّل معاً:</p>
+    <pre><code>bind = SUPER ALT, B, exec, notify-send "مرحباً"</code></pre>
+
+    <h2>الـ Dispatchers الأكثر استخداماً</h2>
+    <p>
+      <code>exec</code> هو الـ dispatcher الذي ستستخدمه في معظم الوقت — ينفذ أي أمر shell بشكل مباشر:
+    </p>
+    <pre><code># فتح تيرمنال
+bind = SUPER, T, exec, kitty
+
+# فتح متصفح
+bind = SUPER, B, exec, brave
+
+# إرسال إشعار
+bind = SUPER ALT, B, exec, notify-send "مرحباً"</code></pre>
+
+    <p>dispatchers أخرى مفيدة:</p>
+    <ul>
+      <li><code>killactive</code> — إغلاق النافذة الحالية</li>
+      <li><code>workspace</code> — الانتقال لـ workspace معين</li>
+      <li><code>movetoworkspace</code> — نقل نافذة لـ workspace آخر</li>
+      <li><code>pass</code> — تمرير الاختصار مباشرة لتطبيق معين</li>
+    </ul>
+
+    <h2>الـ Bind Flags</h2>
+    <p>
+      تضيف الـ flags بعد كلمة <code>bind</code> مباشرة لتغيير سلوك الاختصار:
+    </p>
+
+    <pre><code># bind + flags
+binde = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+bindl = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+</code></pre>
+
+    <table>
+      <thead>
+        <tr><th>Flag</th><th>المعنى</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>e</code></td><td>يتكرر عند الضغط المطوّل (مثالي لمفاتيح الصوت والإضاءة)</td></tr>
+        <tr><td><code>l</code></td><td>يعمل حتى عند قفل الشاشة</td></tr>
+        <tr><td><code>r</code></td><td>يُنفَّذ عند الإفراج عن المفتاح لا عند الضغط</td></tr>
+        <tr><td><code>n</code></td><td>يمرر الحدث للنافذة النشطة أيضاً (non-consuming)</td></tr>
+      </tbody>
+    </table>
+
+    <blockquote>
+      💡 مثال عملي: مفاتيح الصوت والإضاءة تحتاج <code>e</code> للتكرار و<code>l</code> للعمل على شاشة القفل:<br>
+      <code>bindel = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+</code>
+    </blockquote>
+
+    <h2>unbind — إلغاء اختصار</h2>
+    <p>يمكنك إلغاء أي اختصار بكلمة <code>unbind</code>:</p>
+    <pre><code>unbind = CTRL ALT, Delete</code></pre>
+    <p>
+      الاستخدام الذكي لـ unbind هو عمل toggle — سكريبت يفحص حالة ملف، فإن كان الاختصار مفعّلاً يلغيه، وإن كان ملغى يعيد ربطه.
+    </p>
+
+    <h2>Global Keybinds — الاختصارات العالمية</h2>
+    <p>
+      المشكلة الشائعة: اختصارات OBS لا تعمل إلا عند التركيز على نافذة OBS. الحل هو استخدام <code>pass</code> لتمرير الاختصار مباشرة للتطبيق:
+    </p>
+    <pre><code># تمرير Ctrl+Super+R مباشرة لـ OBS لبدء/إيقاف التسجيل
+bind = CTRL SUPER, R, pass, ^(com.obsproject.Studio)$</code></pre>
+    <p>
+      هكذا يعمل الاختصار في أي مكان بغض النظر عن النافذة النشطة.
+    </p>
+
+    <h2>ربط أكثر من أمر بمفتاح واحد</h2>
+    <p>يمكن تعريف نفس المفتاح أكثر من مرة لتنفيذ أوامر متعددة:</p>
+    <pre><code>bind = SUPER, W, exec, notify-send "تم!"
+bind = SUPER, W, exec, hyprctl dispatch centerwindow</code></pre>
+
+    <h2>ربط مفاتيح الماوس</h2>
+    <pre><code># تحريك النوافذ بالماوس
+bindm = SUPER, mouse:272, movewindow
+
+# تغيير حجم النوافذ بالماوس
+bindm = SUPER, mouse:273, resizewindow</code></pre>
+
+    <h2>مثال كامل — ملف binds.conf</h2>
+    <pre><code># تطبيقات أساسية
+bind = SUPER, T, exec, kitty
+bind = SUPER, B, exec, brave
+bind = SUPER, E, exec, thunar
+bind = SUPER, R, exec, rofi -show drun
+
+# إدارة النوافذ
+bind = SUPER, Q, killactive
+bind = SUPER, F, fullscreen
+bind = SUPER, Space, togglefloating
+
+# الانتقال بين الـ workspaces
+bind = SUPER, 1, workspace, 1
+bind = SUPER, 2, workspace, 2
+bind = SUPER, 3, workspace, 3
+
+# نقل نوافذ بين الـ workspaces
+bind = SUPER SHIFT, 1, movetoworkspace, 1
+bind = SUPER SHIFT, 2, movetoworkspace, 2
+
+# صوت وإضاءة (مع تكرار + يعمل على شاشة القفل)
+bindel = , XF86AudioRaiseVolume,  exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+bindel = , XF86AudioLowerVolume,  exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindel = , XF86MonBrightnessUp,   exec, brightnessctl set 5%+
+bindel = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
+
+# ماوس
+bindm = SUPER, mouse:272, movewindow
+bindm = SUPER, mouse:273, resizewindow</code></pre>
+
+    <blockquote>
+      💡 نصيحة: قسِّم ملف الكونفيغ إلى ملفات منفصلة (modularity) واجعل ملف <code>binds.conf</code> مستقلاً — يسهّل الصيانة كثيراً.
+    </blockquote>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

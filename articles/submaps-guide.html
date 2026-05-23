@@ -1,0 +1,376 @@
+<!--
+  title: Submaps في Hyprland — أوضاع المفاتيح المتقدمة
+  description: تعلّم كيف تستخدم Submaps لإنشاء أوضاع مفاتيح مخصصة — تمرير VM، تغيير حجم النوافذ، التحكم في الميديا، وأكثر
+  tag: الإعداد
+  date: 2025-09-07
+  icon: 🗺️
+  author: شخبطه
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه | Submaps في Hyprland</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html" class="active">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الإعداد</div>
+      <h1 class="article-page-title">️ Submaps في Hyprland — أوضاع المفاتيح المتقدمة</h1>
+      <p class="article-page-desc">أنشئ أوضاع مفاتيح مخصصة مثل Vim تماماً — لتمرير VM، تغيير أحجام النوافذ، التحكم في الميديا، وأكثر.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ٧ سبتمبر ٢٠٢٥
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المشكلة — VM يسرق مفاتيحك</h2>
+    <p>
+      إذا جرّبت تشغيل window manager داخل VM — سواء i3 أو Sway أو DWM أو حتى Hyprland نفسه — ستواجه
+      مشكلة مزعجة: الـ host يعترض مفاتيحك قبل أن تصل للـ VM. تضغط <code>Super+1</code> لتبديل
+      workspace في الـ guest، فيتحرك الـ host بدلاً منه. أنت عالق تستخدم الفأرة مثل... شخص عادي.
+    </p>
+    <p>
+      الحل هو <strong>Submaps</strong> — ميزة في Hyprland تتيح لك إنشاء أوضاع منفصلة لمفاتيحك،
+      مثل أوضاع Vim تماماً.
+    </p>
+
+    <h2>ما هو الـ Submap؟</h2>
+    <p>
+      فكّر في الأمر هكذا: عادةً أنت في "الوضع العادي" حيث <code>Super+D</code> يفتح المشغّل،
+      <code>Super+1</code> يبدّل الـ workspace، وهكذا. الـ Submap يسمح لك بالدخول لـ "وضع آخر"
+      حيث <strong>نفس المفاتيح تفعل أشياء مختلفة تماماً</strong>، أو لا تفعل شيئاً أصلاً.
+    </p>
+    <p>الفكرة هي نفس أوضاع Vim: Normal Mode، Insert Mode، Visual Mode — كل وضع له قواعده.</p>
+
+    <h2>البنية الأساسية</h2>
+
+    <pre><code># الدخول للـ submap
+bind = $mainMod, R, submap, resize
+
+# --- بداية الـ submap ---
+submap = resize
+
+  bind = , right, resizeactive, 30 0
+  bind = , left,  resizeactive, -30 0
+  bind = , up,    resizeactive, 0 -30
+  bind = , down,  resizeactive, 0 30
+
+  # الخروج بـ Escape
+  bind = , escape, submap, reset
+
+  # مهم جداً: Catch-All لتجنب الانحشار
+  bind = , catchall, submap, reset
+
+# --- نهاية الـ submap ---
+submap = reset</code></pre>
+
+    <blockquote>
+      ⚠️ <strong>تحذير مهم:</strong> إذا دخلت submap ولم يكن عندك مفتاح للخروج، ستنحشر فيه.
+      الحل الوحيد سيكون التبديل لـ TTY آخر وقتل Hyprland. <strong>دائماً</strong> أضف
+      <code>catchall</code> أو مفتاح خروج.
+    </blockquote>
+
+    <h2>حالة الاستخدام الأولى — تمرير VM (Passthrough)</h2>
+
+    <p>
+      هذه الحالة التي بدأنا بها. ندخل وضعاً يمرّر كل المفاتيح مباشرة للتطبيق بدون أن يعترضها Hyprland:
+    </p>
+
+    <pre><code># في binds.conf
+
+# الدخول لوضع VM passthrough
+bind = $mainMod, V, submap, passthrough
+
+submap = passthrough
+
+  # تمرير كل المفاتيح للتطبيق
+  bind = , catchall, pass, foreground
+
+  # الخروج من الوضع بـ Super+V مرة أخرى
+  bind = $mainMod, V, submap, reset
+
+submap = reset</code></pre>
+
+    <p>
+      الآن حين تضغط <code>Super+V</code> يدخل Hyprland وضع "تمرير كامل". كل ما تضغطه
+      يذهب للـ VM. تضغط <code>Super+V</code> مرة ثانية للخروج والعودة للوضع العادي.
+    </p>
+
+    <p>يمكنك إضافة إشعار لتعرف في أي وضع أنت:</p>
+
+    <pre><code>bind = $mainMod, V, exec, notify-send "VM Mode" "كل المفاتيح تذهب للـ VM"
+bind = $mainMod, V, submap, passthrough
+
+submap = passthrough
+  bind = , catchall, pass, foreground
+  bind = $mainMod, V, exec, notify-send "Host Mode" "Hyprland يتحكم بالمفاتيح"
+  bind = $mainMod, V, submap, reset
+submap = reset</code></pre>
+
+    <h2>حالة الاستخدام الثانية — تغيير حجم النوافذ</h2>
+
+    <p>بدلاً من الضغط المستمر على مفتاح modifier لتغيير الحجم، ادخل وضع resize وتحرر:</p>
+
+    <pre><code>bind = $mainMod, R, submap, resize
+
+submap = resize
+
+  # e = repeatable — يتكرر عند الضغط المستمر
+  binde = , right, resizeactive, 30 0
+  binde = , left,  resizeactive, -30 0
+  binde = , up,    resizeactive, 0 -30
+  binde = , down,  resizeactive, 0 30
+
+  # HJKL لمن يحب Vim
+  binde = , l, resizeactive, 30 0
+  binde = , h, resizeactive, -30 0
+  binde = , k, resizeactive, 0 -30
+  binde = , j, resizeactive, 0 30
+
+  bind = , escape, submap, reset
+  bind = , catchall, submap, reset
+
+submap = reset</code></pre>
+
+    <blockquote>
+      💡 <code>binde</code> بدلاً من <code>bind</code> تعني "repeatable" — يتكرر التأثير طالما المفتاح
+      مضغوط. مهمة جداً لتغيير الحجم.
+    </blockquote>
+
+    <h2>حالة الاستخدام الثالثة — إدارة النوافذ</h2>
+
+    <p>وضع مخصص لإجراءات النوافذ الشائعة:</p>
+
+    <pre><code>bind = $mainMod, W, submap, window-mgmt
+
+submap = window-mgmt
+
+  # تبديل fullscreen
+  bind = , F, fullscreen, 0
+
+  # تبديل floating
+  bind = SHIFT, F, togglefloating
+
+  # تحريك النافذة بالكيبورد
+  bind = , right, movewindow, r
+  bind = , left,  movewindow, l
+  bind = , up,    movewindow, u
+  bind = , down,  movewindow, d
+
+  # إغلاق النافذة
+  bind = , Q, killactive
+
+  bind = , escape, submap, reset
+  bind = , catchall, submap, reset
+
+submap = reset</code></pre>
+
+    <h2>حالة الاستخدام الرابعة — التحكم في الميديا</h2>
+
+    <p>وضع للتحكم في الموسيقى دون الحاجة لمفاتيح وظيفية أو تركيبات معقدة:</p>
+
+    <pre><code>bind = $mainMod, M, submap, media
+
+submap = media
+
+  # التحكم الأساسي
+  bind = , P,      exec, playerctl play-pause
+  bind = , right,  exec, playerctl next
+  bind = , left,   exec, playerctl previous
+
+  # أو بـ I, O, P (أسهل للوصول)
+  bind = , I, exec, playerctl previous
+  bind = , O, exec, playerctl play-pause
+  bind = , bracketright, exec, playerctl next
+
+  # الصوت
+  binde = , up,   exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+  binde = , down, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+
+  bind = , escape, submap, reset
+  bind = , catchall, submap, reset
+
+submap = reset</code></pre>
+
+    <h2>عرض الوضع الحالي في Waybar</h2>
+
+    <p>
+      يمكنك إظهار اسم الـ submap النشط في شريط Waybar حتى تعرف دائماً في أي وضع أنت.
+      في إعدادات Waybar أضف:
+    </p>
+
+    <pre><code>// في config.jsonc
+"hyprland/submap": {
+  "format": "  {}",
+  "max-length": 20,
+  "tooltip": false
+}</code></pre>
+
+    <pre><code>/* في style.css */
+#submap {
+  background: rgba(245, 197, 24, 0.15);
+  color: #e8e8e8;
+  border: 1px solid rgba(245, 197, 24, 0.4);
+  border-radius: 6px;
+  padding: 0 10px;
+  font-weight: bold;
+}</code></pre>
+
+    <p>
+      الآن حين تدخل أي submap سيظهر اسمه في الشريط — مثلاً <code>resize</code> أو <code>media</code>.
+    </p>
+
+    <h2>إذا انحشرت في Submap</h2>
+
+    <p>إذا حدث ونسيت مفتاح الخروج أو بدون <code>catchall</code>، هذا الأمر ينقذك:</p>
+
+    <pre><code>hyprctl dispatch submap reset</code></pre>
+
+    <p>شغّله من طرفية أخرى أو من TTY آخر (<code>Ctrl+Alt+F2</code>).</p>
+
+    <h2>ملف Submaps كامل جاهز للاستخدام</h2>
+
+    <pre><code># ============================
+# Submaps — binds.conf
+# ============================
+
+# VM Passthrough
+bind = $mainMod, V, exec, notify-send "🖥️ VM Mode" "المفاتيح تذهب للـ VM"
+bind = $mainMod, V, submap, passthrough
+submap = passthrough
+  bind = , catchall, pass, foreground
+  bind = $mainMod, V, exec, notify-send "💻 Host Mode" "Hyprland يتحكم"
+  bind = $mainMod, V, submap, reset
+submap = reset
+
+# Window Resize
+bind = $mainMod, R, submap, resize
+submap = resize
+  binde = , right, resizeactive, 30 0
+  binde = , left,  resizeactive, -30 0
+  binde = , up,    resizeactive, 0 -30
+  binde = , down,  resizeactive, 0 30
+  binde = , l, resizeactive, 30 0
+  binde = , h, resizeactive, -30 0
+  binde = , k, resizeactive, 0 -30
+  binde = , j, resizeactive, 0 30
+  bind = , escape, submap, reset
+  bind = , catchall, submap, reset
+submap = reset
+
+# Window Management
+bind = $mainMod, W, submap, window-mgmt
+submap = window-mgmt
+  bind = , F,       fullscreen, 0
+  bind = SHIFT, F,  togglefloating
+  bind = , right,   movewindow, r
+  bind = , left,    movewindow, l
+  bind = , up,      movewindow, u
+  bind = , down,    movewindow, d
+  bind = , Q,       killactive
+  bind = , escape,  submap, reset
+  bind = , catchall, submap, reset
+submap = reset
+
+# Media Control
+bind = $mainMod, M, submap, media
+submap = media
+  bind = , O,     exec, playerctl play-pause
+  bind = , right, exec, playerctl next
+  bind = , left,  exec, playerctl previous
+  binde = , up,   exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+  binde = , down, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+  bind = , escape, submap, reset
+  bind = , catchall, submap, reset
+submap = reset</code></pre>
+
+    <h2>الخلاصة</h2>
+    <p>
+      Submaps ميزة قوية ومغمورة. معظم مستخدمي Hyprland لا يعرفون عنها، وهي تحل مشاكل حقيقية —
+      أبرزها مشكلة VM passthrough التي تجعل تشغيل window manager داخل VM أمراً ممكناً فعلاً.
+    </p>
+    <p>
+      لكنها أيضاً طريقة لتنظيم مفاتيحك بشكل أكثر منطقية — بدلاً من تركيبات معقدة مثل
+      <code>Super+Shift+Ctrl+R</code>، يمكنك الدخول لوضع resize والضغط على السهم فقط.
+    </p>
+
+    <blockquote>
+      🎯 القاعدة الذهبية: <strong>دائماً</strong> أضف <code>bind = , catchall, submap, reset</code>
+      في كل submap تنشئه. ستشكر نفسك لاحقاً.
+    </blockquote>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

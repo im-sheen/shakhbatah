@@ -1,0 +1,150 @@
+<!--
+  title: تخصيص المؤشر في Hyprland
+  description: كيف تثبّت وتغيّر cursor theme في Hyprland — من gnome-look حتى التطبيق عبر hyprctl
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🖱️
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">️ تخصيص المؤشر في Hyprland</h1>
+      <p class="article-page-desc">كيف تثبّت وتغيّر cursor theme في Hyprland — من gnome-look حتى التطبيق عبر hyprctl.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>أين تجد الـ Cursors</h2>
+    <p>
+      <a href="https://gnome-look.org/browse?cat=107" target="_blank" rel="noopener">gnome-look.org → Cursors</a> — أكثر من 1600 cursor theme مجاني.
+    </p>
+    <p>بعض الخيارات الشائعة في AUR:</p>
+    <pre><code># مؤشر Material You (Bibata)
+yay -S bibata-cursor-theme
+
+# مؤشر macOS
+yay -S apple-cursor
+
+# مؤشر Adwaita الافتراضي (أنيق وبسيط)
+sudo pacman -S adwaita-cursors</code></pre>
+
+    <h2>تثبيت Cursor يدوياً</h2>
+    <pre><code># نزّل الملف من gnome-look.org
+cd ~/Downloads
+tar -xzf cursor-theme.tar.gz
+
+# اصنع مجلد icons إن لم يكن موجوداً
+mkdir -p ~/.icons
+
+# انقل الثيم
+mv cursor-theme-folder ~/.icons/</code></pre>
+
+    <h2>تطبيق الـ Cursor</h2>
+
+    <h3>الطريقة الأولى: عبر nwg-look (واجهة رسومية)</h3>
+    <pre><code>yay -S nwg-look</code></pre>
+    <p>افتح nwg-look واختر الـ cursor من قسم Mouse Cursor واضغط Apply.</p>
+
+    <h3>الطريقة الثانية: عبر hyprctl (الأموثوق)</h3>
+    <pre><code># تطبيق فوري
+hyprctl setcursor CursorThemeName 24
+
+# مثال
+hyprctl setcursor macOS 24
+hyprctl setcursor Bibata-Modern-Classic 24</code></pre>
+
+    <h2>جعل التغيير دائماً</h2>
+    <p>أضف في autostart.conf:</p>
+    <pre><code>exec-once = hyprctl setcursor macOS 24</code></pre>
+    <p>أو عبر متغيرات البيئة:</p>
+    <pre><code>env = XCURSOR_THEME,macOS
+env = XCURSOR_SIZE,24</code></pre>
+
+    <blockquote>
+      ⚠️ إن كنت تستخدم theme switcher يغيّر المظهر ديناميكياً، استخدم <code>hyprctl setcursor</code> في سكريبت الثيم بدلاً من متغيرات البيئة الثابتة.
+    </blockquote>
+
+    <h2>حجم المؤشر الموصى به</h2>
+    <ul>
+      <li><strong>شاشة 1080p</strong> → حجم 24</li>
+      <li><strong>شاشة 1440p أو أعلى</strong> → حجم 32 أو 36</li>
+      <li><strong>HiDPI</strong> → حجم 48</li>
+    </ul>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

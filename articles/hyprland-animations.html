@@ -1,0 +1,221 @@
+<!--
+  title: كيف تخصّص الأنيميشن في Hyprland
+  description: شرح كامل لنظام الأنيميشن في Hyprland — من البيزيير كيرف حتى أنيميشن النوافذ والـ workspaces والـ layers
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🎞️
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">️ كيف تخصّص الأنيميشن في Hyprland</h1>
+      <p class="article-page-desc">شرح كامل لنظام الأنيميشن — من البيزيير كيرف حتى أنيميشن النوافذ والـ workspaces والـ layers.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>بنية الأنيميشن</h2>
+    <p>
+      كل سطر أنيميشن في Hyprland يتبع نفس الصيغة:
+    </p>
+    <pre><code>animation = name, on/off, speed, curve, style</code></pre>
+    <ul>
+      <li><strong>name</strong> — اسم الأنيميشن (windows, workspaces, layers…)</li>
+      <li><strong>on/off</strong> — <code>1</code> لتفعيل، <code>0</code> لتعطيل</li>
+      <li><strong>speed</strong> — السرعة، القيمة الافتراضية حوالي <code>7</code></li>
+      <li><strong>curve</strong> — اسم البيزيير كيرف التي تريد استخدامها</li>
+      <li><strong>style</strong> — نوع الحركة (slide, popin, fade…)</li>
+    </ul>
+
+    <h2>البيزيير كيرف — ما هي؟</h2>
+    <p>
+      البيزيير كيرف هي مجموعة من التعليمات الرياضية تحدد شكل حركة الأنيميشن. تُعرَّف في الكونفيغ هكذا:
+    </p>
+    <pre><code>bezier = myBezier, 0.05, 0.9, 0.1, 1.05</code></pre>
+    <p>
+      الأرقام الأربعة هي نقاط التحكم في المنحنى — النقطتان الأولى والأخيرة تحددان نقطة البداية والنهاية، والنقطتان الوسطى تعملان كـ"مغناطيسات" تشكّل منحنى الحركة.
+    </p>
+
+    <blockquote>
+      💡 لتصميم بيزيير كيرف مخصصة جرّب موقع <strong>cssportal.com</strong> أو <strong>easings.net</strong> — تقدر تجرب المنحنيات بصرياً وتنسخ الإحداثيات مباشرة.
+    </blockquote>
+
+    <h2>أنيميشن النوافذ (Windows)</h2>
+    <p>للنوافذ ثلاثة أنواع من الـ style:</p>
+    <ul>
+      <li><code>slide</code> — تنزلق النافذة من الجانب</li>
+      <li><code>popin</code> — تظهر النافذة من نقطة صغيرة وتكبر. يمكن تحديد النسبة المئوية للبداية: <code>popin 80%</code></li>
+      <li><code>gnomed</code> — مستوحى من GNOME، تتمدد النافذة من الأعلى والأسفل</li>
+    </ul>
+    <pre><code>animation = windowsIn,  1, 7, myBezier, slide
+animation = windowsOut, 1, 7, myBezier, slide
+animation = windowsMove,1, 6, myBezier</code></pre>
+
+    <blockquote>
+      💡 <code>windowsMove</code> يتحكم في حركة النافذة أثناء السحب وتغيير الحجم. يمكن استخدام بيزيير مختلفة لجعل هذه الحركة أكثر سلاسة.
+    </blockquote>
+
+    <h2>أنيميشن الـ Layers</h2>
+    <p>
+      الـ layers هي العناصر التي تعلو النوافذ كـ Waybar وRofi — Hyprland لا يعاملها كنوافذ عادية. لها نفس الـ styles:
+    </p>
+    <pre><code>animation = layersIn,  1, 7, myBezier, slide
+animation = layersOut, 1, 7, myBezier, slide</code></pre>
+
+    <blockquote>
+      ⚠️ إذا كان لديك <code>layerrule</code> يحدد أنيميشن خاص بـ Rofi مثلاً، فسيتجاوز الإعداد العام. اضبطه أو احذفه لرؤية التأثير الصحيح.
+    </blockquote>
+
+    <h2>أنيميشن الـ Workspaces</h2>
+    <p>للـ workspaces styles أكثر تنوعاً:</p>
+
+    <table>
+      <thead>
+        <tr><th>Style</th><th>الوصف</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>slide</code></td><td>انزلاق أفقي (الافتراضي)</td></tr>
+        <tr><td><code>slidevert</code></td><td>انزلاق عمودي — مناسب لمن يستخدم شريطاً جانبياً</td></tr>
+        <tr><td><code>fade</code></td><td>تلاشي بين الـ workspaces</td></tr>
+        <tr><td><code>slidefade</code></td><td>انزلاق مع تلاشٍ في نفس الوقت</td></tr>
+        <tr><td><code>slidefadevert</code></td><td>نفس السابق لكن عمودياً</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>animation = workspaces, 1, 8, myBezier, slide</code></pre>
+
+    <p>
+      لـ <code>slidefade</code> يمكن تحديد النسبة المئوية للحركة قبل التلاشي:
+    </p>
+    <pre><code>animation = workspaces, 1, 8, myBezier, slidefade 20%</code></pre>
+
+    <h2>أنيميشن الـ Fade والـ Border</h2>
+    <pre><code># تلاشي النوافذ عند الفتح والإغلاق
+animation = fadeIn,  1, 5, myBezier
+animation = fadeOut, 1, 5, myBezier
+
+# تدوير لون الـ border تلقائياً (RGB effect)
+animation = border,      1, 10, myBezier
+animation = borderangle, 1, 8,  myBezier</code></pre>
+
+    <h2>مثال كامل جاهز للاستخدام</h2>
+    <pre><code>animations {
+    enabled = true
+
+    bezier = myBezier, 0.05, 0.9, 0.1, 1.05
+    bezier = linear,   0.0,  0.0, 1.0, 1.0
+
+    animation = windows,     1, 7,  myBezier, slide
+    animation = windowsIn,   1, 7,  myBezier, slide
+    animation = windowsOut,  1, 7,  myBezier, slide
+    animation = windowsMove, 1, 6,  linear
+
+    animation = layersIn,    1, 7,  myBezier, slide
+    animation = layersOut,   1, 7,  myBezier, slide
+
+    animation = workspaces,  1, 8,  myBezier, slidefade 15%
+    animation = specialWorkspace, 1, 8, myBezier, slidevert
+
+    animation = fadeIn,      1, 5,  myBezier
+    animation = fadeOut,     1, 5,  myBezier
+    animation = border,      1, 10, myBezier
+    animation = borderangle, 1, 8,  linear
+}</code></pre>
+
+    <h2>تخصيص اتجاه الـ Slide</h2>
+    <p>
+      يمكنك إجبار الـ slide على اتجاه معين:
+    </p>
+    <pre><code>animation = layersIn,  1, 7, myBezier, slide left
+animation = layersOut, 1, 7, myBezier, slide right</code></pre>
+
+    <h2>مواقع مفيدة لتصميم البيزيير</h2>
+    <ul>
+      <li><a href="https://cssportal.com/css-cubic-bezier-generator/" target="_blank" rel="noopener">cssportal.com</a> — مولّد بيزيير تفاعلي</li>
+      <li><a href="https://easings.net" target="_blank" rel="noopener">easings.net</a> — مكتبة منحنيات جاهزة مع معاينة</li>
+    </ul>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

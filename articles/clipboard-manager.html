@@ -1,0 +1,185 @@
+<!--
+  title: إعداد الـ Clipboard Manager في Hyprland
+  description: كيف تضبط سجل النسخ في Hyprland باستخدام cliphist وwl-clipboard — مع ربط الاختصار وواجهة Rofi وإمكانية مسح السجل
+  tag: الإعداد
+  date: 2026-05-16
+  icon: 📋
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الإعداد</div>
+      <h1 class="article-page-title">إعداد الـ Clipboard Manager في Hyprland</h1>
+      <p class="article-page-desc">كيف تضبط سجل النسخ باستخدام cliphist وwl-clipboard — مع ربط الاختصار وواجهة Rofi وإمكانية مسح السجل بالكامل.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>المشكلة</h2>
+    <p>
+      في Wayland، حين تنسخ نصاً من تطبيق وتغلقه لاحقاً، يختفي النص المنسوخ معه — لأن النص يبقى في ذاكرة التطبيق نفسه. والأدهى أنك لا تستطيع الوصول لأي نص نسخته سابقاً إلا آخر واحد.
+    </p>
+    <p>
+      الحل: ثلاثة برامج بسيطة تحل المشكلتين معاً.
+    </p>
+
+    <h2>البرامج المطلوبة</h2>
+    <ul>
+      <li><strong>cliphist</strong> — يحفظ سجل كامل لكل ما نسخته (نصوص وصور وبيانات ثنائية)</li>
+      <li><strong>wl-clipboard</strong> — أدوات command-line للتعامل مع الحافظة على Wayland</li>
+      <li><strong>wl-clip-persist</strong> — يحل مشكلة اختفاء النص عند إغلاق التطبيق</li>
+    </ul>
+
+    <h2>التثبيت</h2>
+    <pre><code># على Arch Linux
+sudo pacman -S cliphist wl-clipboard
+
+# wl-clip-persist من AUR
+yay -S wl-clip-persist</code></pre>
+
+    <h2>إعداد autostart</h2>
+    <p>
+      أضف هذا السطر في ملف الكونفيغ الخاص بالـ autostart — يجعل cliphist يراقب كل ما تنسخه:
+    </p>
+    <pre><code># في hyprland.conf أو autostart.conf
+exec-once = wl-paste --type text --watch cliphist store
+exec-once = wl-paste --type image --watch cliphist store  # إن أردت حفظ الصور أيضاً
+exec-once = wl-clip-persist --clipboard regular</code></pre>
+
+    <blockquote>
+      💡 السطر الأول يحفظ النصوص فقط، والثاني يحفظ الصور أيضاً — الغالبية تحتاج الأول فقط.
+    </blockquote>
+
+    <h2>ربط اختصار لوحة المفاتيح</h2>
+    <p>أضف هذا الاختصار في ملف الـ binds:</p>
+    <pre><code># عرض سجل النسخ عبر Rofi
+bind = SUPER SHIFT, V, exec, cliphist list | rofi -dmenu -display-columns 2 -p "سجل النسخ" | cliphist decode | wl-copy</code></pre>
+
+    <p>شرح الأمر خطوة بخطوة:</p>
+    <ul>
+      <li><code>cliphist list</code> — يعرض كل العناصر المحفوظة</li>
+      <li><code>rofi -dmenu</code> — يعرضها في قائمة Rofi للاختيار منها</li>
+      <li><code>cliphist decode</code> — يحوّل الاختيار لنص قابل للاستخدام</li>
+      <li><code>wl-copy</code> — يضعه في الحافظة جاهزاً للصق</li>
+    </ul>
+
+    <h2>مسح سجل النسخ</h2>
+    <p>
+      لمسح السجل كاملاً يمكنك تثبيت <code>nwg-clipman</code> وهو واجهة رسومية بسيطة:
+    </p>
+    <pre><code>yay -S nwg-clipman</code></pre>
+    <p>
+      افتحه من قائمة التطبيقات باسم "Clipboard Manager" — فيه زر واحد لمسح كل السجل.
+    </p>
+
+    <p>أو امسح السجل مباشرة من سطر الأوامر:</p>
+    <pre><code>cliphist wipe</code></pre>
+
+    <h2>بدائل لـ cliphist</h2>
+    <table>
+      <thead>
+        <tr><th>البرنامج</th><th>يحفظ</th><th>ملاحظة</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>cliphist</code></td><td>نص + صور + بيانات ثنائية</td><td>الأفضل والأكثر شمولاً</td></tr>
+        <tr><td><code>clipman</code></td><td>نص فقط</td><td>أبسط لكن محدود</td></tr>
+        <tr><td><code>copyq</code></td><td>نص + صور</td><td>واجهة رسومية كاملة</td></tr>
+      </tbody>
+    </table>
+
+    <h2>الإعداد الكامل دفعة واحدة</h2>
+    <pre><code># autostart.conf
+exec-once = wl-paste --type text --watch cliphist store
+exec-once = wl-clip-persist --clipboard regular
+
+# binds.conf
+bind = SUPER SHIFT, V, exec, cliphist list | rofi -dmenu -p "📋 سجل النسخ" | cliphist decode | wl-copy
+bind = SUPER SHIFT, X, exec, cliphist wipe && notify-send "تم مسح سجل النسخ"</code></pre>
+
+    <blockquote>
+      ⚠️ تأكد أن <code>wl-clipboard</code> مثبت — هو المكتبة الأساسية التي يعتمد عليها cliphist للعمل على Wayland.
+    </blockquote>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

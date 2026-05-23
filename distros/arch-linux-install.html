@@ -1,0 +1,289 @@
+<!--
+  title: دليل تثبيت Arch Linux باستخدام archinstall
+  description: دليل شامل لتثبيت Arch Linux بطريقة أسهل وأقل تعقيداً، موجّه للمبتدئين مع شرح كل إعداد وسبب اختياره.
+  tag: لينكس
+  date: 2026-03-06
+  icon: 🐧
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <meta name="description" content="دليل شامل لتثبيت Arch Linux بطريقة أسهل وأقل تعقيداً، موجّه للمبتدئين مع شرح كل إعداد وسبب اختياره.">
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../distros/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        التوزيعات
+      </a>
+      <div class="article-meta-tag">لينكس</div>
+      <h1 class="article-page-title">دليل تثبيت Arch Linux باستخدام archinstall</h1>
+      <p class="article-page-desc">دليل شامل لتثبيت Arch Linux بطريقة أسهل وأقل تعقيداً، موجّه للمبتدئين مع شرح كل إعداد وسبب اختياره.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        2026-03-06
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <p>
+        هذا الدليل موجّه للمستخدمين الجدد، وكذلك لمن لديهم معرفة متوسطة بلينكس،
+        خصوصًا من يرغب في تثبيت <strong>Arch Linux</strong> بطريقة أسهل وأقل تعقيدًا
+        من الطريقة التقليدية.
+      </p>
+
+    <p>
+        الشرح يعتمد على أداة <code>archinstall</code> الرسمية، مع توضيح أهم الخيارات
+        أثناء التثبيت، وشرح سبب اختيار كل إعداد — حتى تتجنب الأخطاء الشائعة
+        التي يقع فيها أغلب المستخدمين.
+      </p>
+
+    <p>
+        قد يتساءل البعض: لماذا لا نبدأ من Arch مباشرة؟ السبب بسيط — التوزيعات المبنية
+        على Arch توفّر بيئة مريحة وتختصر مشاكل كثيرة، أبرزها:
+      </p>
+
+    <ul>
+<li>
+<strong>حل مشكلة الإقلاع الشهيرة</strong> —
+          رسالة <code>Probing EDD (edd=off to disable)... OK</code>
+          التي تظهر وتربك المستخدم الجديد.
+        </li>
+<li><strong>اتصال إنترنت جاهز</strong> بدون أي إعداد إضافي.</li>
+<li>
+<strong>واجهة رسومية ومتصفح</strong> يمكّنك من البحث عن أي مشكلة تواجهها
+          أثناء التثبيت في الوقت نفسه.
+        </li>
+<li>
+<strong>تجنّب بيئة TTY</strong> — Arch الافتراضية تعمل بواجهة نصية فقط
+          مما قد يُربك المبتدئين.
+        </li>
+</ul>
+
+    <blockquote>💡ملاحظة مهمة:نحن لا نثبّت التوزيعة المبنية على Arch كنظام أساسي،
+          بل نستخدمها فقط كأداة مساعدة لتثبيت Arch Linux النظيف.</blockquote>
+
+    <p>تأكد من توفّر الأمور التالية قبل البدء:</p>
+
+    <ul>
+<li>نسخة ISO لتوزيعة مبنية على Arch (مثل EndeavourOS أو Garuda).</li>
+<li>فلاشة USB بسعة <strong>4 جيجابايت أو أكثر</strong>.</li>
+<li>اتصال بالإنترنت (Wi-Fi أو Ethernet).</li>
+</ul>
+
+    <ol>
+<li>قم بتحميل التوزيعة المبنية على Arch من موقعها الرسمي.</li>
+<li>
+          احرقها على الفلاشة باستخدام إحدى الأدوات التالية:
+          <ul style="margin: 0.75rem 0 0.75rem 1.5rem;">
+<li><strong>Ventoy</strong> — الأسهل، يدعم أكثر من ISO على نفس الفلاشة.</li>
+<li><strong>Rufus</strong> — شائع على Windows.</li>
+<li><strong>balenaEtcher</strong> — بسيط ومتاح على جميع الأنظمة.</li>
+<li><strong>dd</strong> — للمستخدمين المتقدمين على Linux.</li>
+</ul>
+</li>
+<li>أعد تشغيل الجهاز واختر الإقلاع من USB من قائمة الـ Boot Menu.</li>
+</ol>
+
+    <span class="img-icon">🖼️</span>
+<span class="img-label">صورة: اختيار الإقلاع من USB</span>
+
+    <p>بعد الإقلاع ستدخل مباشرة إلى بيئة سطح مكتب كاملة. قم بالخطوات التالية:</p>
+
+    <ol>
+<li>يمكنك تغيير الخلفية اختياريًا لتمييز أن هذه البيئة مؤقتة.</li>
+<li>تأكد من اتصالك بالإنترنت عبر Wi-Fi أو Ethernet.</li>
+<li>افتح الطرفية (Terminal).</li>
+</ol>
+
+    <blockquote>ℹ️يمكنك استخدام أي توزيعة مبنية على Arch للقيام بهذه الخطوة،
+          المهم أن تتوفر فيها واجهة رسومية وإنترنت جاهز.</blockquote>
+
+    <p>داخل الطرفية نفّذ الخطوات التالية بالترتيب:</p>
+
+    <h3>أولاً — التحويل إلى مستخدم root</h3>
+<pre><code>sudo su</code></pre>
+
+    <h3>ثانياً — تثبيت archinstall</h3>
+<pre><code>pacman -Sy archinstall</code></pre>
+
+    <h3>ثالثاً — التحقق من الإصدار</h3>
+<pre><code>archinstall --version</code></pre>
+
+    <h3>رابعاً — بدء التثبيت</h3>
+<pre><code>archinstall</code></pre>
+
+    <p>بعد تشغيل الأداة ستظهر لك قائمة بالإعدادات. إليك شرح كل خيار:</p>
+
+    <h3>7.1 — اللغة (Language)</h3>
+<p>اختر لغة الواجهة. يُفضَّل تركها افتراضية على <strong>English</strong> لتجنب أي مشاكل في الترجمة.</p>
+
+    <h3>7.2 — المرايا والمستودعات (Mirrors)</h3>
+<p>ادخل إلى <strong>Select regions</strong> واختر أقرب دولة أو منطقة جغرافية لك.</p>
+<p>هذا الخيار يُسرّع عملية تحميل الحزم أثناء التثبيت بشكل ملحوظ.</p>
+
+    <h3>7.3 — إعدادات القرص (Disk Configuration) ⚠️</h3>
+<p>هذه أهم خطوة — انتبه جيدًا:</p>
+<ol style="margin: 0.75rem 0 0 1.5rem; color:#909090; font-size:0.93rem; line-height:1.9;">
+<li>اختر <strong style="color:#fff;">Use a best-effort default partition layout</strong>.</li>
+<li>اختر القرص الصلب الصحيح وتأكد منه جيدًا.</li>
+<li>نظام الملفات: اختر <strong style="color:#fff;">ext4</strong> — الأنسب للمبتدئين.</li>
+<li>قسم <code>/home</code>: اختر <strong>نعم</strong> لفصل ملفاتك الشخصية، أو <strong>لا</strong> لنظام أبسط.</li>
+<li>خيار <strong>Swap</strong>: يُستخدم كذاكرة افتراضية، مفيد إذا كانت الـ RAM محدودة.</li>
+</ol>
+<blockquote>⚠️تحذير:هذه الخطوة ستمسح جميع البيانات على القرص المختار.
+            تأكد أنك اخترت القرص الصحيح قبل المتابعة.</blockquote>
+
+    <h3>7.4 — محمّل الإقلاع (Bootloader)</h3>
+<p>اختر <strong>GRUB</strong> — فهو الأكثر توافقًا مع معظم الأجهزة وأنظمة UEFI.</p>
+
+    <h3>7.5 — اسم الجهاز (Hostname)</h3>
+<p>اختر اسمًا لجهازك داخل الشبكة، مثلاً: <code>arch-pc</code></p>
+
+    <h3>7.6 — المصادقة (Authentication)</h3>
+<p>عيّن كلمة مرور قوية لحساب <strong>root</strong>.</p>
+<p>أضف حساب مستخدم جديد، وأدخل الاسم وكلمة المرور.</p>
+<p>تأكد من إضافة المستخدم إلى <strong>sudo</strong> باختيار نعم، ثم اختر تأكيد والخروج.</p>
+
+    <h3>7.7 — الملف التعريفي وبيئة النظام (Profile)</h3>
+<ul style="margin: 0.5rem 0 0 1.5rem; color:#909090; font-size:0.93rem; line-height:2;">
+<li>النوع: اختر <strong style="color:#fff;">Desktop</strong>.</li>
+<li>بيئة سطح المكتب: يُوصى بـ <strong style="color:#fff;">KDE Plasma</strong>، أو GNOME — يمكن اختيار أكثر من واحدة.</li>
+<li>Session Manager: اختر <strong style="color:#fff;">Polkit</strong> لأنه الأحدث والأكثر أمانًا.</li>
+<li>تعريف كرت الشاشة: اختر <strong>NVIDIA</strong> أو <strong>AMD</strong> أو <strong>Intel</strong> حسب جهازك، أو <strong>All open-source</strong> إذا لم يكن لديك كرت منفصل.</li>
+<li>واجهة تسجيل الدخول: اختر الخيار الذي بجانبه كلمة <strong style="color:#fff;">Default</strong>.</li>
+</ul>
+
+    <h3>7.8 — التطبيقات (Applications)</h3>
+<p>فعّل <strong>البلوتوث</strong> إذا كنت ستستخدمه.</p>
+<p>للصوت اختر <strong>pipewire</strong> — وهو الأحدث والأكثر استقرارًا.</p>
+<p>يمكنك تخطي هذه الخطوة وتثبيت التطبيقات لاحقًا بعد الدخول للنظام.</p>
+
+    <h3>7.9 — النواة (Kernels)</h3>
+<p>اختر <strong>linux</strong> — النواة المستقرة الرسمية. الأنسب للاستخدام العام.</p>
+
+    <h3>7.10 — إعدادات الشبكة (Network Configuration)</h3>
+<p>اختر <strong>NetworkManager</strong> — فهو الأسهل في الإدارة ويعمل مع جميع بيئات سطح المكتب.</p>
+
+    <h3>7.11 — حزم إضافية (Additional Packages)</h3>
+<p>اختياري. يمكنك إضافة أدوات مفيدة مثل:</p>
+<pre><code>vim git htop wget curl</code></pre>
+
+    <h3>7.12 — المنطقة الزمنية (Timezone)</h3>
+<p>اختر بلدك والمنطقة الزمنية الصحيحة من القائمة.</p>
+
+    <h3>7.13 — المزامنة التلقائية للوقت</h3>
+<p>اتركها على الإعداد الافتراضي — تعمل بشكل صحيح تلقائيًا.</p>
+
+    <ol>
+<li>اختر <strong>Install</strong> من القائمة الرئيسية.</li>
+<li>وافق على التثبيت باختيار <strong>Yes</strong>.</li>
+<li>انتظر حتى تكتمل العملية — قد تستغرق بضع دقائق حسب سرعة الإنترنت.</li>
+</ol>
+
+    <span class="img-icon">🖼️</span>
+<span class="img-label">صورة: شاشة التثبيت</span>
+
+    <ol>
+<li>اختر <strong>Reboot system</strong> لإعادة تشغيل الجهاز.</li>
+<li><strong>أزل فلاشة USB</strong> قبل اكتمال إعادة التشغيل.</li>
+<li>سيقلع النظام إلى Arch Linux الجديد.</li>
+</ol>
+
+    <blockquote>✅بعد الدخول للنظام، نفّذ أول شيء تحديث النظام كاملاً:sudo pacman -Syu</blockquote>
+
+    <ul>
+<li>
+<strong>شاشة سوداء بعد الإقلاع؟</strong> — راجع إعداد تعريف كرت الشاشة في الخطوة 7.7.
+          قد تحتاج إلى اختيار التعريف المناسب لجهازك.
+        </li>
+<li>
+<strong>تحديث النظام:</strong> بعد الدخول مباشرة نفّذ:
+          <pre><code>sudo pacman -Syu</code></pre>
+</li>
+<li>
+<strong>تثبيت البرامج الأساسية:</strong> بعد التأكد من استقرار النظام، ثبّت ما تحتاجه
+          من AUR أو المستودعات الرسمية.
+        </li>
+</ul>
+
+    <blockquote>
+        الصبر مفتاح النجاح مع Arch Linux —
+        كل مشكلة تواجهها هي فرصة لتتعلم أكثر عن نظامك.
+      </blockquote>
+
+  </main>
+
+  <script src="../assets/js/app.js"></script>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

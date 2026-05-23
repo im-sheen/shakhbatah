@@ -1,0 +1,350 @@
+<!--
+  title: إيماءات التراك باد على Hyprland — الدليل الكامل
+  description: اضبط إيماءات التراك باد لتبديل الـ workspaces وإغلاق النوافذ والتكبير — بالإضافة لحل مشكلة إيماءات سماعات البلوتوث
+  tag: اللابتوب
+  date: 2025-10-07
+  icon: 👆
+  author: شخبطه
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه | إيماءات التراك باد</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html" class="active">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">اللابتوب</div>
+      <h1 class="article-page-title">إيماءات التراك باد على Hyprland — الدليل الكامل</h1>
+      <p class="article-page-desc">اضبط إيماءات التراك باد والبلوتوث من الصفر — بدون مكتبات ثقيلة، بدون تعقيد.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ٧ أكتوبر ٢٠٢٥
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>الإيماءات في Hyprland — الفكرة الأساسية</h2>
+    <p>
+      Hyprland يدعم إيماءات التراك باد بشكل مدمج. بدون أي برنامج إضافي، يمكنك تعيين حركات
+      الأصابع على التراك باد لتنفّذ أي أمر تريده — من تبديل الـ workspaces إلى إغلاق النوافذ
+      والتكبير والتصغير.
+    </p>
+
+    <p>البنية الأساسية للإيماءة:</p>
+
+    <pre><code>gesture = عدد_الأصابع, الاتجاه, الأمر, الخيارات</code></pre>
+
+    <ul>
+      <li><strong>عدد الأصابع:</strong> 3 أو 4 (الأصابع 1 و2 محجوزة للتمرير وتحريك المؤشر)</li>
+      <li><strong>الاتجاه:</strong> <code>l</code> يسار، <code>r</code> يمين، <code>u</code> أعلى، <code>d</code> أسفل، <code>horizontal</code> للأفقي، <code>vertical</code> للعمودي</li>
+      <li><strong>الأمر:</strong> workspace، close، fullscreen، dispatcher، وغيرها</li>
+    </ul>
+
+    <blockquote>
+      ⚠️ إصبعان فقط (2) لا يمكن استخدامهما للإيماءات المخصصة — محجوزان للتمرير الطبيعي.
+      استخدم 3 أو 4 أصابع.
+    </blockquote>
+
+    <h2>ملف الإيماءات</h2>
+
+    <p>
+      يمكنك وضع الإيماءات في <code>~/.config/hypr/hyprland.conf</code> مباشرةً أو في ملف
+      منفصل تستورده مثل <code>~/.config/hypr/gestures.conf</code>:
+    </p>
+
+    <pre><code># في hyprland.conf
+source = ~/.config/hypr/gestures.conf</code></pre>
+
+    <h2>الإيماء الأول — تبديل الـ Workspaces</h2>
+
+    <p>الأكثر فائدة لمستخدمي اللابتوب — مسح أفقي بثلاثة أصابع:</p>
+
+    <pre><code># gestures.conf
+
+# مسح أفقي بـ 3 أصابع = تبديل workspaces
+gesture = 3, horizontal, workspace</code></pre>
+
+    <p>
+      لاحظ أن <code>horizontal</code> يغطي الاتجاهين معاً — اليسار واليمين — بشكل تلقائي.
+      لا تحتاج سطرين.
+    </p>
+
+    <h2>الإيماء الثاني — إغلاق النافذة</h2>
+
+    <p>مسح للأسفل بثلاثة أصابع مع مفتاح modifier لإغلاق النافذة النشطة:</p>
+
+    <pre><code># مسح للأسفل بـ 3 أصابع + Alt = إغلاق النافذة
+gesture = 3, d, close, alt</code></pre>
+
+    <p>
+      المفتاح <code>alt</code> هنا مهم — يمنع الإغلاق العرضي. تحتاج تضغط Alt أثناء المسح.
+      يمكن تغييره لـ <code>super</code> أو <code>ctrl</code> حسب تفضيلك.
+    </p>
+
+    <h2>الإيماء الثالث — التكبير للشاشة الكاملة</h2>
+
+    <pre><code># مسح للأعلى بـ 3 أصابع + Super = fullscreen
+gesture = 3, u, fullscreen, super
+
+# للخروج من fullscreen نفس الإيماء</code></pre>
+
+    <p>يمكن إضافة <code>scale</code> لتسريع أنيميشن الـ fullscreen:</p>
+
+    <pre><code># scale:1.5 تعني الأنيميشن أسرع بـ 1.5x
+gesture = 3, u, fullscreen, super, scale:1.5</code></pre>
+
+    <h2>الإيماء الرابع — تشغيل تطبيق بأربعة أصابع</h2>
+
+    <p>أربعة أصابع للأسفل تفتح الطرفية (أو أي تطبيق تختاره):</p>
+
+    <pre><code># 4 أصابع للأسفل = فتح kitty
+gesture = 4, d, dispatcher, exec, kitty
+
+# أو فتح المشغّل
+gesture = 4, u, dispatcher, exec, fuzzel</code></pre>
+
+    <p>
+      لاحظ الفرق: حين تستخدم <code>dispatcher</code> كأمر، تضيف بعده اسم الـ dispatcher
+      ثم الـ argument — وهنا المهم إضافة فاصلة بعد <code>exec</code>:
+    </p>
+
+    <pre><code># صح ✅
+gesture = 4, d, dispatcher, exec, kitty
+
+# خطأ ❌ — لن يعمل
+gesture = 4, d, dispatcher, exec kitty</code></pre>
+
+    <h2>قائمة الـ Dispatchers المتاحة للإيماءات</h2>
+
+    <p>يمكن استخدام أي dispatcher من قائمة Hyprland مع الإيماءات:</p>
+
+    <ul>
+      <li><code>workspace</code> — التنقل بين الـ workspaces</li>
+      <li><code>close</code> — إغلاق النافذة النشطة</li>
+      <li><code>fullscreen</code> — تكبير/تصغير الشاشة الكاملة</li>
+      <li><code>togglefloating</code> — تبديل وضع التعويم</li>
+      <li><code>movewindow</code> — تحريك النافذة</li>
+      <li><code>resizeactive</code> — تغيير حجم النافذة</li>
+      <li><code>togglespecialworkspace</code> — فتح/إغلاق الـ special workspace</li>
+      <li><code>exec</code> — تنفيذ أمر أو برنامج</li>
+    </ul>
+
+    <pre><code># أمثلة متنوعة
+gesture = 3, l, dispatcher, workspace, e-1
+gesture = 3, r, dispatcher, workspace, e+1
+gesture = 4, u, dispatcher, togglespecialworkspace
+gesture = 4, l, dispatcher, movewindow, l
+gesture = 4, r, dispatcher, movewindow, r</code></pre>
+
+    <h2>الملف الكامل الجاهز</h2>
+
+    <pre><code># ~/.config/hypr/gestures.conf
+# ===================================
+# إيماءات التراك باد
+# ===================================
+
+# تبديل الـ workspaces — 3 أصابع أفقي
+gesture = 3, horizontal, workspace
+
+# إغلاق النافذة — 3 أصابع للأسفل + Alt
+gesture = 3, d, close, alt
+
+# Fullscreen — 3 أصابع للأعلى + Super
+gesture = 3, u, fullscreen, super, scale:1.2
+
+# فتح المشغّل — 4 أصابع للأعلى
+gesture = 4, u, dispatcher, exec, fuzzel
+
+# Special Workspace — 4 أصابع للأسفل
+gesture = 4, d, dispatcher, togglespecialworkspace
+
+# تعويم النافذة — 4 أصابع للأسفل + Alt
+gesture = 4, d, dispatcher, togglefloating, alt</code></pre>
+
+    <h2>ملاحظات مهمة للاستخدام</h2>
+
+    <ul>
+      <li>الإيماءات ليست بنفس نعومة macOS — هناك تأخير طفيف في بداية التعرف على الإيماءة</li>
+      <li>تأكد أن لا إصبع إضافي يلمس التراك باد عند تنفيذ الإيماءة</li>
+      <li>إذا لاحظت أن الأنيميشن لا يعمل بشكل صحيح أثناء الـ gesture، هذا طبيعي — الـ workspace يتبدل لكن الأنيميشن قد يكون غير مكتمل</li>
+      <li>يمكن ضبط حساسية التراك باد عبر <code>input { touchpad { } }</code> في إعدادات Hyprland</li>
+    </ul>
+
+    <pre><code># في hyprland.conf — إعدادات التراك باد
+input {
+  touchpad {
+    natural_scroll = true
+    scroll_factor = 0.8
+    tap-to-click = true
+    disable_while_typing = true
+  }
+}</code></pre>
+
+    <hr style="border-color:var(--border);margin:3rem 0;">
+
+    <h2>مشكلة إيماءات سماعات البلوتوث</h2>
+
+    <p>
+      إذا كانت عندك سماعات بلوتوث لاسلكية — AirPods أو Sony WF أو Samsung Galaxy Buds —
+      ستلاحظ أن الـ tap للتشغيل/الإيقاف والضغط المطوّل وغيرها تعمل على الجوال بشكل مثالي
+      لكن على Hyprland لا تفعل شيئاً. هذه المقالة تشرح لماذا وكيف تحلّها.
+    </p>
+
+    <h2>لماذا لا تعمل؟ — المشكلة الجذرية</h2>
+
+    <p>هناك ثلاث طبقات معنية:</p>
+
+    <ul>
+      <li>
+        <strong>الطبقة الأولى — السماعة:</strong> حين تضغط الزر، السماعة ترسل إشارة بلوتوث
+        باستخدام بروتوكول <strong>AVRCP</strong> (Audio Video Remote Control Profile).
+        السماعة تقوم بعملها بشكل صحيح.
+      </li>
+      <li>
+        <strong>الطبقة الثانية — BlueZ:</strong> daemon البلوتوث على Linux يستقبل إشارة AVRCP
+        ويفهم أن أمر تحكم بالميديا جاء — لكنه لا يعرف أين يرسله. من الـ Media Player؟
+        Spotify؟ Firefox؟ MPV؟ BlueZ يتعامل مع الاتصال فقط لا التشغيل.
+      </li>
+      <li>
+        <strong>الطبقة الثالثة — تطبيقات الميديا:</strong> كل Spotify وFirefox وMPV يتحدثون
+        لغة <strong>MPRIS</strong> (Media Player Remote Interfacing Specification) — نفس
+        اللغة التي يستخدمها <code>playerctl</code>.
+      </li>
+    </ul>
+
+    <p>
+      السماعة تتحدث AVRCP، تطبيقات الميديا تتحدث MPRIS، ولا أحد يترجم بينهما.
+      على GNOME وKDE هذه الترجمة موجودة في الـ settings daemon — لكن Hyprland لا يملك
+      settings daemon، فالاتصال مقطوع.
+    </p>
+
+    <h2>الحل — mpris-proxy</h2>
+
+    <p>
+      البرنامج المسؤول عن الترجمة اسمه <code>mpris-proxy</code> ويأتي ضمن حزمة
+      <code>bluez-utils</code> الموجودة غالباً مثبّتة مسبقاً:
+    </p>
+
+    <pre><code># تثبيت في حال لم يكن موجوداً
+sudo pacman -S bluez-utils
+
+# تشغيله يدوياً للتجربة
+mpris-proxy</code></pre>
+
+    <p>
+      إذا رأيت رسالة مثل <code>org.bluez appeared, Bluetooth adapter found</code>
+      فهو يعمل بشكل صحيح. جرّب الضغط على زر السماعة الآن — يجب أن يعمل التشغيل/الإيقاف.
+    </p>
+
+    <h2>تشغيله تلقائياً عند الدخول</h2>
+
+    <p>أضفه في ملف الـ autostart:</p>
+
+    <pre><code># في hyprland.conf أو autostart.conf
+exec-once = mpris-proxy</code></pre>
+
+    <blockquote>
+      💡 لا تحتاج لإضافة <code>&amp;</code> أو <code>disown</code> هنا — <code>exec-once</code>
+      يشغّل البرنامج في الخلفية تلقائياً.
+    </blockquote>
+
+    <h2>التحقق من أن كل شيء يعمل</h2>
+
+    <pre><code># تأكد أن mpris-proxy يعمل
+pgrep -x mpris-proxy && echo "يعمل ✓" || echo "لا يعمل ✗"
+
+# إعادة تشغيله إذا توقف
+pkill mpris-proxy; mpris-proxy &</code></pre>
+
+    <h2>الملخص</h2>
+
+    <p>
+      <strong>إيماءات التراك باد</strong> مدمجة في Hyprland وتعمل بدون برامج إضافية — فقط
+      أضف سطور <code>gesture</code> في ملف الإعداد. ابدأ بالثلاثة الأساسية (تبديل workspace،
+      إغلاق، fullscreen) ثم أضف حسب احتياجك.
+    </p>
+
+    <p>
+      <strong>إيماءات البلوتوث</strong> تحتاج فقط تشغيل <code>mpris-proxy</code> في الـ autostart —
+      سطر واحد يحل المشكلة كاملاً.
+    </p>
+
+    <blockquote>
+      🎯 كلا الحلّين بسيطان جداً حين تفهم السبب — وهذا هو الفرق بين من ينسخ ويلصق ومن يفهم ما يفعله.
+    </blockquote>
+
+  </main>
+
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

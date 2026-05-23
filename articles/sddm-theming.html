@@ -1,0 +1,161 @@
+<!--
+  title: تخصيص SDDM — شاشة تسجيل الدخول
+  description: كيف تثبّت وتخصّص شاشة تسجيل الدخول SDDM في Hyprland — من الخلفيات الحية حتى الخطوط والطقس والثيمات الجاهزة
+  tag: التخصيص
+  date: 2026-05-16
+  icon: 🖼️
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">التخصيص</div>
+      <h1 class="article-page-title">️ تخصيص SDDM — شاشة تسجيل الدخول</h1>
+      <p class="article-page-desc">كيف تثبّت وتخصّص شاشة تسجيل الدخول SDDM في Hyprland — من الخلفيات الحية حتى الطقس والثيمات الجاهزة.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو SDDM؟</h2>
+    <p>
+      SDDM هو الـ Display Manager الأكثر استخداماً مع Hyprland — هو الشاشة التي تظهر عند تشغيل الجهاز وتطلب منك تسجيل الدخول.
+    </p>
+
+    <h2>التثبيت</h2>
+    <pre><code>sudo pacman -S sddm
+sudo systemctl enable sddm</code></pre>
+
+    <h2>أين تجد الثيمات</h2>
+    <p>
+      موقع <a href="https://store.kde.org/browse?cat=101" target="_blank" rel="noopener">KDE Store</a> يحتوي عشرات الثيمات الجاهزة. البعض يحتاج قدرة على كتابة QML للتعديل.
+    </p>
+
+    <h2>تثبيت ثيم يدوياً</h2>
+    <pre><code># استنسخ الثيم
+git clone https://github.com/author/sddm-theme.git
+
+# انقله للمكان الصحيح
+sudo cp -r sddm-theme /usr/share/sddm/themes/</code></pre>
+
+    <h2>تفعيل الثيم</h2>
+    <p>افتح <code>/etc/sddm.conf</code> أو أنشئ <code>/etc/sddm.conf.d/theme.conf</code>:</p>
+    <pre><code>[Theme]
+Current=mytheme-name</code></pre>
+
+    <h2>إضافة عرض الطقس</h2>
+    <p>بعض الثيمات تعرض الطقس الحالي. لإعداد موقعك:</p>
+
+    <h3>الخطوة 1: ملف إعداد الموقع</h3>
+    <pre><code># في /etc/sddm-weather.conf
+LATITUDE=24.7136
+LONGITUDE=46.6753
+UNIT=celsius</code></pre>
+
+    <h3>الخطوة 2: سكريبت تحديث الطقس</h3>
+    <p>أنشئ <code>/usr/local/bin/update-sddm-weather</code> يجلب البيانات من <a href="https://open-meteo.com" target="_blank" rel="noopener">open-meteo.com</a> ويحفظها في <code>/run/sddm-weather.txt</code>.</p>
+
+    <h3>الخطوة 3: خدمة systemd للتحديث</h3>
+    <pre><code># /etc/systemd/system/sddm-weather.service
+[Unit]
+Description=Update SDDM weather
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/update-sddm-weather</code></pre>
+    <pre><code># /etc/systemd/system/sddm-weather.timer
+[Unit]
+Description=Update SDDM weather every 10 minutes
+
+[Timer]
+OnBootSec=20s
+OnUnitActiveSec=10min
+
+[Install]
+WantedBy=timers.target</code></pre>
+    <pre><code>sudo systemctl enable --now sddm-weather.timer</code></pre>
+
+    <h2>إضافة متغير بيئة لـ SDDM</h2>
+    <p>في <code>/etc/sddm.conf</code>:</p>
+    <pre><code>[Wayland]
+GreeterEnvironment=QML_XHR_ALLOW_FILE_READ=1</code></pre>
+    <p>هذا المتغير ضروري إن كان الثيم يقرأ ملف الطقس عبر QML XHR.</p>
+
+    <h2>تخصيص الخطوط</h2>
+    <p>احفظ الخطوط في <code>/usr/local/share/fonts/TTF/</code> ثم حدّث كاش الخطوط:</p>
+    <pre><code>sudo fc-cache -r</code></pre>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

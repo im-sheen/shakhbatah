@@ -1,0 +1,146 @@
+<!--
+  title: تخطيط Dwindle في Hyprland — الدليل الشامل
+  description: شرح كل خيارات تخطيط Dwindle في Hyprland — من Pseudotiling وForce Split حتى Smart Split وتحكم في نسبة النوافذ
+  tag: الإعداد
+  date: 2026-05-16
+  icon: 🪟
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">الإعداد</div>
+      <h1 class="article-page-title">تخطيط Dwindle — الدليل الشامل</h1>
+      <p class="article-page-desc">شرح كل خيارات تخطيط Dwindle — من Pseudotiling وForce Split حتى Smart Split وضبط نسبة النوافذ.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١٦ مايو ٢٠٢٦
+      </div>
+    </div>
+  </div>
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو Dwindle؟</h2>
+    <p>
+      Dwindle هو التخطيط الافتراضي في Hyprland — مستوحى من BSPWM. كل نافذة جديدة تُقسّم المساحة المتاحة للنصف، مما ينتج شكلاً يشبه أوراق شجرة ثنائية.
+    </p>
+
+    <h2>الخيارات الأساسية</h2>
+    <pre><code># في hyprland.conf
+dwindle {
+    # تتبع وضع الـ split — لا تغيّره عند Resize
+    preserve_split = true    # موصى به دائماً
+
+    # تقسيم ثابت على اليمين دائماً
+    force_split = 2          # 0=cursor، 1=يسار، 2=يمين
+
+    # نسبة التقسيم الافتراضية
+    default_split_ratio = 1.0  # 1.0 = 50/50
+
+    # خاصية Pseudotiling
+    pseudotile = false       # يُفعَّل بـ keybind
+}</code></pre>
+
+    <h2>Pseudotiling — تبليط النوافذ العائمة</h2>
+    <p>يجعل نوافذ floating تتبع نظام التبليط بدلاً من التحرك الحر:</p>
+    <pre><code>bind = SUPER, P, pseudo</code></pre>
+
+    <h2>Force Split — التحكم في اتجاه الـ Split</h2>
+    <ul>
+      <li><code>0</code> — يتبع موضع المؤشر</li>
+      <li><code>1</code> — دائماً لليسار/أعلى</li>
+      <li><code>2</code> — دائماً لليمين/أسفل (سلوك BSPWM)</li>
+    </ul>
+
+    <h2>Smart Split</h2>
+    <pre><code>dwindle {
+    smart_split = false  # إيقاف (موصى به)
+}</code></pre>
+    <p>
+      عند تشغيله، موضع المؤشر يحدد اتجاه الـ split — مربك في الغالب.
+    </p>
+
+    <h2>Special Scale Factor — لـ Scratchpad</h2>
+    <pre><code>dwindle {
+    special_scale_factor = 0.8  # 80% من الحجم الطبيعي
+}</code></pre>
+    <p>يصغّر النوافذ داخل الـ special workspace (scratchpad) مقارنة بالـ workspaces العادية.</p>
+
+    <h2>Single Window Aspect Ratio</h2>
+    <pre><code>dwindle {
+    # للشاشات العريضة — يمنع تمدد النافذة لكامل العرض
+    single_window_aspect_ratio = 16 9
+}</code></pre>
+    <p>مفيد لشاشات 21:9 أو أعرض حيث نافذة واحدة تمتد بشكل غير مريح.</p>
+
+  </main>
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+  <script src="../assets/js/app.js"></script>
+</body>
+</html>

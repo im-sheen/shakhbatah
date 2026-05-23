@@ -1,0 +1,224 @@
+<!--
+  title: كيفية حرق ملفات ISO على فلاش USB في Linux
+  description: دليل عملي لحرق ملفات ISO باستخدام أداة dd، مع شرح كل أمر وتحذيرات مهمة لتجنب مسح البيانات الخاطئة.
+  tag: لينكس
+  date: 2026-03-07
+  icon: 💿
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="../assets/images/favicon.ico">
+  <link rel="icon" type="image/png" href="../assets/images/favicon-32.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <meta name="description" content="دليل عملي لحرق ملفات ISO باستخدام أداة dd، مع شرح كل أمر وتحذيرات مهمة لتجنب مسح البيانات الخاطئة.">
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../distros/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        التوزيعات
+      </a>
+      <div class="article-meta-tag">لينكس</div>
+      <h1 class="article-page-title">كيفية حرق ملفات ISO على فلاش USB في Linux</h1>
+      <p class="article-page-desc">دليل عملي لحرق ملفات ISO باستخدام أداة dd، مع شرح كل أمر وتحذيرات مهمة لتجنب مسح البيانات الخاطئة.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        2026-03-07
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <p>
+        حرق ملف ISO على فلاش USB من أكثر المهام شيوعاً لمستخدمي Linux، سواء لتثبيت
+        توزيعة جديدة أو لإنشاء وسيط إقلاع لإنقاذ النظام. في هذه المقالة سنستخدم
+        أداة <code>dd</code> — وهي أداة سطر أوامر قوية ومثبّتة في جميع توزيعات Linux.
+      </p>
+
+    <blockquote>⚠️تحذير مهم:أوامر الحرق تمسح جميع البيانات على الفلاش بشكل كامل ولا يمكن التراجع عنه.
+          تأكد دائماً أنك تختار الفلاش الصحيح قبل تنفيذ أي أمر.</blockquote>
+
+    <p>
+        قبل أي شيء، يجب معرفة الاسم الذي يعطيه النظام للفلاش.
+        افتح الطرفية واكتب:
+      </p>
+
+    <pre><code>lsblk</code></pre>
+
+    <p>ستظهر لك قائمة بجميع الأقراص والأقسام، مثل:</p>
+
+    <pre><code>NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda      8:0    0 119.2G  0 disk
+└─sda1   8:1    0 119.2G  0 part /
+sdc      8:32   1  29.3G  0 disk
+├─sdc1   8:33   1  29.3G  0 part /run/media/ahmed/Ventoy
+└─sdc2   8:34   1    32M  0 part</code></pre>
+
+    <p>
+        في هذا المثال الفلاش هو <code>sdc</code> — يمكن تمييزه بأن:
+      </p>
+
+    <ul>
+<li>حجمه يتوافق مع حجم الفلاش الفعلي (٢٩.٣ جيجا).</li>
+<li>عمود <code>RM</code> قيمته <code>1</code> أي أنه قابل للإزالة.</li>
+<li>نقطة التركيب (MOUNTPOINTS) تشير إلى مسار وسائط خارجية.</li>
+</ul>
+
+    <blockquote>⚠️لا تخلط بينsda(القرص الرئيسي) وsdc(الفلاش).
+          الكتابة على القرص الرئيسي ستمسح نظامك بالكامل.</blockquote>
+
+    <p>
+        قبل الحرق يجب فصل أي أقسام مفتوحة من الفلاش، وإلا سيرفض النظام الكتابة عليه.
+        استخدم <code>umount</code> لكل قسم:
+      </p>
+
+    <pre><code>sudo umount /dev/sdc1 /dev/sdc2</code></pre>
+
+    <blockquote>💡إذا ظهرت رسالةnot mountedفلا داعي للقلق — يعني القسم غير مركب أصلاً.</blockquote>
+
+    <p>الأمر الكامل للحرق:</p>
+
+    <pre><code>sudo dd if=/home/ahmed/Downloads/omarchy-3.2.2.iso \
+         of=/dev/sdc \
+         bs=4M \
+         status=progress \
+         oflag=sync
+sync</code></pre>
+
+    <p>شرح كل جزء من الأمر:</p>
+
+    <table class="cmd-table">
+<thead>
+<tr>
+<th>الخيار</th>
+<th>الوظيفة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>if=</code></td>
+<td>مسار ملف الـ ISO على جهازك (المصدر)</td>
+</tr>
+<tr>
+<td><code>of=</code></td>
+<td>اسم الفلاش كاملاً — القرص وليس القسم (<code>/dev/sdc</code> لا <code>/dev/sdc1</code>)</td>
+</tr>
+<tr>
+<td><code>bs=4M</code></td>
+<td>حجم البلوك — ٤ ميجابايت لتسريع عملية الحرق</td>
+</tr>
+<tr>
+<td><code>status=progress</code></td>
+<td>يعرض تقدم الحرق في الوقت الفعلي</td>
+</tr>
+<tr>
+<td><code>oflag=sync</code></td>
+<td>يضمن كتابة البيانات على الفلاش فعلياً وليس في الذاكرة المؤقتة</td>
+</tr>
+<tr>
+<td><code>sync</code></td>
+<td>أمر منفصل بعد dd لضمان اكتمال الكتابة تماماً</td>
+</tr>
+</tbody>
+</table>
+
+    <blockquote>⏳العملية قد تستغرق من دقيقتين إلى ١٠ دقائق حسب حجم الـ ISO وسرعة الفلاش.
+          لا تفصل الفلاش أثناء الحرق.</blockquote>
+
+    <p>
+        بعد انتهاء الأمر وظهور موجه الأوامر مجدداً، افصل الفلاش ثم أعد توصيله.
+        الفلاش الآن جاهز للإقلاع وتثبيت النظام.
+      </p>
+
+    <ul>
+<li>
+<strong>نسخة احتياطية:</strong> انسخ أي بيانات مهمة من الفلاش قبل البدء —
+          الحرق سيمسح كل شيء.
+        </li>
+<li>
+<strong>تحقق من مسار ISO:</strong> تأكد أن المسار في <code>if=</code>
+          صحيح تماماً، وإلا سيفشل الأمر.
+        </li>
+<li>
+<strong>بدائل رسومية:</strong> إذا كنت تفضل واجهة رسومية يمكنك استخدام
+          <strong>Etcher</strong> (AppImage جاهز للتشغيل) أو <strong>Ventoy</strong>
+          الذي يدعم رفع أكثر من ISO على نفس الفلاش.
+        </li>
+</ul>
+
+    <blockquote>
+<code>dd</code> بسيطة وفعّالة — لكنها لا تسامح على الأخطاء. تأكد مرتين قبل الضغط على Enter.
+      </blockquote>
+
+  </main>
+
+  <script src="../assets/js/app.js"></script>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

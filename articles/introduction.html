@@ -1,0 +1,210 @@
+<!--
+  title: مقدمة إلى Hyprland
+  description: تعرف على ما هو Hyprland ولماذا يستحق التجربة — مدير النوافذ الأكثر جمالاً على لينكس
+  tag: مقدمة
+  date: 2024-01-01
+  icon: ⬡
+  author: im-sheen
+  author-github: https://github.com/im-sheen
+  author-bio: مطور ومهتم بلينكس وتخصيص سطح المكتب
+-->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>شخبطه</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="readingProgress"></div>
+  <nav class="navbar">
+    <a href="../index.html" class="nav-logo-link">
+      <span class="logo-text">شخبطه</span>
+      
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html">الرئيسية</a></li>
+      <li><a href="../distros/index.html">التوزيعات</a></li>
+      <li><a href="../desktop/index.html">واجهات</a></li>
+      <li><a href="../tools/index.html">أدوات</a></li>
+      <li><a href="../articles/index.html">Hyprland</a></li>
+      <li><button class="nav-search-btn" id="navSearchBtn" aria-label="بحث"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button></li>
+    </ul>
+    <button class="menu-toggle" id="menuToggle">☰</button>
+  </nav>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="../index.html">الرئيسية</a>
+    <a href="../distros/index.html">التوزيعات</a>
+    <a href="../desktop/index.html">واجهات</a>
+    <a href="../tools/index.html">أدوات</a>
+    <a href="../articles/index.html">Hyprland</a>
+  </div>
+
+  <div class="article-page-header" style="position:relative;z-index:1;">
+    <div class="article-page-header-inner">
+      <a href="../articles/index.html" class="article-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        العودة للمقالات
+      </a>
+      <div class="article-meta-tag">مقدمة</div>
+      <h1 class="article-page-title">مقدمة إلى Hyprland</h1>
+      <p class="article-page-desc">تعرف على ما هو Hyprland ولماذا أصبح الخيار الأول لمستخدمي لينكس المتقدمين.</p>
+      <div class="article-page-date">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+        </svg>
+        ١ يناير ٢٠٢٤
+      </div>
+    </div>
+  </div>
+
+  <main class="article-content" style="position:relative;z-index:1;">
+
+    <h2>ما هو Hyprland؟</h2>
+    <p>
+      <strong>Hyprland</strong> هو <strong>Wayland compositor</strong> من نوع <em>Dynamic Tiling</em>،
+      أي أنه يرتب النوافذ تلقائياً بطريقة ذكية مع إمكانية التحكم الكامل في التخطيط.
+      يتميز عن غيره بكونه الأجمل والأكثر قابلية للتخصيص في عالم لينكس.
+    </p>
+    <p>
+      بناه المطور <strong>Vaxry</strong> من الصفر بلغة C++، وأُطلق أول إصداراته عام 2022.
+      منذ ذلك الحين أصبح من أسرع المشاريع نمواً في مجتمع لينكس.
+    </p>
+
+    <blockquote>
+      💡 Hyprland ليس مجرد مدير نوافذ — إنه تجربة بصرية كاملة.
+    </blockquote>
+
+    <h2>لماذا Hyprland تحديداً؟</h2>
+    <p>هناك أسباب عديدة تجعل Hyprland خياراً مميزاً:</p>
+
+    <h3>١. الرسوم المتحركة</h3>
+    <p>
+      Hyprland يوفر نظام رسوم متحركة لا مثيل له. كل شيء ينتقل بسلاسة:
+      فتح النوافذ، إغلاقها، التبديل بين مساحات العمل، حتى تغيير الحجم.
+      يمكنك التحكم في كل شيء عبر منحنيات <code>bezier</code> مخصصة.
+    </p>
+
+    <h3>٢. الأداء</h3>
+    <p>
+      رغم كل هذا الجمال، Hyprland سريع جداً. مبني بلغة C++ ومُحسَّن لاستهلاك أقل قدر
+      من الموارد مع الحفاظ على تجربة بصرية استثنائية.
+    </p>
+
+    <h3>٣. التخصيص</h3>
+    <p>
+      ملف الإعداد <code>hyprland.conf</code> يتيح لك التحكم في كل تفصيلة:
+      الألوان، الحدود، الظلال، الشفافية، التخطيط، الاختصارات، وأكثر بكثير.
+    </p>
+
+    <h3>٤. IPC والـ Plugins</h3>
+    <p>
+      Hyprland يوفر واجهة IPC قوية تتيح كتابة سكريبتات وبرامج تتحكم في البيئة.
+      كما يدعم نظام plugins يمكنك من تحميل إضافات مكتوبة بـ C++.
+    </p>
+
+    <h2>Wayland مقابل X11</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>الخاصية</th>
+          <th>Wayland</th>
+          <th>X11</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>الأمان</td>
+          <td>أفضل بكثير</td>
+          <td>أضعف</td>
+        </tr>
+        <tr>
+          <td>الأداء</td>
+          <td>أسرع وأقل تأخيراً</td>
+          <td>أبطأ نسبياً</td>
+        </tr>
+        <tr>
+          <td>التمزق (Tearing)</td>
+          <td>لا يحدث</td>
+          <td>يحتاج إعداداً</td>
+        </tr>
+        <tr>
+          <td>التوافق</td>
+          <td>بحاجة لـ XWayland للتطبيقات القديمة</td>
+          <td>توافق واسع</td>
+        </tr>
+        <tr>
+          <td>المستقبل</td>
+          <td>هو المستقبل</td>
+          <td>يتراجع تدريجياً</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>هل Hyprland مناسب لك؟</h2>
+    <p>Hyprland مناسب إذا كنت:</p>
+    <ul>
+      <li>تريد بيئة سطح مكتب مخصصة بالكامل</li>
+      <li>تحب مفهوم Tiling (النوافذ المرتبة تلقائياً)</li>
+      <li>تستمتع بتجربة إعداد وتخصيص النظام</li>
+      <li>تريد أفضل تجربة بصرية على لينكس</li>
+    </ul>
+
+    <p>قد لا يكون مناسباً إذا كنت:</p>
+    <ul>
+      <li>مبتدئاً في لينكس وتريد شيئاً يعمل فوراً</li>
+      <li>تعتمد على برامج قديمة لا تعمل على Wayland</li>
+      <li>لا تريد قضاء وقت في إعداد النظام</li>
+    </ul>
+
+    <blockquote>
+      🎯 الخلاصة: إذا كنت تريد الأفضل من حيث الجماليات والتخصيص وأنت على استعداد لتعلم الإعداد،
+      فـ Hyprland هو خيارك.
+    </blockquote>
+
+    <h2>الخطوة التالية</h2>
+    <p>
+      الآن بعد أن عرفت ما هو Hyprland، الخطوة القادمة هي تثبيته على نظامك.
+      راجع مقالة <strong>تثبيت Hyprland</strong> للحصول على دليل خطوة بخطوة.
+    </p>
+
+  </main>
+
+  <script src="../assets/js/app.js"></script>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-modal">
+      <div class="search-modal-header">
+        <div class="search-input-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="globalSearchInput" placeholder="ابحث في كل المقالات..." autocomplete="off" />
+        </div>
+        <button class="search-close" id="searchClose">✕</button>
+      </div>
+      <div class="search-results" id="globalSearchResults">
+        <p class="search-hint">اكتب للبحث في جميع المقالات...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <img src="../assets/images/logo.jpg" alt="شخبطه" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--gold-dark);">
+        <span style="font-family:var(--font-serif);color:var(--gold-dark);">شخبطه</span>
+      </div>
+      <p class="footer-note">مقالات وأدلة بالعربية عن لينكس، Hyprland، والأدوات</p>
+      <div class="footer-links">
+        <a href="https://github.com/im-sheen" target="_blank">GitHub</a><span>·</span>
+        <a href="https://im-sheen.github.io/shakhbatah/" target="_blank">im-sheen.github.io/shakhbatah</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
